@@ -1,0 +1,9 @@
+build/*
+
+#vscode
+.vscode/*
+# Local History for Visual Studio Code
+.history/
+
+#clion
+.idea/*
