@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 2.8.2)
+
+project(esp-idf-download NONE)
+include(ExternalProject)
+ExternalProject_Add(esp-idf
+  GIT_REPOSITORY    https://github.com/espressif/esp-idf
+  GIT_TAG           release/v4.2
+  SOURCE_DIR        "${CMAKE_CURRENT_BINARY_DIR}/esp-idf-src"
+  BINARY_DIR        "${CMAKE_CURRENT_BINARY_DIR}/esp-idf-build"
+  CONFIGURE_COMMAND "${CMAKE_CURRENT_BINARY_DIR}/esp-idf-src/install.sh"
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  TEST_COMMAND      ""
+)

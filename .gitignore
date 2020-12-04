@@ -7,3 +7,6 @@ build/*
 
 #clion
 .idea/*
+cmake-build-debug/
+/build-esp32/
+/build-local/
