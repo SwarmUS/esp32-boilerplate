@@ -44,22 +44,25 @@ You will need to change the CMakesLists to fit your needs, folders under `src` a
 This project requires the esp-idf repo cloned and sourced to be able to compile. It is included as a submodule and can therefore be initialised by running upon cloning this repo.
 It wil then need to be installed to set the the Extensa toolchain and other stuff. Simply run:
 ````
+git clone -b release/v4.2 --recurse-submodules https://github.com/espressif/esp-idf
+esp-idf/install.xx (extension varies from platform to platform, use sh for linux and bat for windows)
 git clone https://github.com/SwarmUS/esp32-boilerplate
-cd esp32-boilerplate
-git submodule update --init --recursive
-/contrib/esp-idf/install.sh (extension depends on platform, .sh for linux or .bat for windows)
 ````
 
 ## Build
 To be able to build for esp-32, you need to have some environment variables source. 
 You can run the following command to source the required variables:
 ````
-    source contrib/esp-idf/export.sh
+    source path/to/esp-idf/export.xx (extension varies from platform to platform, use sh for linux and bat for windows)
 ````
-After this is done, `echo $IDF_PATH` should output `/path/to/repository/esp32-boilerplate/contrib/esp-idf`.
+After this is done, `echo $IDF_PATH` should output `/path/to/esp-idf`.
 
 This repo also contains script to run the cmake with proper arguments. The main can either run locally. 
-Either run `./scripts/build.sh`  to build locally or `./scripts/build-esp.sh` to build for esp32. There are also scripts to run on either targets.
+Either run `./scripts/build.sh`  to build locally or `./scripts/build-esp.sh` to build for esp32. There are also scripts to run on either targets (note: these scripts only work for linux and are meant as examples).
+
+## Running
+As can be seen in the scripts, the target can be run locally with a make run command and on the esp32 using the idf.py python script to flash and open a serial on the esp32.
+The esp32 target could be changed in the future to use openocd.
 
 ## Tests
 
@@ -69,8 +72,3 @@ To run tests you can use
 
 Or use CTest runner (recommended)
 ```ctest -V```
-
-## Notes
-
-The repo also contains a cmake file to add and run scripts for the esp-idf via cmake and source the variables. 
-Attempts were made to integrate it as so, but it proved to be impossible. The files will remain there in case it ever proves feasible.
