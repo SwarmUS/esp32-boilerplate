@@ -60,6 +60,14 @@ After this is done, `echo $IDF_PATH` should output `/path/to/esp-idf`.
 This repo also contains script to run the cmake with proper arguments. The main can either run locally. 
 Either run `./scripts/build.sh`  to build locally or `./scripts/build-esp.sh` to build for esp32. There are also scripts to run on either targets (note: these scripts only work for linux and are meant as examples).
 
+For CLion users, since you need to source a script before running the cmake from clion, you just need to source the script before launching clion from a terminal.
+Simply run:
+````
+    source path/to/esp-idf/export.xx (extension varies from platform to platform, use sh for linux and bat for windows)
+    clion
+````
+Then, in ``File->Settings->Build,Execution,Deployment->CMake``, add a profile, set the type to debug and copy the following arguments in CMake Options: ``-DCMAKE_TOOLCHAIN_FILE=cmake/esp-idf/toolchain-esp32.cmake -DTARGET=esp32``.
+This has been tested on Ubuntu 20.04 but the same logic should apply to any system.
 ## Running
 As can be seen in the scripts, the target can be run locally with a make run command and on the esp32 using the idf.py python script to flash and open a serial on the esp32.
 The esp32 target could be changed in the future to use openocd.
