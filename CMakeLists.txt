@@ -58,3 +58,8 @@ if(ENABLE_TESTS)
     googletest_get_populate()
     add_subdirectory(tests)
 endif()
+
+#Additional tooling include
+include(doxygen/doxygen)
+include(clang-tools/clang-tidy)
+include(clang-tools/clang-format)
