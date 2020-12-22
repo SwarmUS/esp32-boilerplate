@@ -34,14 +34,9 @@ esp32-boilerplate/
 |   |--esp32/              #directory for esp32 stub tests
 ````
 
-## Using the template
-When creating a new repo you can select the Template-Cpp as template instead of an empty repo.
-
-You will need to change the CMakesLists to fit your needs, folders under `src` are libraries, you need to adapt the file `src/CMakeLists.txt` so it reflects your own libraries. You will need to change `tests/src/CMakeLists.txt` too so it reflects your changes. 
-
 ## Setup
 
-This project requires the esp-idf repo cloned and sourced to be able to compile. It is included as a submodule and can therefore be initialised by running upon cloning this repo.
+This project requires the esp-idf repo cloned and sourced to be able to compile. 
 It wil then need to be installed to set the the Extensa toolchain and other stuff. Simply run:
 ````
 git clone -b release/v4.2 --recurse-submodules https://github.com/espressif/esp-idf
@@ -74,6 +69,7 @@ Simply run:
 ````
 Then, in ``File->Settings->Build,Execution,Deployment->CMake``, add a profile, set the type to debug and copy the following arguments in CMake Options: ``-DCMAKE_TOOLCHAIN_FILE=cmake/esp-idf/toolchain-esp32.cmake -DTARGET=esp32``.
 This has been tested on Ubuntu 20.04 but the same logic should apply to any system.
+
 ## Running
 As can be seen in the scripts, the target can be run locally with a make run command and on the esp32 using the idf.py python script to flash and open a serial on the esp32.
 The esp32 target could be changed in the future to use openocd.
