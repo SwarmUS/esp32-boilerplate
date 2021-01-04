@@ -6,28 +6,46 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  CMAKE_TEST_PORJECT_PATH: build/tests
-  CMAKE_TEST_PORJECT_NAME: Template_CXX_tests
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: swarmus/embedded
     steps:
     - uses: actions/checkout@v2
       with:
         submodules: true
-    - name: prepare
+    # Verify local build
+    - name: build-local
       run: |
-        mkdir -p build
-        cd build
+        mkdir -p build-local
+        cd build-local
         cmake ..
-    - name: build
-      run: |
-        cd build
-        make -j
+        make
+    # Run tests
     - name: tests
       run: |
-        cd build
+        cd build-local
         ctest -V
+
+    # Check format
+    - name: format
+      run: |
+        cd build-local
+        make check-format
+
+    # Generate documentation
+    - name: doc
+      run: |
+        cd build-local
+        make doc
+
+    # Verify esp build
+    - name: build-esp
+      run: |
+        . $IDF_PATH/export.sh
+        mkdir -p build-esp
+        cd build-esp
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolchain-esp32.cmake -DTARGET=esp32
+        make
         
