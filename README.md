@@ -74,6 +74,81 @@ This has been tested on Ubuntu 20.04 but the same logic should apply to any syst
 As can be seen in the scripts, the target can be run locally with a make run command and on the esp32 using the idf.py python script to flash and open a serial on the esp32.
 The esp32 target could be changed in the future to use openocd.
 
+The project includes a target called ``openocd-flash`` that will flash the program over JTAG with the adafruit ftd2232h breakout board. For other adapters, other .cfg might need to be supplied. Debugging is supported in VS Code. Here is the launch and task files necessary. Some changes to properly resolve paths are needed:
+launch.json
+````
+    {
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "OpenOCD Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "miDebuggerPath": "/home/casto/.espressif/tools/xtensa-esp32-elf/esp-2020r2-8.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gdb", // to be changed by user
+            "program": "${workspaceFolder}/cmake-build-target/esp32-boilerplate.elf",
+            "preLaunchTask": "openocd",
+            "setupCommands": [{
+                "description": "enable pretty printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }, {
+                "text": "file '${workspaceFolder}/cmake-build-target/esp32-boilerplate.elf'"
+            }, {
+                "text": "target remote :3333"
+            }, {
+                "text": "monitor program_esp32 ${workspaceFolder}/cmake-build-target/esp32-boilerplate.elf 0x10000 verify"
+            }, {
+                "text": "monitor reset halt"
+            }, {
+                "text": "thb app_main"
+            }],
+            "cwd": "${workspaceFolder}",
+            "externalConsole": false
+        }
+    ]
+}
+````
+tasks.json
+````
+    {
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "openocd",
+            "type": "shell",
+            "isBackground": true,
+            "problemMatcher": [
+                {
+                  "pattern": [
+                    {
+                      "regexp": ".",
+                      "file": 1,
+                      "location": 2,
+                      "message": 3
+                    }
+                  ],
+                  "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": ".",
+                  }
+                }
+              ],
+            "options": 
+            {
+                "cwd": "/home/casto/.espressif/tools/openocd-esp32/v0.10.0-esp32-20191114/openocd-esp32" // to be changed by user
+            },
+            "command": "bin/openocd -s share/openocd/scripts -f ${workspaceFolder}/tools/openocd/adafruit-esp.cfg -c 'program_esp ${workspaceFolder}/cmake-build-target/esp32-boilerplate.bin 0x10000'",
+        }
+    ]
+}
+````
+
+IMPORTANT: For some reason, VS Code has trouble attaching the debugger on the first launch. If this occurs, relaunch the configuration and the program should launch and break on app_main() entry.
+
 ## Tests
 
 This projects uses Google Tests for testings, there are some examples of uses.
