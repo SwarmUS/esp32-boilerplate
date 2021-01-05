@@ -74,7 +74,19 @@ This has been tested on Ubuntu 20.04 but the same logic should apply to any syst
 As can be seen in the scripts, the target can be run locally with a make run command and on the esp32 using the idf.py python script to flash and open a serial on the esp32.
 The esp32 target could be changed in the future to use openocd.
 
-The project includes a target called ``openocd-flash`` that will flash the program over JTAG with the adafruit ftd2232h breakout board. For other adapters, other .cfg might need to be supplied. Debugging is supported in VS Code. Here is the launch and task files necessary. Some changes to properly resolve paths are needed:
+The project includes a target called ``openocd-flash`` that will flash the program over JTAG with the adafruit ftd2232h breakout board. For other adapters, other .cfg might need to be supplied. 
+
+#### Debugging
+To debug using CLion, you can create a run configuration using the Embedded Gdb Server template. Follow these steps to create this configuration:
+1. Create a new configuration using Embedded GDB Server Template
+2. Set the executable to the .elf file of the project
+3. Select the xtensa gdb located under .espressif (exemple path: ```/home/casto/.espressif/tools/xtensa-esp32-elf/esp-2020r2-8.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gdb```)
+4. For download executable, select ``None``. This will be done manually while launching the gdb server (aka openocd)
+5. For target remote args, enter ``localhost 3333``
+6. For the GDB server, choose the one provided with the esp tool chain, similarly to the gdb (example path: ``/home/casto/.espressif/tools/openocd-esp32/v0.10.0-esp32-20191114/openocd-esp32/bin/openocd``)
+7. For the GDB server args, enter these args, modifying the paths to your project: `` -s share/openocd/scripts -f /home/casto/git/Sherbrooke/SwarmUs/esp32-boilerplate/tools/openocd/adafruit-esp.cfg -c "program_esp /home/casto/git/Sherbrooke/SwarmUs/esp32-boilerplate/cmake-build-target/esp32-boilerplate.bin 0x10000"``
+
+Debugging is also supported in VS Code. Here is an example launch and task files necessary. Some changes to properly resolve paths are needed (changes to the user and version might be required):
 launch.json
 ````json
     {
@@ -147,7 +159,7 @@ tasks.json
 }
 ````
 
-IMPORTANT: For some reason, VS Code has trouble attaching the debugger on the first launch. If this occurs, relaunch the configuration and the program should launch and break on app_main() entry.
+IMPORTANT: VS Code has trouble attaching the debugger on the first launch. If this occurs, relaunch the configuration and the program should launch and break on app_main() entry.
 
 ## Connections to ftd2232h breakout board
 
