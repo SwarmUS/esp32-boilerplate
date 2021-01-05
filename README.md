@@ -44,6 +44,7 @@ esp-idf/install.xx (extension varies from platform to platform, use sh for linux
 git clone https://github.com/SwarmUS/esp32-boilerplate
 ````
 
+To be able to open a serial port, you will need to add your user to the ``dialout`` group. Run ``sudo adduser YOUR_NAME dialout``.
 ## Build
 To be able to build for esp-32, you need to have some environment variables source. 
 You can run the following command to source the required variables:
@@ -56,10 +57,9 @@ To build for esp or host, do the following commands. Supplying the to cmake will
 ````
 mkdir build
 cd build
-cmake .. <-DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolchain-esp32.cmake -DTARGET=esp32>
+cmake .. -DCMAKE_BUILD_TYPE=Debug <-DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolchain-esp32.cmake -DTARGET=esp32>
 make
 ````
-
 
 For CLion users, since you need to source a script before running the cmake from clion, you just need to source the script before launching clion from a terminal.
 Simply run:
@@ -77,6 +77,9 @@ The esp32 target could be changed in the future to use openocd.
 The project includes a target called ``openocd-flash`` that will flash the program over JTAG with the adafruit ftd2232h breakout board. For other adapters, other .cfg might need to be supplied. 
 
 #### Debugging
+
+The xtensa debugger has a depency on libpython2.7. You can install it using your package manager.
+
 To debug using CLion, you can create a run configuration using the Embedded Gdb Server template. Follow these steps to create this configuration:
 1. Create a new configuration using Embedded GDB Server Template
 2. Set the executable to the .elf file of the project
