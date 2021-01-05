@@ -76,7 +76,7 @@ The esp32 target could be changed in the future to use openocd.
 
 The project includes a target called ``openocd-flash`` that will flash the program over JTAG with the adafruit ftd2232h breakout board. For other adapters, other .cfg might need to be supplied. Debugging is supported in VS Code. Here is the launch and task files necessary. Some changes to properly resolve paths are needed:
 launch.json
-````
+````json
     {
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
@@ -112,7 +112,7 @@ launch.json
 }
 ````
 tasks.json
-````
+````json
     {
     "version": "2.0.0",
     "tasks": [
@@ -148,6 +148,18 @@ tasks.json
 ````
 
 IMPORTANT: For some reason, VS Code has trouble attaching the debugger on the first launch. If this occurs, relaunch the configuration and the program should launch and break on app_main() entry.
+
+## Connections to ftd2232h breakout board
+
+````
+Connections:
+FTD2232H        ESP32       Signal
+D0              D13         TCLK
+D1              D12         TDI
+D2              D15         TMS
+D3              D14         TDO
+GND             GND         GND
+````
 
 ## Tests
 
