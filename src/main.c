@@ -8,11 +8,15 @@
 */
 #include "esp_spi_flash.h"
 #include "esp_system.h"
+//#include <FreeRTOS.h>
+//#include <FreeRTOSConfig.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include <stdio.h>
 
-void app_main(void) {
+void dummyTask(void* param)
+{
+    (void) param;
     printf("Hello world!\n");
 
     /* Print chip information */
@@ -34,4 +38,10 @@ void app_main(void) {
     printf("Restarting now.\n");
     fflush(stdout);
     esp_restart();
+}
+
+void app_main(void) {
+    xTaskCreate(dummyTask, "dumb", configMINIMAL_STACK_SIZE * 4, NULL,
+                tskIDLE_PRIORITY + 2, NULL);
+    vTaskStartScheduler();
 }
