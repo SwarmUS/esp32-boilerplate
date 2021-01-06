@@ -42,6 +42,5 @@ void dummyTask(void* param)
 
 void app_main(void) {
     xTaskCreate(dummyTask, "dumb", configMINIMAL_STACK_SIZE * 4, NULL,
-                tskIDLE_PRIORITY + 2, NULL);
-    vTaskStartScheduler();
+                0 + 2, NULL);
 }
