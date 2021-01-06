@@ -28,6 +28,7 @@ else()
     message("Compiling locally")
     set(ALIAS_PREFIX "SwarmUs")
     set(ENABLE_TESTS ON)
+    add_definitions(-DPOSIX)
 endif()
 
 # Include sources

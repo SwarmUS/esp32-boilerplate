@@ -8,11 +8,16 @@
 */
 #include "esp_spi_flash.h"
 #include "esp_system.h"
-//#include <FreeRTOS.h>
-//#include <FreeRTOSConfig.h>
+#include <stdio.h>
+
+// Hack to resolve posix includes for freertos
+#ifdef POSIX
+#include <FreeRTOS.h>
+#include <FreeRTOSConfig.h>
+#else
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include <stdio.h>
+#endif
 
 void dummyTask(void* param)
 {

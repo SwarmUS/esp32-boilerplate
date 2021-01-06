@@ -9,5 +9,5 @@ jmp_buf buf;
 int main(void) {
     setjmp(buf);
     app_main();
-    vTaskStartScheduler();
+    vTaskStartScheduler(); // This is also done in the hidden esp main
 }
