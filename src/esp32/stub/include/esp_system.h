@@ -10,6 +10,7 @@ extern "C" {
 #endif
 
 extern void app_main(void);
+extern void vTaskStartScheduler();
 
 typedef struct {
     uint32_t features; //!< bit mask of CHIP_FEATURE_x feature flags

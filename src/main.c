@@ -1,23 +1,11 @@
-/* Hello World Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include "esp_spi_flash.h"
 #include "esp_system.h"
 #include <stdio.h>
 
-// Hack to resolve posix includes for freertos
-#ifdef POSIX
 #include <FreeRTOS.h>
 #include <FreeRTOSConfig.h>
-#else
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#endif
+#include <task.h>
+
 
 void dummyTask(void* param)
 {

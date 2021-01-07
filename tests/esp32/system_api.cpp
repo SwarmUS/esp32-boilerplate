@@ -2,6 +2,7 @@
 #include "esp_system.h"
 
 void app_main() {} // work around for esp main function set-up
+void vTaskStartScheduler() {}
 
 
 class Esp32StubTests : public testing::Test {};
