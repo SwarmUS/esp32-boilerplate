@@ -31,8 +31,6 @@ else()
     add_definitions(-DPOSIX)
 endif()
 
-# Include sources
-add_subdirectory(src)
 
 #set executable name
 set(elf_file ${CMAKE_PROJECT_NAME}.elf)
@@ -50,20 +48,41 @@ if(COMPILE_ESP)
             openocd-flash
             COMMAND openocd -f ${CMAKE_CURRENT_SOURCE_DIR}/tools/openocd/adafruit-esp.cfg -c "program_esp ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin 0x10000 verify exit"
     )
+
+    # Hack for freertos include path to match
+    get_target_property(FREERTOS_SOURCE_DIR ${ALIAS_PREFIX}::freertos SOURCE_DIR)
+    target_include_directories(${elf_file}
+        PUBLIC
+            ${FREERTOS_SOURCE_DIR}/include/freertos
+    )
 else()
+    #Target to launch local executable
     add_custom_target(
             run
             COMMAND $<TARGET_FILE:${elf_file}>
     )
+
+    #ROS dependencies
+    include(catkin/common)
 endif()
 
 # Testing
 if(ENABLE_TESTS)
     include(googletest/common)
     enable_testing()
-    googletest_get_populate()
+
+    if(NOT TARGET gtest)
+        googletest_get_populate()
+    endif()
+
+    if(DISABLE_EXTERNAL_WARNINGS)
+        googletest_disable_warnings()
+    endif()
     add_subdirectory(tests)
 endif()
+
+# Include sources
+add_subdirectory(src)
 
 #Additional tooling include
 include(doxygen/doxygen)
