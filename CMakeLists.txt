@@ -35,10 +35,10 @@ endif()
 #set executable name
 set(elf_file ${CMAKE_PROJECT_NAME}.elf)
 
-add_executable(${elf_file} src/main.c) # Needs to be in the root of the project as it is expected by esp-idf
+add_executable(${elf_file} src/main.cpp) # Needs to be in the root of the project as it is expected by esp-idf
 
 # Link the libraries to the executable, depending on alias
-target_link_libraries(${elf_file} ${ALIAS_PREFIX}::esp32 ${ALIAS_PREFIX}::freertos ${ALIAS_PREFIX}::spi_flash)
+target_link_libraries(${elf_file} ${ALIAS_PREFIX}::esp32 ${ALIAS_PREFIX}::freertos ${ALIAS_PREFIX}::spi_flash SwarmUs::BSP)
 
 if(COMPILE_ESP)
     # Register the executable for idf, needs to be done after linking
@@ -49,7 +49,7 @@ if(COMPILE_ESP)
             COMMAND openocd -f ${CMAKE_CURRENT_SOURCE_DIR}/tools/openocd/adafruit-esp.cfg -c "program_esp ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin 0x10000 verify exit"
     )
 
-    # Hack for freertos include path to match
+    # Hack for freertos include path to match. Could be removed if no freertos calls are made from app_main()
     get_target_property(FREERTOS_SOURCE_DIR ${ALIAS_PREFIX}::freertos SOURCE_DIR)
     target_include_directories(${elf_file}
         PUBLIC

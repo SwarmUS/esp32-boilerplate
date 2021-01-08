@@ -11,7 +11,6 @@ add_library(${LIB_NAME} SHARED ${LIB_SOURCES})
 #add_dependencies(${LIB_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 target_include_directories(${LIB_NAME} SYSTEM PRIVATE ${catkin_INCLUDE_DIRS})
-message("La chose: ${catkin_INCLUDE_DIRS}")
 target_include_directories(${LIB_NAME}
         PUBLIC
             include
