@@ -135,6 +135,7 @@ tasks.json
             "label": "openocd",
             "type": "shell",
             "isBackground": true,
+            "dependsOn": "update-build",
             "problemMatcher": [
                 {
                   "pattern": [
@@ -157,6 +158,16 @@ tasks.json
                 "cwd": "/home/casto/.espressif/tools/openocd-esp32/v0.10.0-esp32-20191114/openocd-esp32" // to be changed by user
             },
             "command": "bin/openocd -s share/openocd/scripts -f ${workspaceFolder}/tools/openocd/adafruit-esp.cfg -c 'program_esp ${workspaceFolder}/cmake-build-target/esp32-boilerplate.bin 0x10000'",
+        },
+        ,
+        {
+          "label": "update-build",
+          "type": "shell",
+          "isBackground": false,
+          "options": {
+            "cwd": "${workspaceFolder}/cmake-build-target/" // to be changed by user if different build directory
+          },
+          "command": "make app"
         }
     ]
 }
