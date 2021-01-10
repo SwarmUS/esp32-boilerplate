@@ -4,7 +4,7 @@
 #include "bsp/IBSP.h"
 
 class BSP : public IBSP {
-public:
+  public:
     BSP();
     ~BSP() override;
 
@@ -12,4 +12,4 @@ public:
     ChipInfo getChipInfo() override;
 };
 
-#endif //BSP_H
+#endif // BSP_H

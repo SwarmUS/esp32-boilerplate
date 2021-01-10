@@ -8,7 +8,6 @@ extern "C" {
 extern void app_main(void);
 extern void vTaskStartScheduler();
 
-
 #ifdef __cplusplus
 }
 #endif

@@ -1,17 +1,16 @@
 #include <stdio.h>
 
+#include "bsp/Factory.h"
 #include <FreeRTOS.h>
 #include <FreeRTOSConfig.h>
 #include <task.h>
-#include "bsp/Factory.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void dummyTask(void* param)
-{
-    (void) param;
+void dummyTask(void* param) {
+    (void)param;
     printf("Hello world!\n");
 
     /* Print chip information */
@@ -22,8 +21,7 @@ void dummyTask(void* param)
         printf("System has %d cores\n\r", info.m_cores);
         if (info.m_osType == ChipInfo::ESP) {
             printf("System is running on target\n\r");
-        }
-        else {
+        } else {
             printf("System is running locally\n\r");
         }
         vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -34,9 +32,7 @@ void app_main(void) {
     std::shared_ptr<IBSP> bsp = BspFactory::getBSP();
     bsp->initChip();
 
-
-    xTaskCreate(dummyTask, "dumb", configMINIMAL_STACK_SIZE * 4, NULL,
-                0 + 2, NULL);
+    xTaskCreate(dummyTask, "dumb", configMINIMAL_STACK_SIZE * 4, NULL, 0 + 2, NULL);
 }
 
 #ifdef __cplusplus

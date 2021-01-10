@@ -5,13 +5,10 @@
 
 struct ChipInfo {
     uint8_t m_cores;
-    enum OS_TYPE {
-        ESP,
-        SIMULATION
-    } m_osType;
+    enum OS_TYPE { ESP, SIMULATION } m_osType;
 };
 class IBSP {
-public:
+  public:
     virtual ~IBSP() = default;
 
     /**

@@ -4,10 +4,10 @@
 #include "bsp/IBSP.h"
 #include "ros/ros.h"
 
-class BSP: public IBSP {
-public:
+class BSP : public IBSP {
+  public:
     BSP();
-    BSP(const ros::NodeHandle &nodeHandle, int loopRate);
+    BSP(const ros::NodeHandle& nodeHandle, int loopRate);
     ~BSP() override;
 
     void initChip() override;
@@ -15,11 +15,9 @@ public:
 
     std::shared_ptr<ros::NodeHandle> getNodeHandle();
 
-private:
+  private:
     std::shared_ptr<ros::NodeHandle> m_rosNodeHandle;
     int m_loopRate;
-
-
 };
 
 #endif //_BSP_H
