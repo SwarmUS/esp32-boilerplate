@@ -22,4 +22,4 @@ target_link_libraries(${LIB_NAME}
         ${catkin_LIBRARIES}
 )
 
-add_library(SwarmUs::esp32 ALIAS ${LIB_NAME})
+add_library(SwarmUs::HiveConnect::esp32 ALIAS ${LIB_NAME})

@@ -1,5 +1,5 @@
 set(LIB_NAME "stub_freertos")
-set(LIB_ALIAS "SwarmUs::freertos")
+set(LIB_ALIAS "SwarmUs::HiveConnect::FreeRTOS")
 
 
 include(freertos/common)

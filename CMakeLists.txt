@@ -23,12 +23,9 @@ if(COMPILE_ESP)
                     COMPONENTS esp32 freertos esptool_py
                     SDKCONFIG ${CMAKE_BINARY_DIR}/sdkconfig
                     BUILD_DIR ${CMAKE_BINARY_DIR})
-    set(ALIAS_PREFIX "idf")
 else()
     message("Compiling locally")
-    set(ALIAS_PREFIX "SwarmUs")
     set(ENABLE_TESTS ON)
-    add_definitions(-DPOSIX)
 endif()
 
 
@@ -38,7 +35,7 @@ set(elf_file ${CMAKE_PROJECT_NAME}.elf)
 add_executable(${elf_file} src/main.cpp) # Needs to be in the root of the project as it is expected by esp-idf
 
 # Link the libraries to the executable, depending on alias
-target_link_libraries(${elf_file} ${ALIAS_PREFIX}::esp32 ${ALIAS_PREFIX}::freertos SwarmUs::BSP)
+target_link_libraries(${elf_file} SwarmUs::HiveConnect::esp32 SwarmUs::HiveConnect::FreeRTOS SwarmUs::HiveConnect::BSP)
 
 if(COMPILE_ESP)
     # Register the executable for idf, needs to be done after linking
@@ -50,7 +47,7 @@ if(COMPILE_ESP)
     )
 
     # Hack for freertos include path to match. Could be removed if no freertos calls are made from app_main()
-    get_target_property(FREERTOS_SOURCE_DIR ${ALIAS_PREFIX}::freertos SOURCE_DIR)
+    get_target_property(FREERTOS_SOURCE_DIR idf::freertos SOURCE_DIR)
     target_include_directories(${elf_file}
         PUBLIC
             ${FREERTOS_SOURCE_DIR}/include/freertos

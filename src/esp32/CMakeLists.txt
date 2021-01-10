@@ -1,3 +1,7 @@
 if(NOT COMPILE_ESP)
     add_subdirectory(stub)
+else()
+    add_library(swarmus_esp32_target INTERFACE)
+    target_link_libraries(swarmus_esp32_target INTERFACE idf::esp32)
+    add_library(SwarmUs::HiveConnect::esp32 ALIAS swarmus_esp32_target)
 endif()

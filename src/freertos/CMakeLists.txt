@@ -1,3 +1,7 @@
 if(NOT COMPILE_ESP)
-    add_subdirectory(stub)
+    add_subdirectory(posix)
+else()
+    add_library(swarmus_freertos_esp INTERFACE)
+    target_link_libraries(swarmus_freertos_esp INTERFACE idf::freertos)
+    add_library(SwarmUs::HiveConnect::FreeRTOS ALIAS swarmus_freertos_esp)
 endif()

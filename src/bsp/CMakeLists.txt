@@ -1,5 +1,5 @@
 set(LIB_NAME "swarmus-bsp")
-set(LIB_ALIAS "SwarmUs::BSP")
+set(LIB_ALIAS "SwarmUs::HiveConnect::BSP")
 
 get_filename_component(BSP_CMAKE_DIR ${CMAKE_CURRENT_LIST_FILE} DIRECTORY)
 
