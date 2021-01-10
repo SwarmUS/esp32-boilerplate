@@ -18,6 +18,7 @@ jobs:
     # Verify local build
     - name: build-local
       run: |
+        . /opt/ros/$ROS_DISTRO/setup.sh
         mkdir -p build-local
         cd build-local
         cmake ..
@@ -25,18 +26,21 @@ jobs:
     # Run tests
     - name: tests
       run: |
+        . /opt/ros/$ROS_DISTRO/setup.sh
         cd build-local
         ctest -V
 
     # Check format
     - name: format
       run: |
+        . /opt/ros/$ROS_DISTRO/setup.sh
         cd build-local
         make check-format
 
     # Generate documentation
     - name: doc
       run: |
+        . /opt/ros/$ROS_DISTRO/setup.sh
         cd build-local
         make doc
 
