@@ -1,6 +1,7 @@
 #include "BSP.h"
 #include <FreeRTOS.h>
 #include <task.h>
+#include <thread>
 
 BSP::BSP() : m_loopRate(0) {};
 BSP::~BSP() = default;
@@ -24,6 +25,13 @@ void BSP::initChip() {
     xTaskCreate(rosSpinTask, "ros_spinner", configMINIMAL_STACK_SIZE, (void*) &this->m_loopRate, tskIDLE_PRIORITY + 1,
                 NULL);
 
+}
+
+ChipInfo BSP::getChipInfo() {
+    return ChipInfo {
+        .m_cores = (uint8_t) std::thread::hardware_concurrency(),
+        .m_osType = ChipInfo::SIMULATION
+    };
 }
 
 std::shared_ptr<ros::NodeHandle> BSP::getNodeHandle() {

@@ -1,5 +1,3 @@
-#include "esp_spi_flash.h"
-#include "esp_system.h"
 #include <stdio.h>
 
 #include <FreeRTOS.h>
@@ -17,28 +15,24 @@ void dummyTask(void* param)
     printf("Hello world!\n");
 
     /* Print chip information */
-    esp_chip_info_t chip_info;
-    esp_chip_info(&chip_info);
-    printf("This is ESP32 chip with %d CPU cores, WiFi%s%s, ", chip_info.cores,
-           (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
-           (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
+    std::shared_ptr<IBSP> bsp = BspFactory::getBSP();
+    ChipInfo info = bsp->getChipInfo();
 
-    printf("silicon revision %d, ", chip_info.revision);
-
-    printf("%dMB %s flash\n", spi_flash_get_chip_size() / (1024 * 1024),
-           (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
-
-    for (int i = 10; i >= 0; i--) {
-        printf("Restarting in %d seconds...\n", i);
+    while (true) {
+        printf("System has %d cores\n\r", info.m_cores);
+        if (info.m_osType == ChipInfo::ESP) {
+            printf("System is running on target\n\r");
+        }
+        else {
+            printf("System is running locally\n\r");
+        }
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
-    printf("Restarting now.\n");
-    fflush(stdout);
-    esp_restart();
 }
 
 void app_main(void) {
     std::shared_ptr<IBSP> bsp = BspFactory::getBSP();
+    bsp->initChip();
 
 
     xTaskCreate(dummyTask, "dumb", configMINIMAL_STACK_SIZE * 4, NULL,

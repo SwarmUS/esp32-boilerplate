@@ -24,4 +24,5 @@ target_link_libraries(${LIB_NAME}
         PUBLIC
         # Defined libraries
         idf::freertos
+        idf::esp32
 )

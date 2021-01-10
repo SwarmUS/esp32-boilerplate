@@ -9,6 +9,7 @@ public:
     ~BSP() override;
 
     void initChip() override;
+    ChipInfo getChipInfo() override;
 };
 
 #endif //BSP_H

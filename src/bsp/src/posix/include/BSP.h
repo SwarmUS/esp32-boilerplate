@@ -11,6 +11,7 @@ public:
     ~BSP() override;
 
     void initChip() override;
+    ChipInfo getChipInfo() override;
 
     std::shared_ptr<ros::NodeHandle> getNodeHandle();
 

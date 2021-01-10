@@ -38,7 +38,7 @@ set(elf_file ${CMAKE_PROJECT_NAME}.elf)
 add_executable(${elf_file} src/main.cpp) # Needs to be in the root of the project as it is expected by esp-idf
 
 # Link the libraries to the executable, depending on alias
-target_link_libraries(${elf_file} ${ALIAS_PREFIX}::esp32 ${ALIAS_PREFIX}::freertos ${ALIAS_PREFIX}::spi_flash SwarmUs::BSP)
+target_link_libraries(${elf_file} ${ALIAS_PREFIX}::esp32 ${ALIAS_PREFIX}::freertos SwarmUs::BSP)
 
 if(COMPILE_ESP)
     # Register the executable for idf, needs to be done after linking
