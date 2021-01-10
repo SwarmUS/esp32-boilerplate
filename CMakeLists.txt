@@ -45,13 +45,6 @@ if(COMPILE_ESP)
             openocd-flash
             COMMAND openocd -f ${CMAKE_CURRENT_SOURCE_DIR}/tools/openocd/adafruit-esp.cfg -c "program_esp ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin 0x10000 verify exit"
     )
-
-    # Hack for freertos include path to match. Could be removed if no freertos calls are made from app_main()
-    get_target_property(FREERTOS_SOURCE_DIR idf::freertos SOURCE_DIR)
-    target_include_directories(${elf_file}
-        PUBLIC
-            ${FREERTOS_SOURCE_DIR}/include/freertos
-    )
 else()
     #Target to launch local executable
     add_custom_target(
