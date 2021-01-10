@@ -44,6 +44,11 @@ target_link_libraries(${elf_file} ${ALIAS_PREFIX}::esp32 ${ALIAS_PREFIX}::freert
 if(COMPILE_ESP)
     # Register the executable for idf, needs to be done after linking
     idf_build_executable(${elf_file})
+    # Create target to flash via openocd with JTAG interface
+    add_custom_target(
+            openocd-flash
+            COMMAND openocd -f ${CMAKE_CURRENT_SOURCE_DIR}/tools/openocd/adafruit-esp.cfg -c "program_esp ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin 0x10000 verify exit"
+    )
 else()
     add_custom_target(
             run
