@@ -21,6 +21,7 @@ target_include_directories(${LIB_NAME}
         PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         ${BSP_CMAKE_DIR}/include
+        PUBLIC
         include
         )
 
@@ -32,3 +33,7 @@ target_link_libraries(${LIB_NAME}
 )
 
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+
+if(ENABLE_TESTS)
+    add_subdirectory(tests)
+endif()

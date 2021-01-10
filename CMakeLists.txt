@@ -75,7 +75,6 @@ if(ENABLE_TESTS)
     if(DISABLE_EXTERNAL_WARNINGS)
         googletest_disable_warnings()
     endif()
-    add_subdirectory(tests)
 endif()
 
 # Include sources
