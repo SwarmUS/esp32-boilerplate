@@ -16,7 +16,7 @@ target_link_libraries(${TEST_NAME}
     gtest_main
     gmock
     SwarmUs::HiveConnect::BSP
-    SwarmUs::BSP::Platform
+    SwarmUs::HiveConnect::BSP::Platform
     ${catkin_LIBRARIES}
 )
 

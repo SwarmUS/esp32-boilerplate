@@ -1,38 +1,15 @@
-# Esp-32 boilerplate
+# HiveConnect
 
-This is a boilerplate repo for esp-32 code for SwamUs.
-It's goal is to have a ready project for esp32 with unit testing and kickstart development and integration with the esp-idf build tools and library.
+Project for the esp32 module and ros simulation node for SwarmUs.
 
-It provides a way to run a simple loop that shows hardware information and prints an Hello World message.
-It can either be run locally or on an esp-32 module.
+## Requirements
 
-
-## Hierachy
-
-Each folder under src is a library referring to an esp-idf component. It offers stubs to run built in components locally or links to the idf-components depending on the cmake arguments.
-As code grows and the architecture becomes clearer, this is subject to change. 
-
-The stub libraries are reused for unit testing with GTest.
-
-````
-esp32-boilerplate/
-|-- src/
-|   |-- esp32/
-|   |   |-- stub            #stub library files
-|   |   |   |-- include     #library header files. Should match include path of the esp-idf component
-|   |   |   |-- src         #library source files
-|   |-- freertos/
-|   |   |-- stub            #stub library files
-|   |   |   |-- include     #library header files. Should match include path of the esp-idf component
-|   |   |   |-- src         #library source files
-|   |-- spi_flash/
-|   |   |-- stub            #stub library files
-|   |   |   |-- include     #library header files. Should match include path of the esp-idf component
-|   |   |   |-- src         #library source files
-|   -- main.cpp        #main.c, app_main for esp-idf. Hook for main function contained in esp32 stub
-|-- tests/
-|   |--esp32/              #directory for esp32 stub tests
-````
+* [ROS Noetic](http://wiki.ros.org/noetic/Installation/Ubuntu) for building the POSIX target
+* [esp-idf](https://github.com/espressif/esp-idf) for the esp32 tooling. v4.2 was chosen for development
+* [Clang tools](https://clang.llvm.org/docs/ClangTools.html) are used to match the style and warnings used in the project
+    * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) to match the coding style
+    * [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) for additional compiler warnings
+* [Doxygen](https://github.com/doxygen/doxygen) and [graphviz](https://gitlab.com/graphviz/graphviz/) to generate the documentation
 
 ## Setup
 
@@ -41,7 +18,7 @@ It wil then need to be installed to set the the Extensa toolchain and other stuf
 ````
 git clone -b release/v4.2 --recurse-submodules https://github.com/espressif/esp-idf
 esp-idf/install.xx (extension varies from platform to platform, use sh for linux and bat for windows)
-git clone https://github.com/SwarmUS/esp32-boilerplate
+git clone https://github.com/SwarmUS/HiveConnect
 ````
 
 To be able to open a serial port, you will need to add your user to the ``dialout`` group. Run ``sudo adduser YOUR_NAME dialout``.
@@ -57,7 +34,7 @@ To build for esp or host, do the following commands. Supplying the to cmake will
 ````
 mkdir build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Debug <-DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolchain-esp32.cmake -DTARGET=esp32>
+cmake .. -DCMAKE_BUILD_TYPE=Debug <-DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolchain-esp32.cmake>
 make
 ````
 
@@ -87,7 +64,7 @@ To debug using CLion, you can create a run configuration using the Embedded Gdb 
 4. For download executable, select ``None``. This will be done manually while launching the gdb server (aka openocd)
 5. For target remote args, enter ``localhost 3333``
 6. For the GDB server, choose the one provided with the esp tool chain, similarly to the gdb (example path: ``/home/casto/.espressif/tools/openocd-esp32/v0.10.0-esp32-20191114/openocd-esp32/bin/openocd``)
-7. For the GDB server args, enter these args, modifying the paths to your project: `` -s share/openocd/scripts -f /home/casto/git/Sherbrooke/SwarmUs/esp32-boilerplate/tools/openocd/adafruit-esp.cfg -c "program_esp /home/casto/git/Sherbrooke/SwarmUs/esp32-boilerplate/cmake-build-target/esp32-boilerplate.bin 0x10000"``
+7. For the GDB server args, enter these args, modifying the paths to your project: `` -s share/openocd/scripts -f /home/casto/git/Sherbrooke/SwarmUs/HiveConnect/tools/openocd/adafruit-esp.cfg -c "program_esp /home/casto/git/Sherbrooke/SwarmUs/HiveConnect/cmake-build-target/hive_connect.bin 0x10000"``
 
 Debugging is also supported in VS Code. Here is an example launch and task files necessary. Some changes to properly resolve paths are needed (changes to the user and version might be required):
 launch.json
@@ -103,18 +80,18 @@ launch.json
             "type": "cppdbg",
             "request": "launch",
             "miDebuggerPath": "/home/casto/.espressif/tools/xtensa-esp32-elf/esp-2020r2-8.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gdb", // to be changed by user
-            "program": "${workspaceFolder}/cmake-build-target/esp32-boilerplate.elf",
+            "program": "${workspaceFolder}/cmake-build-target/hive_connect.elf",
             "preLaunchTask": "openocd",
             "setupCommands": [{
                 "description": "enable pretty printing for gdb",
                 "text": "-enable-pretty-printing",
                 "ignoreFailures": true
             }, {
-                "text": "file '${workspaceFolder}/cmake-build-target/esp32-boilerplate.elf'"
+                "text": "file '${workspaceFolder}/cmake-build-target/hive_connect.elf'"
             }, {
                 "text": "target remote :3333"
             }, {
-                "text": "monitor program_esp32 ${workspaceFolder}/cmake-build-target/esp32-boilerplate.elf 0x10000 verify"
+                "text": "monitor program_esp32 ${workspaceFolder}/cmake-build-target/hive_connect.elf 0x10000 verify"
             }, {
                 "text": "monitor reset halt"
             }, {
@@ -157,7 +134,7 @@ tasks.json
             {
                 "cwd": "/home/casto/.espressif/tools/openocd-esp32/v0.10.0-esp32-20191114/openocd-esp32" // to be changed by user
             },
-            "command": "bin/openocd -s share/openocd/scripts -f ${workspaceFolder}/tools/openocd/adafruit-esp.cfg -c 'program_esp ${workspaceFolder}/cmake-build-target/esp32-boilerplate.bin 0x10000'",
+            "command": "bin/openocd -s share/openocd/scripts -f ${workspaceFolder}/tools/openocd/adafruit-esp.cfg -c 'program_esp ${workspaceFolder}/cmake-build-target/hive_connect.bin 0x10000'",
         },
         ,
         {

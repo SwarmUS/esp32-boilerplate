@@ -1,4 +1,4 @@
-set(LIB_NAME "stub_freertos")
+set(LIB_NAME "swarmus_hive_connect_freertos")
 set(LIB_ALIAS "SwarmUs::HiveConnect::FreeRTOS")
 
 

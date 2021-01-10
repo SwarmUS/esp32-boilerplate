@@ -1,4 +1,5 @@
-set(LIB_NAME "stub_esp32")
+set(LIB_NAME "swarmus_stub_esp32")
+set(LIB_ALIAS "SwarmUs::HiveConnect::esp32")
 
 set(LIB_SOURCES
         src/cpu_start.cpp
@@ -21,4 +22,4 @@ target_link_libraries(${LIB_NAME}
         ${catkin_LIBRARIES}
 )
 
-add_library(SwarmUs::HiveConnect::esp32 ALIAS ${LIB_NAME})
+add_library(${LIB_ALIAS} ALIAS ${LIB_NAME})

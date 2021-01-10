@@ -1,5 +1,5 @@
-set(LIB_NAME "swarmus-bsp-posix")
-set(LIB_ALIAS "SwarmUs::BSP::Platform")
+set(LIB_NAME "swarmus_hive_connect_bsp_posix")
+set(LIB_ALIAS "SwarmUs::HiveConnect::BSP::Platform")
 
 set(LIB_SOURCES
         src/BSP.cpp

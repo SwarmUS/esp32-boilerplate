@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>esp32-boilerplate</name>
+    <name>hive_connect</name>
     <version>0.0.0</version>
     <description>ROS node version of the HiveConnect software running on HiveBoards</description>
 

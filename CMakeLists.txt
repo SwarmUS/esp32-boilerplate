@@ -7,7 +7,7 @@ option(DISABLE_EXTERNAL_WARNINGS "Disables warnings from external libs (gtest, f
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 11)
-project(esp32-boilerplate C CXX ASM)
+project(hive_connect C CXX ASM)
 
 
 # Set appropriate files and flags to link libraries
