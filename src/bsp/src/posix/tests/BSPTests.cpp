@@ -1,11 +1,10 @@
 #include "BSP.h"
 #include "System.h"
 #include <gtest/gtest.h>
+#include <ros/ros.h>
 #include <thread>
-#include "ros/ros.h"
 
 void app_main() {}
-
 
 class BspTests : public testing::Test {
   public:
