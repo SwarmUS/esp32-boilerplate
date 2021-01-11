@@ -35,7 +35,7 @@ set(elf_file ${CMAKE_PROJECT_NAME}.elf)
 add_executable(${elf_file} src/main.cpp) # Needs to be in the root of the project as it is expected by esp-idf
 
 # Link the libraries to the executable, depending on alias
-target_link_libraries(${elf_file} SwarmUs::HiveConnect::esp32 SwarmUs::HiveConnect::FreeRTOS SwarmUs::HiveConnect::BSP)
+target_link_libraries(${elf_file} SwarmUs::HiveConnect::FreeRTOS SwarmUs::HiveConnect::BSP)
 
 if(COMPILE_ESP)
     # Register the executable for idf, needs to be done after linking

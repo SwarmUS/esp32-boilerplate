@@ -3,7 +3,6 @@
 #include <task.h>
 #include <thread>
 
-BSP::BSP() : m_loopRate(0){};
 BSP::~BSP() = default;
 
 void rosSpinTask(void* param) {

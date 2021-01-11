@@ -7,7 +7,7 @@ add_subdirectory(src)
 
 set(LIB_HEADERS
         include/bsp/IBSP.h
-        include/bsp/Factory.h
+        include/bsp/Container.h
 )
 
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS})

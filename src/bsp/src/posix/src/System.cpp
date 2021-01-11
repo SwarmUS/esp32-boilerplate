@@ -1,6 +1,8 @@
-#include "esp_system.h"
+#include "System.h"
 #include "ros/ros.h"
+#include <FreeRTOS.h>
 #include <csetjmp>
+#include <task.h>
 
 jmp_buf g_buf;
 

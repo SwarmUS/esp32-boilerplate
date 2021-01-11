@@ -6,7 +6,6 @@
 
 class BSP : public IBSP {
   public:
-    BSP();
     BSP(const ros::NodeHandle& nodeHandle, int loopRate);
     ~BSP() override;
 

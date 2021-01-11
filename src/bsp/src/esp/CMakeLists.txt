@@ -3,7 +3,7 @@ set(LIB_ALIAS "SwarmUs::HiveConnect::BSP::Platform")
 
 set(LIB_SOURCES
         src/BSP.cpp
-        src/Factory.cpp
+        src/Container.cpp
         )
 
 set(LIB_PRIVATE_HEADERS

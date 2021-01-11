@@ -4,12 +4,12 @@
 #include "IBSP.h"
 #include <memory>
 
-namespace BspFactory {
+namespace BspContainer {
 
 /**
  * @brief Returns the BSP instance for the application
  */
-std::shared_ptr<IBSP> getBSP();
-} // namespace BspFactory
+IBSP& getBSP();
+} // namespace BspContainer
 
 #endif // FACTORY_H
