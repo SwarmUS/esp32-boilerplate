@@ -26,6 +26,8 @@ if(COMPILE_ESP)
 else()
     message("Compiling locally")
     set(ENABLE_TESTS ON)
+    #ROS dependencies
+    include(catkin/common)
 endif()
 
 
@@ -42,18 +44,17 @@ if(COMPILE_ESP)
     idf_build_executable(${elf_file})
     # Create target to flash via openocd with JTAG interface
     add_custom_target(
-            openocd-flash
+            hive_connect_flash
             COMMAND openocd -f ${CMAKE_CURRENT_SOURCE_DIR}/tools/openocd/adafruit-esp.cfg -c "program_esp ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin 0x10000 verify exit"
     )
 else()
     #Target to launch local executable
     add_custom_target(
-            run
+            hive_connect_run
             COMMAND $<TARGET_FILE:${elf_file}>
     )
 
-    #ROS dependencies
-    include(catkin/common)
+
 endif()
 
 # Testing

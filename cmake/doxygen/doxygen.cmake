@@ -32,7 +32,7 @@ if (DOXYGEN_FOUND)
         set(DOXYGEN_WARN_AS_ERROR YES)
     endif()
 
-    doxygen_add_docs(doc
+    doxygen_add_docs(hive_connect_doc
             ALL
             ${PROJECT_SOURCE_DIR}/src
             COMMENT "Generate esp32-boilerplate documentation")
