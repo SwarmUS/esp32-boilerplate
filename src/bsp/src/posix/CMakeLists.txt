@@ -36,7 +36,3 @@ target_link_libraries(${LIB_NAME}
 )
 
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-
-if(ENABLE_TESTS)
-    add_subdirectory(tests)
-endif()
