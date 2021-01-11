@@ -1,12 +1,23 @@
 #include "BSP.h"
+#include "System.h"
 #include <gtest/gtest.h>
 #include <thread>
+#include "ros/ros.h"
+
+void app_main() {}
+
 
 class BspTests : public testing::Test {
   public:
     BSP* m_bsp;
+    ros::NodeHandle* m_node;
 
-    void SetUp() override { m_bsp = new BSP(); }
+    void SetUp() override {
+        int argc = 0;
+        ros::init(argc, nullptr, "test_bsp");
+        m_node = new ros::NodeHandle("~/");
+        m_bsp = new BSP(*m_node, 1000);
+    }
 
     void TearDown() override { delete m_bsp; }
 };

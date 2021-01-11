@@ -9,6 +9,7 @@ set(LIB_SOURCES
 
 set(LIB_PRIVATE_HEADERS
         include/BSP.h
+        include/System.h
 )
 
 add_library(${LIB_NAME} ${LIB_SOURCES} ${LIB_PRIVATE_HEADERS})
@@ -30,6 +31,7 @@ target_link_libraries(${LIB_NAME}
         PUBLIC
         # Defined libraries
         SwarmUs::HiveConnect::FreeRTOS
+        PRIVATE
         ${catkin_LIBRARIES}
 )
 

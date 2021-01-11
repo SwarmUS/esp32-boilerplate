@@ -28,6 +28,7 @@ jobs:
       run: |
         . /opt/ros/$ROS_DISTRO/setup.sh
         cd build-local
+        roscore &
         ctest -V
 
     # Check format
