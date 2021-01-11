@@ -79,7 +79,7 @@ launch.json
             "name": "OpenOCD Debug",
             "type": "cppdbg",
             "request": "launch",
-            "miDebuggerPath": "/home/casto/.espressif/tools/xtensa-esp32-elf/esp-2020r2-8.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gdb", // to be changed by user
+            "miDebuggerPath": "/path/to/.espressif/tools/xtensa-esp32-elf/esp-2020r2-8.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gdb", // to be changed by user
             "program": "${workspaceFolder}/cmake-build-target/hive_connect.elf",
             "preLaunchTask": "openocd",
             "setupCommands": [{
@@ -132,7 +132,7 @@ tasks.json
               ],
             "options": 
             {
-                "cwd": "/home/casto/.espressif/tools/openocd-esp32/v0.10.0-esp32-20191114/openocd-esp32" // to be changed by user
+                "cwd": "/path/to/.espressif/tools/openocd-esp32/v0.10.0-esp32-20191114/openocd-esp32" // to be changed by user
             },
             "command": "bin/openocd -s share/openocd/scripts -f ${workspaceFolder}/tools/openocd/adafruit-esp.cfg -c 'program_esp ${workspaceFolder}/cmake-build-target/hive_connect.bin 0x10000'",
         },
