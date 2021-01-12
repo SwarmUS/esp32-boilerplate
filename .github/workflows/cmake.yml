@@ -35,14 +35,14 @@ jobs:
       run: |
         . /opt/ros/$ROS_DISTRO/setup.sh
         cd build-local
-        make check-format
+        make hive_connect_check_format
 
     # Generate documentation
     - name: doc
       run: |
         . /opt/ros/$ROS_DISTRO/setup.sh
         cd build-local
-        make doc
+        make hive_connect_doc
 
     # Verify esp build
     - name: build-esp

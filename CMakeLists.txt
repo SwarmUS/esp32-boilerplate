@@ -23,7 +23,9 @@ if(COMPILE_ESP)
                     COMPONENTS esp32 freertos esptool_py
                     SDKCONFIG ${CMAKE_BINARY_DIR}/sdkconfig
                     BUILD_DIR ${CMAKE_BINARY_DIR})
+    set(EXECUTABLE_NAME "${CMAKE_PROJECT_NAME}.elf")
 else()
+    set(EXECUTABLE_NAME ${CMAKE_PROJECT_NAME})
     message("Compiling locally")
     set(ENABLE_TESTS ON)
     #ROS dependencies
@@ -31,17 +33,14 @@ else()
 endif()
 
 
-#set executable name
-set(elf_file ${CMAKE_PROJECT_NAME}.elf)
-
-add_executable(${elf_file} src/main.cpp) # Needs to be in the root of the project as it is expected by esp-idf
+add_executable(${EXECUTABLE_NAME} src/main.cpp) # Needs to be in the root of the project as it is expected by esp-idf
 
 # Link the libraries to the executable, depending on alias
-target_link_libraries(${elf_file} SwarmUs::HiveConnect::FreeRTOS SwarmUs::HiveConnect::BSP)
+target_link_libraries(${EXECUTABLE_NAME} SwarmUs::HiveConnect::FreeRTOS SwarmUs::HiveConnect::BSP)
 
 if(COMPILE_ESP)
     # Register the executable for idf, needs to be done after linking
-    idf_build_executable(${elf_file})
+    idf_build_executable(${EXECUTABLE_NAME})
     # Create target to flash via openocd with JTAG interface
     add_custom_target(
             hive_connect_flash
@@ -51,7 +50,7 @@ else()
     #Target to launch local executable
     add_custom_target(
             hive_connect_run
-            COMMAND $<TARGET_FILE:${elf_file}>
+            COMMAND $<TARGET_FILE:${EXECUTABLE_NAME}>
     )
 
 
