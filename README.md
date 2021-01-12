@@ -38,6 +38,8 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug <-DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolc
 make
 ````
 
+In case of conflicts with the python interpreter for the posix buid, you can supply a path to the python interpreter. Simply add ``-DPython3_EXECUTABLE=/usr/bin/python3`` to the cmake command arguments
+
 For CLion users, since you need to source a script before running the cmake from clion, you just need to source the script before launching clion from a terminal.
 Simply run:
 ````
