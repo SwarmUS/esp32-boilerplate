@@ -34,10 +34,10 @@ target_include_directories(${LIB_NAME}
 
 target_link_libraries(${LIB_NAME}
         PUBLIC
-        SwarmUs::freertos::posix::config
+        SwarmUs::HiveConnect::freertos::posix::config
 
         PRIVATE
-        SwarmUs::freertos::posix
+        SwarmUs::HiveConnect::freertos::posix
 
         FreeRTOS::Coroutine
         FreeRTOS::EventGroups
