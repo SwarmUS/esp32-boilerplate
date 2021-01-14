@@ -16,8 +16,9 @@ void rosSpinTask(void* param) {
     vTaskEndScheduler();
 }
 
-BSP::BSP(const ros::NodeHandle& nodeHandle, const int loopRate) : m_loopRate(loopRate) {
+BSP::BSP(const ros::NodeHandle& nodeHandle, const int loopRate, const ILogger& logger) : m_loopRate(loopRate) {
     m_rosNodeHandle = std::make_shared<ros::NodeHandle>(nodeHandle);
+    m_logger = &logger;
 }
 
 void BSP::initChip() {
@@ -29,5 +30,7 @@ ChipInfo BSP::getChipInfo() {
     return ChipInfo{.m_cores = (uint8_t)std::thread::hardware_concurrency(),
                     .m_osType = ChipInfo::SIMULATION};
 }
+
+const ILogger* BSP::getLogger() { return m_logger; }
 
 std::shared_ptr<ros::NodeHandle> BSP::getNodeHandle() { return m_rosNodeHandle; }

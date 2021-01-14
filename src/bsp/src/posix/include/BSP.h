@@ -6,16 +6,19 @@
 
 class BSP : public IBSP {
   public:
-    BSP(const ros::NodeHandle& nodeHandle, int loopRate);
+    BSP(const ros::NodeHandle& nodeHandle, int loopRate, const ILogger& logger);
     ~BSP() override;
 
     void initChip() override;
     ChipInfo getChipInfo() override;
+    const ILogger* getLogger() override;
 
     std::shared_ptr<ros::NodeHandle> getNodeHandle();
 
   private:
     std::shared_ptr<ros::NodeHandle> m_rosNodeHandle;
+    const ILogger* m_logger;
+
     int m_loopRate;
 };
 

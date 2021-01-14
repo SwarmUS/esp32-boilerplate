@@ -2,6 +2,7 @@
 #define IBSP_H
 
 #include <cstdint>
+#include "ILogger.h"
 
 /**
  * @brief Structure containing basic system information
@@ -24,6 +25,8 @@ class IBSP {
      * @return The chip info for the BSP initiated
      */
     virtual ChipInfo getChipInfo() = 0;
+
+    virtual const ILogger* getLogger() = 0;
 };
 
 #endif // IBSP_H
