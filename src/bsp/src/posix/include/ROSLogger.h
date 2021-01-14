@@ -15,18 +15,10 @@ class ROSLogger : public ILogger {
 
   private:
     LogLevel m_logLevel;
-    static void info(char* buffer) {
-        ROS_INFO("%s", buffer);
-    }
-    static void debug(char* buffer) {
-        ROS_DEBUG("%s", buffer);
-    }
-    static void warn(char* buffer) {
-        ROS_WARN("%s", buffer);
-    }
-    static void error(char* buffer) {
-        ROS_ERROR("%s", buffer);
-    }
+    static void info(char* buffer) { ROS_INFO("%s", buffer); }
+    static void debug(char* buffer) { ROS_DEBUG("%s", buffer); }
+    static void warn(char* buffer) { ROS_WARN("%s", buffer); }
+    static void error(char* buffer) { ROS_ERROR("%s", buffer); }
 };
 
 #endif // ROSLOGGER_H

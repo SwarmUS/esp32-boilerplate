@@ -19,4 +19,3 @@ void BSP::log(LogLevel level, const char* format, ...) {
     m_logger->log(level, format, args);
     va_end(args);
 }
-
