@@ -1,5 +1,4 @@
 include(FetchContent)
-set(FETCHCONTENT_BASE_DIR ${CMAKE_BINARY_DIR}/_deps/${CMAKE_PROJECT_NAME})
 
 # Adding modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
@@ -25,6 +24,7 @@ function(freertos_fetch_kernel)
         message("Cloning FreeRTOS Kernel")
         set(FETCHCONTENT_QUIET FALSE) # To see progress
         FetchContent_Populate(${FREERTOS_KERNEL})
+        set(FREERTOS_KERNEL_PATH ${${FREERTOS_KERNEL_L}_SOURCE_DIR} PARENT_SCOPE)
     endif()
 
     set(FREERTOS_KERNEL_PATH ${${FREERTOS_KERNEL_L}_SOURCE_DIR} PARENT_SCOPE)

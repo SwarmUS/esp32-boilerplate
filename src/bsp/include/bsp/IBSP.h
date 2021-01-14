@@ -26,6 +26,12 @@ class IBSP {
      */
     virtual ChipInfo getChipInfo() = 0;
 
+    /**
+     * @brief Looging function. Follows same syntax as printf after the LogLevel
+     * @param level The corresponding level of the statement to be logged
+     * @param format Formatting string for logging statement
+     * @param ... printf-style input arguments for formatting string
+     */
     virtual void log(LogLevel level, const char* format, ...) = 0;
 };
 
