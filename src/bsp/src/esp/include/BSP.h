@@ -10,7 +10,7 @@ class BSP : public IBSP {
 
     void initChip() override;
     ChipInfo getChipInfo() override;
-    virtual const ILogger* getLogger() override;
+    virtual void log(LogLevel level, const char* format, ...) override;
 
   private:
     ILogger* m_logger;
