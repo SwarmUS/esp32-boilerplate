@@ -32,6 +32,11 @@ ChipInfo BSP::getChipInfo() {
                     .m_osType = ChipInfo::SIMULATION};
 }
 
-const ILogger* BSP::getLogger() { return m_logger; }
+void BSP::log(LogLevel level, const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    m_logger->log(level, format, args);
+    va_end(args);
+}
 
 std::shared_ptr<ros::NodeHandle> BSP::getNodeHandle() { return m_rosNodeHandle; }

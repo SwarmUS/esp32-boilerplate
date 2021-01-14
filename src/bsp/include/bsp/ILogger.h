@@ -9,7 +9,7 @@ class ILogger {
   public:
     virtual ~ILogger() = default;
 
-    virtual void log(LogLevel level, const char* format, ...) const = 0;
+    virtual void log(LogLevel level, const char* format, va_list arg) const = 0;
 };
 
 #endif // ILOGGER_H

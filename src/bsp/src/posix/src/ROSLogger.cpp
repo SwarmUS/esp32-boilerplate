@@ -5,27 +5,24 @@ void print(const char* format, va_list a);
 
 ROSLogger::ROSLogger(LogLevel logLevel) : m_logLevel(logLevel) {}
 
-void ROSLogger::log(LogLevel level, const char* format, ...) const {
+void ROSLogger::log(LogLevel level, const char* format, va_list args) const {
     if (level >= m_logLevel) {
         const int bufferSize = 512;
         char buffer[bufferSize];
-        va_list args;
-        va_start(args, format);
         vsnprintf(buffer, bufferSize, format, args);
-        va_end(args);
         switch (level) {
         case ERROR:
-            ROS_ERROR("%s", buffer);
+            error(buffer);
             break;
         case WARNING:
-            ROS_WARN("%s", buffer);
+            warn(buffer);
             break;
         case DEBUG:
-            ROS_DEBUG("%s", buffer);
+            debug(buffer);
             break;
         case INFO:
         default:
-            ROS_INFO("%s", buffer);
+            info(buffer);
             break;
         }
     }

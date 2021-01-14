@@ -26,7 +26,7 @@ class IBSP {
      */
     virtual ChipInfo getChipInfo() = 0;
 
-    virtual const ILogger* getLogger() = 0;
+    virtual void log(LogLevel level, const char* format, ...) = 0;
 };
 
 #endif // IBSP_H

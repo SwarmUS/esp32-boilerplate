@@ -18,11 +18,11 @@ void dummyTask(void* param) {
     ChipInfo info = bsp->getChipInfo();
 
     while (true) {
-        bsp->getLogger()->log(INFO, "System has %d cores", info.m_cores);
+        bsp->log(INFO, "System has %d cores", info.m_cores);
         if (info.m_osType == ChipInfo::ESP) {
-            bsp->getLogger()->log(INFO, "System is running on target");
+            bsp->log(INFO, "System is running on target");
         } else {
-            bsp->getLogger()->log(INFO, "System is running locally");
+            bsp->log(INFO, "System is running locally");
         }
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }

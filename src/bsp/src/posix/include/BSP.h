@@ -11,7 +11,7 @@ class BSP : public IBSP {
 
     void initChip() override;
     ChipInfo getChipInfo() override;
-    const ILogger* getLogger() override;
+    void log(LogLevel level, const char* format, ...) override;
 
     std::shared_ptr<ros::NodeHandle> getNodeHandle();
 
