@@ -10,11 +10,10 @@ class ROSLogger : public ILogger {
     ROSLogger(LogLevel logLevel);
     ~ROSLogger() = default;
 
-    void log(LogLevel level, const char * format, ... ) const override;
+    void log(LogLevel level, const char* format, ...) const override;
 
   private:
     LogLevel m_logLevel;
-
 };
 
 #endif // ROSLOGGER_H

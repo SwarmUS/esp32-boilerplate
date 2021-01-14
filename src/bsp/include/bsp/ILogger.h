@@ -3,18 +3,13 @@
 
 #include <cstdarg>
 
-enum LogLevel {
-    INFO,
-    DEBUG,
-    WARNING,
-    ERROR
-};
+enum LogLevel { INFO = 0, DEBUG, WARNING, ERROR };
 
 class ILogger {
   public:
     virtual ~ILogger() = default;
 
-    virtual void log(LogLevel level, const char * format, ...) const = 0 ;
+    virtual void log(LogLevel level, const char* format, ...) const = 0;
 };
 
 #endif // ILOGGER_H

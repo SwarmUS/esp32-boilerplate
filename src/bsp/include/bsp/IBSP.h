@@ -1,8 +1,8 @@
 #ifndef IBSP_H
 #define IBSP_H
 
-#include <cstdint>
 #include "ILogger.h"
+#include <cstdint>
 
 /**
  * @brief Structure containing basic system information

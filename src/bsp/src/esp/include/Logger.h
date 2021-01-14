@@ -8,8 +8,7 @@ class Logger : public ILogger {
     Logger(LogLevel logLevel);
     ~Logger() = default;
 
-    void log(LogLevel level, const char * format, ...) const override ;
-
+    void log(LogLevel level, const char* format, ...) const override;
 
   private:
     LogLevel m_logLevel;
