@@ -3,7 +3,7 @@ if(CLANG_FORMAT)
     set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 
     add_custom_target(
-            format
+            hive_connect_format
             COMMAND
             ${PROJECT_SOURCE_DIR}/tools/run-clang-format.py
             --recursive
@@ -12,7 +12,7 @@ if(CLANG_FORMAT)
             ${SOURCE_DIR})
 
     add_custom_target(
-            check-format
+            hive_connect_check_format
             COMMAND
             ${PROJECT_SOURCE_DIR}/tools/run-clang-format.py
             --recursive
