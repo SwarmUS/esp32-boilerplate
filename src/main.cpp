@@ -1,6 +1,5 @@
-#include <stdio.h>
-
 #include "bsp/Container.h"
+#include "logger/Logger.h"
 #include <FreeRTOS.h>
 #include <FreeRTOSConfig.h>
 #include <task.h>
@@ -16,13 +15,14 @@ void dummyTask(void* param) {
     /* Print chip information */
     IBSP* bsp = &BspContainer::getBSP();
     ChipInfo info = bsp->getChipInfo();
+    Logger logger = Logger(LogLevel::Info, BspContainer::getUserInterface());
 
     while (true) {
-        printf("System has %d cores\n\r", info.m_cores);
+        logger.log(LogLevel::Info, "System has %d cores", info.m_cores);
         if (info.m_osType == ChipInfo::ESP) {
-            printf("System is running on target\n\r");
+            logger.log(LogLevel::Info, "System is running on target");
         } else {
-            printf("System is running locally\n\r");
+            logger.log(LogLevel::Info, "System is running locally");
         }
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }

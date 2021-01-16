@@ -8,7 +8,7 @@ add_subdirectory(src)
 set(LIB_HEADERS
         include/bsp/IBSP.h
         include/bsp/Container.h
-)
+        include/bsp/IUserInterface.h)
 
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS})
 add_library(${LIB_ALIAS} ALIAS ${LIB_NAME})

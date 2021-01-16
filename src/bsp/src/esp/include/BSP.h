@@ -10,6 +10,8 @@ class BSP : public IBSP {
 
     void initChip() override;
     ChipInfo getChipInfo() override;
+
+  private:
 };
 
 #endif // BSP_H

@@ -36,7 +36,13 @@ endif()
 add_executable(${EXECUTABLE_NAME} src/main.cpp) # Needs to be in the root of the project as it is expected by esp-idf
 
 # Link the libraries to the executable, depending on alias
-target_link_libraries(${EXECUTABLE_NAME} SwarmUs::HiveConnect::FreeRTOS SwarmUs::HiveConnect::BSP)
+target_link_libraries(${EXECUTABLE_NAME}
+        PUBLIC
+        SwarmUs::HiveConnect::FreeRTOS
+        SwarmUs::HiveConnect::BSP
+        SwarmUs::HiveConnect::Logger
+)
+
 
 if(COMPILE_ESP)
     # Register the executable for idf, needs to be done after linking

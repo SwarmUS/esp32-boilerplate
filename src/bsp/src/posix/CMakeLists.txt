@@ -5,11 +5,13 @@ set(LIB_SOURCES
         src/BSP.cpp
         src/Container.cpp
         src/System.cpp
+        src/UserInterface.cpp
 )
 
 set(LIB_PRIVATE_HEADERS
         include/BSP.h
         include/System.h
+        include/UserInterface.h
 )
 
 add_library(${LIB_NAME} ${LIB_SOURCES} ${LIB_PRIVATE_HEADERS})
