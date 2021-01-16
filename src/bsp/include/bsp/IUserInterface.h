@@ -42,12 +42,48 @@ class IUserInterface {
      */
     virtual int print(const char* format, va_list args) const = 0;
 
+    /**
+     * @brief Logs of with the INFO log level.
+     *
+     * @param [in] format Text to be written, can contain format specifiers that will be replaced by
+     *values specified in the additional arguments, matches the standard printf function
+     * @param rgs Previously initialized va_list
+     * @return Matches the standard printf return. The total number of characters is returned or a
+     *negative number on error
+     */
     virtual int logInfo(const char* format, va_list args) const = 0;
 
+    /**
+     * @brief Logs of with the DEBUG log level.
+     *
+     * @param [in] format Text to be written, can contain format specifiers that will be replaced by
+     *values specified in the additional arguments, matches the standard printf function
+     * @param rgs Previously initialized va_list
+     * @return Matches the standard printf return. The total number of characters is returned or a
+     *negative number on error
+     */
     virtual int logDebug(const char* format, va_list args) const = 0;
 
+    /**
+     * @brief Logs of with the WARNING log level.
+     *
+     * @param [in] format Text to be written, can contain format specifiers that will be replaced by
+     *values specified in the additional arguments, matches the standard printf function
+     * @param rgs Previously initialized va_list
+     * @return Matches the standard printf return. The total number of characters is returned or a
+     *negative number on error
+     */
     virtual int logWarn(const char* format, va_list args) const = 0;
 
+    /**
+     * @brief Logs of with the ERROR log level.
+     *
+     * @param [in] format Text to be written, can contain format specifiers that will be replaced by
+     *values specified in the additional arguments, matches the standard printf function
+     * @param rgs Previously initialized va_list
+     * @return Matches the standard printf return. The total number of characters is returned or a
+     *negative number on error
+     */
     virtual int logError(const char* format, va_list args) const = 0;
 };
 
