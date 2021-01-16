@@ -3,7 +3,6 @@
 #include "mocks/UserInterfaceMock.h"
 #include <gtest/gtest.h>
 
-
 class LoggerTestFixture : public testing::Test {
   protected:
     UserInterfaceMock* m_uiMock;

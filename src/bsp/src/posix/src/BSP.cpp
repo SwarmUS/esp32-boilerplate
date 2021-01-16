@@ -16,8 +16,7 @@ void rosSpinTask(void* param) {
     vTaskEndScheduler();
 }
 
-BSP::BSP(const ros::NodeHandle& nodeHandle, const int loopRate) :
-    m_loopRate(loopRate) {
+BSP::BSP(const ros::NodeHandle& nodeHandle, const int loopRate) : m_loopRate(loopRate) {
     m_rosNodeHandle = std::make_shared<ros::NodeHandle>(nodeHandle);
 }
 

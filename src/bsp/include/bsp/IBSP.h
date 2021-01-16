@@ -24,7 +24,6 @@ class IBSP {
      * @return The chip info for the BSP initiated
      */
     virtual ChipInfo getChipInfo() = 0;
-
 };
 
 #endif // IBSP_H

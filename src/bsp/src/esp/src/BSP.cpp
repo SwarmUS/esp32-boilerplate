@@ -12,4 +12,3 @@ ChipInfo BSP::getChipInfo() {
 
     return (ChipInfo){.m_cores = chipInfo.cores, .m_osType = ChipInfo::ESP};
 }
-

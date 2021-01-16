@@ -1,8 +1,8 @@
 #include "bsp/Container.h"
+#include "logger/Logger.h"
 #include <FreeRTOS.h>
 #include <FreeRTOSConfig.h>
 #include <task.h>
-#include "logger/Logger.h"
 
 #ifdef __cplusplus
 extern "C" {

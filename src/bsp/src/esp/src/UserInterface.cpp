@@ -8,7 +8,6 @@ int UserInterface::print(const char* format, va_list args) const {
     return ret;
 }
 
-
 int UserInterface::print(const char* format, ...) const {
     va_list args;
     va_start(args, format);
@@ -17,7 +16,6 @@ int UserInterface::print(const char* format, ...) const {
 
     return retValue;
 }
-
 
 int UserInterface::logInfo(const char* format, va_list args) const {
     vprintf(format, args);
