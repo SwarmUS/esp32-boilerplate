@@ -3,7 +3,7 @@
 
 int UserInterface::print(const char* format, va_list args) const {
     int ret = vprintf(format, args);
-    printf("\n\r");
+    UserInterface::print("\n\r");
     return ret;
 }
 
@@ -18,24 +18,24 @@ int UserInterface::print(const char* format, ...) const {
 
 int UserInterface::printInfo(const char* format, va_list args) const {
     int retValue = vprintf(format, args);
-    printf("\r\n");
+    UserInterface::print("\r\n");
     return retValue;
 }
 
 int UserInterface::printDebug(const char* format, va_list args) const {
     int retValue = vprintf(format, args);
-    printf("\r\n");
+    UserInterface::print("\r\n");
     return retValue;
 };
 
 int UserInterface::printWarning(const char* format, va_list args) const {
     int retValue = vprintf(format, args);
-    printf("\r\n");
+    UserInterface::print("\r\n");
     return retValue;
 };
 
 int UserInterface::printError(const char* format, va_list args) const {
     int retValue = vprintf(format, args);
-    printf("\r\n");
+    UserInterface::print("\r\n");
     return retValue;
 }

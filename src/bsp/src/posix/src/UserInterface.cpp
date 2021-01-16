@@ -26,25 +26,28 @@ int UserInterface::printInfo(const char* format, va_list args) const {
 }
 
 int UserInterface::printDebug(const char* format, va_list args) const {
-    const int bufferSize = 512;
-    char buffer[bufferSize];
-    int ret = vsnprintf(buffer, bufferSize, format, args);
-    ROS_DEBUG("%s", buffer);
-    return ret;
+    std::pair<char*, int> statement = UserInterface::generateBuffer(format, args);
+    ROS_DEBUG("%s", statement.first);
+    return statement.second;
 };
 
 int UserInterface::printWarning(const char* format, va_list args) const {
-    const int bufferSize = 512;
-    char buffer[bufferSize];
-    int ret = vsnprintf(buffer, bufferSize, format, args);
-    ROS_WARN("%s", buffer);
-    return ret;
+    std::pair<char*, int> statement = UserInterface::generateBuffer(format, args);
+    ROS_WARN("%s", statement.first);
+    return statement.second;
 };
 
 int UserInterface::printError(const char* format, va_list args) const {
+    std::pair<char*, int> statement = UserInterface::generateBuffer(format, args);
+    ROS_ERROR("%s", statement.first);
+    return statement.second;
+}
+
+std::pair<char*, int> UserInterface::generateBuffer(const char* format, va_list args) {
+    std::pair<char*, int> retVal;
     const int bufferSize = 512;
     char buffer[bufferSize];
-    int ret = vsnprintf(buffer, bufferSize, format, args);
-    ROS_ERROR("%s", buffer);
-    return ret;
+    retVal.second = vsnprintf(buffer, bufferSize, format, args);
+    retVal.first = buffer;
+    return retVal;
 }

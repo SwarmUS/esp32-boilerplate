@@ -2,6 +2,7 @@
 #define USERINTERFACE_H
 
 #include "bsp/IUserInterface.h"
+#include <utility>
 
 class UserInterface : public IUserInterface {
   public:
@@ -19,6 +20,9 @@ class UserInterface : public IUserInterface {
     int printWarning(const char* format, va_list args) const override;
 
     int printError(const char* format, va_list args) const override;
+
+  private:
+    static std::pair<char*, int> generateBuffer(const char* format, va_list args);
 };
 
 #endif // HIVE_CONNECT_USERINTERFACE_H
