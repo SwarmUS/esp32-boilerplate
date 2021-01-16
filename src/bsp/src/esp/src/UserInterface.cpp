@@ -1,5 +1,5 @@
 #include "UserInterface.h"
-#include <cstdarg>
+#include "esp_log.h"
 #include <cstdio>
 
 int UserInterface::print(const char* format, va_list args) const {
@@ -18,21 +18,25 @@ int UserInterface::print(const char* format, ...) const {
 }
 
 int UserInterface::logInfo(const char* format, va_list args) const {
-    vprintf(format, args);
+    esp_log_writev(ESP_LOG_INFO, "Logger", format, args);
+    printf("\r\n");
     return 0;
 }
 
 int UserInterface::logDebug(const char* format, va_list args) const {
-    vprintf(format, args);
+    esp_log_writev(ESP_LOG_INFO, "Logger", format, args);
+    printf("\r\n");
     return 0;
 };
 
 int UserInterface::logWarn(const char* format, va_list args) const {
-    vprintf(format, args);
+    esp_log_writev(ESP_LOG_INFO, "Logger", format, args);
+    printf("\r\n");
     return 0;
 };
 
 int UserInterface::logError(const char* format, va_list args) const {
-    vprintf(format, args);
+    esp_log_writev(ESP_LOG_INFO, "Logger", format, args);
+    printf("\r\n");
     return 0;
 }
