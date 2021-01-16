@@ -2,6 +2,7 @@
 #define FACTORY_H
 
 #include "IBSP.h"
+#include "IUserInterface.h"
 #include <memory>
 
 namespace BspContainer {
@@ -14,7 +15,7 @@ IBSP& getBSP();
 /**
  * @brief Returns the logger instance for the application
  */
-ILogger& getLogger();
+IUserInterface& getUserInterface();
 } // namespace BspContainer
 
 #endif // FACTORY_H

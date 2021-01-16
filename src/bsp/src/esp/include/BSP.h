@@ -5,15 +5,13 @@
 
 class BSP : public IBSP {
   public:
-    BSP(ILogger& logger);
+    BSP();
     ~BSP() override;
 
     void initChip() override;
     ChipInfo getChipInfo() override;
-    virtual void log(LogLevel level, const char* format, ...) override;
 
   private:
-    ILogger* m_logger;
 };
 
 #endif // BSP_H
