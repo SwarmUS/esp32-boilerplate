@@ -28,28 +28,28 @@ class UserInterfaceMock final : public IUserInterface {
         return 0;
     }
 
-    int logInfo(const char* format, va_list args) const override {
+    int printInfo(const char* format, va_list args) const override {
         (void)format;
         (void)args;
         m_printCallCounter++;
         return 0;
     }
 
-    int logDebug(const char* format, va_list args) const override {
+    int printDebug(const char* format, va_list args) const override {
         (void)format;
         (void)args;
         m_printCallCounter++;
         return 0;
     }
 
-    int logWarn(const char* format, va_list args) const override {
+    int printWarning(const char* format, va_list args) const override {
         (void)format;
         (void)args;
         m_printCallCounter++;
         return 0;
     }
 
-    int logError(const char* format, va_list args) const override {
+    int printError(const char* format, va_list args) const override {
         (void)format;
         (void)args;
         m_printCallCounter++;

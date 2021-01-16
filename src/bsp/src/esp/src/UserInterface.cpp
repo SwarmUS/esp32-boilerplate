@@ -1,5 +1,4 @@
 #include "UserInterface.h"
-#include "esp_log.h"
 #include <cstdio>
 
 int UserInterface::print(const char* format, va_list args) const {
@@ -17,26 +16,26 @@ int UserInterface::print(const char* format, ...) const {
     return retValue;
 }
 
-int UserInterface::logInfo(const char* format, va_list args) const {
-    esp_log_writev(ESP_LOG_INFO, "Logger", format, args);
+int UserInterface::printInfo(const char* format, va_list args) const {
+    int retValue = vprintf(format, args);
     printf("\r\n");
-    return 0;
+    return retValue;
 }
 
-int UserInterface::logDebug(const char* format, va_list args) const {
-    esp_log_writev(ESP_LOG_INFO, "Logger", format, args);
+int UserInterface::printDebug(const char* format, va_list args) const {
+    int retValue = vprintf(format, args);
     printf("\r\n");
-    return 0;
+    return retValue;
 };
 
-int UserInterface::logWarn(const char* format, va_list args) const {
-    esp_log_writev(ESP_LOG_INFO, "Logger", format, args);
+int UserInterface::printWarning(const char* format, va_list args) const {
+    int retValue = vprintf(format, args);
     printf("\r\n");
-    return 0;
+    return retValue;
 };
 
-int UserInterface::logError(const char* format, va_list args) const {
-    esp_log_writev(ESP_LOG_INFO, "Logger", format, args);
+int UserInterface::printError(const char* format, va_list args) const {
+    int retValue = vprintf(format, args);
     printf("\r\n");
-    return 0;
+    return retValue;
 }

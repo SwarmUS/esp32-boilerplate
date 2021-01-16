@@ -12,13 +12,13 @@ class UserInterface : public IUserInterface {
 
     int print(const char* format, va_list args) const override;
 
-    int logInfo(const char* format, va_list args) const override;
+    int printInfo(const char* format, va_list args) const override;
 
-    int logDebug(const char* format, va_list args) const override;
+    int printDebug(const char* format, va_list args) const override;
 
-    int logWarn(const char* format, va_list args) const override;
+    int printWarning(const char* format, va_list args) const override;
 
-    int logError(const char* format, va_list args) const override;
+    int printError(const char* format, va_list args) const override;
 };
 
 #endif // HIVE_CONNECT_USERINTERFACE_H

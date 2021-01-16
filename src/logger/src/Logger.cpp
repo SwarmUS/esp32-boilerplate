@@ -7,7 +7,8 @@ Logger::Logger(LogLevel level, const IUserInterface& ui) : m_ui(ui) {
     m_semaphore = xSemaphoreCreateBinary();
 
     if (m_semaphore == NULL) {
-        m_ui.print("Error: Logger semaphore could not be created");
+        va_list args;
+        m_ui.printError("Error: Logger semaphore could not be created", args);
     }
 
     xSemaphoreGive(m_semaphore);
@@ -23,17 +24,17 @@ LogRet Logger::log(LogLevel level, const char* format, ...) const {
             int retValue = -1;
             switch (level) {
             case LogLevel::Error:
-                retValue = m_ui.logError(format, args);
+                retValue = m_ui.printError(format, args);
                 break;
             case LogLevel::Warn:
-                retValue = m_ui.logWarn(format, args);
+                retValue = m_ui.printWarning(format, args);
                 break;
             case LogLevel::Debug:
-                retValue = m_ui.logDebug(format, args);
+                retValue = m_ui.printDebug(format, args);
                 break;
             case LogLevel::Info:
             default:
-                retValue = m_ui.logInfo(format, args);
+                retValue = m_ui.printInfo(format, args);
                 break;
             }
             va_end(args);

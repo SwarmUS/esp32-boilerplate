@@ -17,7 +17,7 @@ int UserInterface::print(const char* format, ...) const {
     return retValue;
 }
 
-int UserInterface::logInfo(const char* format, va_list args) const {
+int UserInterface::printInfo(const char* format, va_list args) const {
     const int bufferSize = 512;
     char buffer[bufferSize];
     int ret = vsnprintf(buffer, bufferSize, format, args);
@@ -25,7 +25,7 @@ int UserInterface::logInfo(const char* format, va_list args) const {
     return ret;
 }
 
-int UserInterface::logDebug(const char* format, va_list args) const {
+int UserInterface::printDebug(const char* format, va_list args) const {
     const int bufferSize = 512;
     char buffer[bufferSize];
     int ret = vsnprintf(buffer, bufferSize, format, args);
@@ -33,7 +33,7 @@ int UserInterface::logDebug(const char* format, va_list args) const {
     return ret;
 };
 
-int UserInterface::logWarn(const char* format, va_list args) const {
+int UserInterface::printWarning(const char* format, va_list args) const {
     const int bufferSize = 512;
     char buffer[bufferSize];
     int ret = vsnprintf(buffer, bufferSize, format, args);
@@ -41,7 +41,7 @@ int UserInterface::logWarn(const char* format, va_list args) const {
     return ret;
 };
 
-int UserInterface::logError(const char* format, va_list args) const {
+int UserInterface::printError(const char* format, va_list args) const {
     const int bufferSize = 512;
     char buffer[bufferSize];
     int ret = vsnprintf(buffer, bufferSize, format, args);
