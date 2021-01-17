@@ -12,6 +12,8 @@ void AbstractTask::start() {
     xTaskCreate(wrapper, m_taskName, m_stackDepth, this, m_priority, &this->m_taskHandle);
 }
 
+TaskHandle_t AbstractTask::getTaskHandle() const { return m_taskHandle; }
+
 void AbstractTask::wrapper(void* params) {
     auto* task = static_cast<AbstractTask*>(params);
     task->task();

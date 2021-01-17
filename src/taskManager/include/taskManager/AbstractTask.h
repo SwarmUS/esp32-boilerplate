@@ -10,6 +10,7 @@ class AbstractTask {
     AbstractTask(const char* taskName, portSHORT stackDepth, UBaseType_t priority);
     virtual ~AbstractTask() = default;
     void start();
+    TaskHandle_t getTaskHandle() const;
 
     virtual void task() = 0;
 
