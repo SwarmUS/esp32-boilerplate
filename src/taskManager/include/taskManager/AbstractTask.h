@@ -2,8 +2,8 @@
 #define ABSTRACTTASK_H
 
 #include <FreeRTOS.h>
-#include <task.h>
 #include <algorithm>
+#include <task.h>
 
 class AbstractTask {
   public:
