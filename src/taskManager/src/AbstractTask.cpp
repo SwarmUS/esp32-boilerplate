@@ -9,7 +9,7 @@ AbstractTask::AbstractTask(const char* taskName, portSHORT stackDepth, UBaseType
 }
 
 void AbstractTask::start() {
-    xTaskCreate(wrapper, m_taskName, m_stackDepth, this, m_priority, &this->m_taskHandle);
+    xTaskCreate(wrapper, m_taskName, m_stackDepth, this, m_priority, &m_taskHandle);
 }
 
 TaskHandle_t AbstractTask::getTaskHandle() const { return m_taskHandle; }
