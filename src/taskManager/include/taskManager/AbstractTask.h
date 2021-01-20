@@ -3,11 +3,13 @@
 
 #include <FreeRTOS.h>
 #include <algorithm>
+#include <array>
 #include <task.h>
 
+template <unsigned int T>
 class AbstractTask {
   public:
-    AbstractTask(const char* taskName, portSHORT stackDepth, UBaseType_t priority);
+    AbstractTask(const char* taskName, UBaseType_t priority);
     virtual ~AbstractTask() = default;
     void start();
     TaskHandle_t getTaskHandle() const;
@@ -18,7 +20,8 @@ class AbstractTask {
     static void wrapper(void* params);
 
     const char* m_taskName;
-    portSHORT m_stackDepth;
+    std::array<uint8_t*, T> m_stackArray;
+    StaticTask_t m_taskBuffer;
     UBaseType_t m_priority;
     TaskHandle_t m_taskHandle;
 };
