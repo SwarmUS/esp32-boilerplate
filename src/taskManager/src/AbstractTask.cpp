@@ -20,8 +20,8 @@ template <unsigned int stackSize>
 void AbstractTask<stackSize>::start() {
     m_taskHandle = xTaskCreateStatic(wrapper, m_taskName, stackSize, this, m_priority,
                                      m_stackArray.data(), &m_taskBuffer);
-    m_taskHandle = xTaskCreateStatic(wrapper, m_taskName, stackSize, this, m_priority, m_stackArray.data(),
-                                     &m_taskBuffer);
+    m_taskHandle = xTaskCreateStatic(wrapper, m_taskName, stackSize, this, m_priority,
+                                     m_stackArray.data(), &m_taskBuffer);
 }
 
 template <unsigned int stackSize>
