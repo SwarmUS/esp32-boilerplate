@@ -10,7 +10,7 @@ template <unsigned int stackSize>
 class AbstractTask {
   public:
     AbstractTask(const char* taskName, UBaseType_t priority);
-    virtual ~AbstractTask() = default;
+    virtual ~AbstractTask();
     void start();
     TaskHandle_t getTaskHandle() const;
 
