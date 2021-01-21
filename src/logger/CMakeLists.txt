@@ -23,6 +23,7 @@ target_link_libraries(${LIB_NAME}
     PUBLIC
         SwarmUs::HiveConnect::BSP
         SwarmUs::HiveConnect::FreeRTOS
+        SwarmUs::HiveConnect::TaskManager
 )
 
 if(ENABLE_TESTS)
