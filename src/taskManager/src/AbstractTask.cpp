@@ -11,15 +11,15 @@ AbstractTask<stackSize>::AbstractTask(const char* taskName, UBaseType_t priority
 
 template <unsigned int stackSize>
 AbstractTask<stackSize>::~AbstractTask() {
-    if(m_taskHandle != NULL) {
+    if (m_taskHandle != NULL) {
         vTaskDelete(m_taskHandle);
     }
 }
 
 template <unsigned int stackSize>
 void AbstractTask<stackSize>::start() {
-    m_taskHandle = xTaskCreateStatic(wrapper, m_taskName, stackSize, this, m_priority, m_stackArray.data(),
-                                     &m_taskBuffer);
+    m_taskHandle = xTaskCreateStatic(wrapper, m_taskName, stackSize, this, m_priority,
+                                     m_stackArray.data(), &m_taskBuffer);
 }
 
 template <unsigned int stackSize>
