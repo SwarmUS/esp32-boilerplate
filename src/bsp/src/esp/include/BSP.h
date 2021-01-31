@@ -2,6 +2,7 @@
 #define BSP_H
 
 #include "bsp/IBSP.h"
+#include <array>
 
 class BSP : public IBSP {
   public:
@@ -12,6 +13,7 @@ class BSP : public IBSP {
     ChipInfo getChipInfo() override;
 
   private:
+    void initSPI();
 };
 
 #endif // BSP_H

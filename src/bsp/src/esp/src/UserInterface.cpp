@@ -3,7 +3,6 @@
 
 int UserInterface::print(const char* format, va_list args) const {
     int ret = vprintf(format, args);
-    UserInterface::print("\n\r");
     return ret;
 }
 
