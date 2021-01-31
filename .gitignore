@@ -12,3 +12,5 @@ cmake-build-target/
 cmake-build-local/
 /build-esp32/
 /build-local/
+
+sdkconfig.old
