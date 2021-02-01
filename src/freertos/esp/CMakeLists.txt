@@ -11,4 +11,4 @@ target_link_libraries(swarmus_freertos_esp
         idf::freertos
 )
 
-add_library(SwarmUs::HiveConnect::FreeRTOS ALIAS swarmus_freertos_esp)
+add_library(SwarmUS::HiveConnect::FreeRTOS ALIAS swarmus_freertos_esp)

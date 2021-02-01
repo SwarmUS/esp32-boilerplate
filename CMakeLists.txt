@@ -21,7 +21,7 @@ if(COMPILE_ESP)
                     # will be included as needed based on dependency tree
                     # epstool_py always required
                     COMPONENTS esp32 freertos esptool_py driver
-                    SDKCONFIG ${CMAKE_BINARY_DIR}/sdkconfig
+                    SDKCONFIG ${CMAKE_CURRENT_SOURCE_DIR}/sdkconfig
                     BUILD_DIR ${CMAKE_BINARY_DIR})
     set(EXECUTABLE_NAME "${CMAKE_PROJECT_NAME}.elf")
 else()
@@ -38,9 +38,9 @@ add_executable(${EXECUTABLE_NAME} src/main.cpp) # Needs to be in the root of the
 # Link the libraries to the executable, depending on alias
 target_link_libraries(${EXECUTABLE_NAME}
         PUBLIC
-        SwarmUs::HiveConnect::FreeRTOS
-        SwarmUs::HiveConnect::BSP
-        SwarmUs::HiveConnect::Logger
+        SwarmUS::HiveConnect::FreeRTOS
+        SwarmUS::HiveConnect::BSP
+        SwarmUS::HiveConnect::Logger
 )
 
 

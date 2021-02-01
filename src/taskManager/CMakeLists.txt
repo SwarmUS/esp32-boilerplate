@@ -1,5 +1,5 @@
 set(LIB_NAME "swarmus-hive_connect-task_manager")
-set(LIB_ALIAS "SwarmUs::HiveConnect::TaskManager")
+set(LIB_ALIAS "SwarmUS::HiveConnect::TaskManager")
 
 set(LIB_SOURCES
         src/AbstractTask.cpp
@@ -20,6 +20,6 @@ target_include_directories(${LIB_NAME}
 
 target_link_libraries(${LIB_NAME}
         PUBLIC
-        SwarmUs::HiveConnect::FreeRTOS
+        SwarmUS::HiveConnect::FreeRTOS
 )
 

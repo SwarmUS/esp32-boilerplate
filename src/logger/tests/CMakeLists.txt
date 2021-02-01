@@ -16,7 +16,7 @@ target_link_libraries(${TEST_NAME}
         gtest_main
         gmock
 
-        SwarmUs::HiveConnect::Logger
+        SwarmUS::HiveConnect::Logger
 )
 
 add_test(NAME ${TEST_NAME}

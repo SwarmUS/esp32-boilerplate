@@ -1,5 +1,5 @@
 set(LIB_NAME "swarmus_hive_connect_bsp")
-set(LIB_ALIAS "SwarmUs::HiveConnect::BSP")
+set(LIB_ALIAS "SwarmUS::HiveConnect::BSP")
 
 get_filename_component(BSP_CMAKE_DIR ${CMAKE_CURRENT_LIST_FILE} DIRECTORY)
 
@@ -24,7 +24,7 @@ target_include_directories(${LIB_NAME}
 
 target_link_libraries(${LIB_NAME}
         PRIVATE
-        SwarmUs::HiveConnect::BSP::Platform
+        SwarmUS::HiveConnect::BSP::Platform
 )
 
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)

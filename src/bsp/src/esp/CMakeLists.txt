@@ -1,5 +1,5 @@
 set(LIB_NAME "swarmus_hive_connect_bsp_esp")
-set(LIB_ALIAS "SwarmUs::HiveConnect::BSP::Platform")
+set(LIB_ALIAS "SwarmUS::HiveConnect::BSP::Platform")
 
 set(LIB_SOURCES
         src/BSP.cpp
@@ -26,7 +26,9 @@ target_include_directories(${LIB_NAME}
 target_link_libraries(${LIB_NAME}
         PUBLIC
         # Defined libraries
-        SwarmUs::HiveConnect::FreeRTOS
+        SwarmUS::HiveConnect::FreeRTOS
+        SwarmUS::HiveConnect::Logger
+        SwarmUS::HiveConnect::BSP::Common
         PRIVATE
         idf::esp32
         idf::driver
