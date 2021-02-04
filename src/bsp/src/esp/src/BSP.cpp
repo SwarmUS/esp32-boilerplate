@@ -37,9 +37,9 @@ void BSP::initSPI() {
                                                 .flags = 0,
                                                 .queue_size =
                                                     2, // Should have at most 2 (1 input, 1 output)
-                                                .mode = 0,
+                                                .mode = 1,
                                                 .post_setup_cb = NULL,
-                                                .post_trans_cb = HAL_SPI_transferCompleteCallback};
+                                                .post_trans_cb = transactionCompleteCallback};
 
     assert(spi_slave_initialize(STM_SPI, &busConfig, &slaveConfig, DMA_CHANNEL_SPI) == ESP_OK);
 

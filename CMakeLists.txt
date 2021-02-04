@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 option(DISABLE_EXTERNAL_WARNINGS "Disables warnings from external libs (gtest, freertos, etc)" ON)
 
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 project(hive_connect C CXX ASM)
 
 

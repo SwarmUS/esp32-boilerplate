@@ -10,19 +10,20 @@ extern "C" {
 
 void dummyTask(void* param) {
     (void)param;
-    printf("Hello world!\n");
 
     /* Print chip information */
     IBSP* bsp = &BspContainer::getBSP();
     ChipInfo info = bsp->getChipInfo();
     Logger logger = Logger(LogLevel::Info, BspContainer::getUserInterface());
-
+    logger.log(LogLevel::Info, "Hi!");
     while (true) {
-        logger.log(LogLevel::Info, "System has %d cores", info.m_cores);
-        if (info.m_osType == ChipInfo::ESP) {
-            logger.log(LogLevel::Info, "System is running on target");
-        } else {
-            logger.log(LogLevel::Info, "System is running locally");
+        ISpiStm* spiStm = &BspContainer::getSpiStm();
+        if (!spiStm->isBusy()) {
+            char message[] = "Hello STM";
+            spiStm->send((uint8_t*)message, sizeof(message));
+        }
+        else {
+            //logger.log(LogLevel::Info, "Spi driver is busy...");
         }
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }

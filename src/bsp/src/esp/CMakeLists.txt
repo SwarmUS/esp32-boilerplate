@@ -5,6 +5,7 @@ set(LIB_SOURCES
         src/BSP.cpp
         src/Container.cpp
         src/UserInterface.cpp
+        src/SpiStm.cpp
         hal/spi_callbacks.c)
 
 set(LIB_PRIVATE_HEADERS

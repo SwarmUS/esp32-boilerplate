@@ -3,6 +3,7 @@ set(LIB_ALIAS "SwarmUS::HiveConnect::BSP")
 
 get_filename_component(BSP_CMAKE_DIR ${CMAKE_CURRENT_LIST_FILE} DIRECTORY)
 
+add_subdirectory(common)
 add_subdirectory(src)
 
 set(LIB_HEADERS
