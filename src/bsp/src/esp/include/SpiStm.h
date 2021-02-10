@@ -38,10 +38,12 @@ class SpiStm : public ISpiStm {
     struct Message {
         // These buffers need to be word-alligned for DMA.
         alignas(32) std::array<uint8_t, STM_SPI_MAX_MESSAGE_LENGTH> m_data;
-        uint32_t m_length;
+        uint32_t m_sizeBytes;
     } m_inboundMessage, m_outboundMessage;
     // Used for transaction
-    alignas(32) StmSpi::Header m_outboundHeader, m_inboundHeader;
+    alignas(32) StmSpi::Header m_outboundHeader;
+    StmSpi::Header* m_inboundHeader;
+
     void updateOutboundHeader();
 
   private:
@@ -51,9 +53,11 @@ class SpiStm : public ISpiStm {
     StaticSemaphore_t m_semaphoreBuffer;
     SemaphoreHandle_t m_semaphore;
 
-    std::array<StackType_t, 1024> m_stackData;
+    std::array<StackType_t, 4096> m_stackData;
     StaticTask_t m_stackBuffer;
     TaskHandle_t m_taskHandle;
+    uint32_t m_loopRate;
+
     bool m_isBusy;
 };
 #endif // __SPISTM_H__

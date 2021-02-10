@@ -6,6 +6,8 @@
 #include <cstring>
 #include <driver/gpio.h>
 
+
+static bool g_transTimeoutOut = false;
 void task(void* instance) {
     const uint8_t loopRate = 5;
     while (true) {
@@ -21,13 +23,14 @@ SpiStm::SpiStm(ILogger& logger) : m_logger(logger) {
     m_inboundHeader = {0};
     m_outboundHeader = {0};
     m_isBusy = false;
+    m_loopRate = 100;
 
     setCallback(SpiStm::transactionCallback, this);
 
     m_semaphore = xSemaphoreCreateBinaryStatic(&m_semaphoreBuffer);
     xSemaphoreGive(m_semaphore);
 
-    m_taskHandle = xTaskCreateStatic(task, "esp_spi_driver_task", 1024u, this, 1u,
+    m_taskHandle = xTaskCreateStatic(task, "esp_spi_driver_task", 4096, this, 1u,
                                      m_stackData.data(), &m_stackBuffer);
 }
 
@@ -51,7 +54,7 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
         // Appending CRC32
         *(uint32_t*)(m_outboundMessage.m_data.data() + length) =
             CRC::calculateCRC32(buffer, length);
-        m_outboundMessage.m_length = length;
+        m_outboundMessage.m_sizeBytes = length;
         m_isBusy = true;
         xSemaphoreGive(m_semaphore);
 
@@ -66,31 +69,43 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
 bool SpiStm::isBusy() const { return m_isBusy; }
 
 void SpiStm::execute() {
+
+    vTaskDelay(m_loopRate);
+
     uint32_t txLengthBytes = 0;
     uint32_t rxLengthBytes = 0;
-    uint32_t looprate = 5;
     switch (m_rxState) {
     case receiveState::RECEIVING_HEADER:
-        m_transaction.rx_buffer = &m_inboundHeader;
         rxLengthBytes = sizeof(StmSpi::Header);
         //m_logger.log(LogLevel::Error, "Receiving into header buffer");
         break;
     case receiveState::PARSING_HEADER:
-        if (m_inboundHeader.headerStruct.crc8 != CRC::calculateCRC8(&m_inboundHeader, 3)) {
-            m_logger.log(LogLevel::Error, "Received corrupted payload");
+        m_inboundHeader = (StmSpi::Header*)m_inboundMessage.m_data.data();
+        if (m_inboundHeader->headerStruct.crc8 != CRC::calculateCRC8(m_inboundHeader, 3)) {
+            m_logger.log(LogLevel::Error, "Received corrupted header");
+            m_logger.log(LogLevel::Info, "Bytes were: | %d | %d | %d | %d |", m_inboundMessage.m_data[0], m_inboundMessage.m_data[1], m_inboundMessage.m_data[2], m_inboundMessage.m_data[3]);
+            memset(m_inboundHeader, 0xFF, sizeof (m_outboundHeader));
             m_rxState = receiveState::ERROR;
             break;
-        } else if (m_inboundHeader.headerStruct.rxSizeWord == m_outboundMessage.m_length) {
-            m_txState = transmitState::SENDING_PAYLOAD;
+        }
+        if (m_inboundHeader->headerStruct.rxSizeWord == m_outboundMessage.m_sizeBytes) {
+            m_logger.log(LogLevel::Info, "Received valid header. Can now send payload");
+            m_txState = transmitState::SENDING_HEADER; // change it
         } else {
             m_txState = transmitState::SENDING_HEADER;
+            m_logger.log(LogLevel::Info, "Received valid header but cannot send payload");
         }
-        m_logger.log(LogLevel::Info, "Received valid header");
+
+        m_rxState = receiveState::RECEIVING_HEADER;
         break;
     case receiveState::RECEIVING_PAYLOAD:
         m_transaction.rx_buffer = m_inboundMessage.m_data.data();
-        rxLengthBytes = sizeof(m_inboundHeader.headerStruct.txSizeWord) << 2;
+        rxLengthBytes = sizeof(m_inboundHeader->headerStruct.txSizeWord) << 2;
         m_logger.log(LogLevel::Error, "Receiving into payload buffer");
+        break;
+    case receiveState::VALIDATE_CRC:
+        // TODO: validate CRC
+        m_rxState = receiveState::VALID_PAYLOAD;
         break;
     case receiveState::VALID_PAYLOAD:
         m_logger.log(LogLevel::Debug, "Received valid payload");
@@ -111,7 +126,7 @@ void SpiStm::execute() {
         break;
     case transmitState::SENDING_PAYLOAD:
         m_transaction.tx_buffer = m_outboundMessage.m_data.data();
-        txLengthBytes = m_outboundMessage.m_length;
+        txLengthBytes = m_outboundMessage.m_sizeBytes;
         m_logger.log(LogLevel::Info, "Output message contains payload");
         break;
     case transmitState::ERROR:
@@ -122,20 +137,27 @@ void SpiStm::execute() {
     m_transaction.length = std::max(rxLengthBytes, txLengthBytes) << 3U;
 
     // Notify master if payload to send CS is high.
-    if (m_outboundMessage.m_length != 0 && gpio_get_level(STM_CS) != 0) {
+    if (m_outboundMessage.m_sizeBytes != 0 && gpio_get_level(STM_CS) != 0) {
         notifyMaster();
     }
+    m_transaction.rx_buffer =  m_inboundMessage.m_data.data();
+    // This call is non-blocking, hence the TaskDelay
+    if (g_transTimeoutOut) {
+       m_logger.log(LogLevel::Info, "Transaction timeout before receiving everything");
+       g_transTimeoutOut = false;
+    }
+    spi_slave_queue_trans(STM_SPI, &m_transaction, m_loopRate);
 
-    // This call is non-blocking.
-    spi_slave_queue_trans(STM_SPI, &m_transaction, looprate);
-    vTaskDelay(looprate);
 }
 
 void SpiStm::updateOutboundHeader() {
-    // Reminder: sizes in header are in words, but buffers in bytes
-    m_outboundHeader.headerStruct.txSizeWord = m_outboundMessage.m_length >> 2;
-    m_outboundHeader.headerStruct.rxSizeWord = m_inboundHeader.headerStruct.txSizeWord >> 2;
-
+    m_outboundHeader.headerStruct.txSizeWord = m_outboundMessage.m_sizeBytes >> 2;
+    if (m_inboundHeader != nullptr) {
+        m_outboundHeader.headerStruct.rxSizeWord = m_inboundHeader->headerStruct.txSizeWord;
+    }
+    uint8_t test[] = {0,3,4};
+    uint8_t crc = CRC::calculateCRC8(test, 3);
+    (void ) crc;
     m_outboundHeader.headerStruct.systemState.rawValue = 0; // TODO: get actual system state
 
     m_outboundHeader.headerStruct.crc8 = CRC::calculateCRC8(&m_outboundHeader, 3);
@@ -146,7 +168,8 @@ void SpiStm::notifyMaster() { gpio_set_level(STM_USER_0, 1); }
 void SpiStm::transactionCallback(void* instance, spi_slave_transaction_t* transaction) {
     auto* _this = static_cast<SpiStm*>(instance);
     if (transaction->length != transaction->trans_len) {
-        _this->m_logger.log(LogLevel::Debug, "Transaction timed out before it could finished");
+        // Transaction timed out before it could finish. Nothing was received.
+        g_transTimeoutOut = true;
         return;
     }
     switch (_this->m_rxState) {
@@ -159,7 +182,7 @@ void SpiStm::transactionCallback(void* instance, spi_slave_transaction_t* transa
         _this->m_rxState = receiveState::VALID_PAYLOAD;
         break;
     default:
-        _this->m_logger.log(LogLevel::Error, "Received data when in unknown state");
+        // Should never get here
         break;
     }
 

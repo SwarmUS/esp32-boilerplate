@@ -37,7 +37,7 @@ void BSP::initSPI() {
                                                 .flags = 0,
                                                 .queue_size =
                                                     2, // Should have at most 2 (1 input, 1 output)
-                                                .mode = 1,
+                                                .mode = 3,
                                                 .post_setup_cb = NULL,
                                                 .post_trans_cb = transactionCompleteCallback};
 

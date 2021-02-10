@@ -12,7 +12,7 @@
 #define STM_CS GPIO_NUM_5
 
 // DMA_CHANNELS
-#define DMA_CHANNEL_SPI 2
+#define DMA_CHANNEL_SPI 1
 
 // User GPIOs
 #define STM_USER_0 GPIO_NUM_17
