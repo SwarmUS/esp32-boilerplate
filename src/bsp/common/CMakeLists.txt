@@ -23,3 +23,7 @@ target_link_libraries(${LIB_NAME}
         PUBLIC
         )
 
+if(ENABLE_TESTS)
+    add_subdirectory(tests)
+endif()
+
