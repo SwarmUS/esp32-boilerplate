@@ -37,11 +37,11 @@ class SpiStm : public ISpiStm {
 
     struct Message {
         // These buffers need to be word-alligned for DMA.
-        alignas(32) std::array<uint8_t, STM_SPI_MAX_MESSAGE_LENGTH> m_data;
+        WORD_ALIGNED_ATTR std::array<uint8_t, STM_SPI_MAX_MESSAGE_LENGTH> m_data;
         uint32_t m_sizeBytes;
     } m_inboundMessage, m_outboundMessage;
     // Used for transaction
-    alignas(32) StmSpi::Header m_outboundHeader;
+    WORD_ALIGNED_ATTR StmSpi::Header m_outboundHeader;
     StmSpi::Header* m_inboundHeader;
 
     void updateOutboundHeader();
