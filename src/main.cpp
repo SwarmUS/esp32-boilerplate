@@ -20,10 +20,9 @@ void dummyTask(void* param) {
         ISpiStm* spiStm = &BspContainer::getSpiStm();
         if (!spiStm->isBusy()) {
             char message[] = "Hello STM";
-            spiStm->send((uint8_t*)message, sizeof(message));
-        }
-        else {
-            //logger.log(LogLevel::Info, "Spi driver is busy...");
+            //spiStm->send((uint8_t*)message, sizeof(message));
+        } else {
+            // logger.log(LogLevel::Info, "Spi driver is busy...");
         }
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }

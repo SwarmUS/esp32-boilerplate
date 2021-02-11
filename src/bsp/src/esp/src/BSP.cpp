@@ -36,7 +36,7 @@ void BSP::initSPI() {
     spi_slave_interface_config_t slaveConfig = {.spics_io_num = STM_CS,
                                                 .flags = 0,
                                                 .queue_size =
-                                                    2, // Should have at most 2 (1 input, 1 output)
+                                                    1, // Should have at most 2 (1 input, 1 output)
                                                 .mode = 3,
                                                 .post_setup_cb = NULL,
                                                 .post_trans_cb = transactionCompleteCallback};

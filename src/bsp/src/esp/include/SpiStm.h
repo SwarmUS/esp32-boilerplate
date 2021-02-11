@@ -23,15 +23,14 @@ class SpiStm : public ISpiStm {
 
   protected:
     ILogger& m_logger;
-    enum class transmitState { SENDING_HEADER, SENDING_PAYLOAD, ERROR } m_txState;
+    enum class transmitState { SENDING_HEADER, SENDING_PAYLOAD, ERROR }  m_txState;
     enum class receiveState {
         RECEIVING_HEADER,
         PARSING_HEADER,
         RECEIVING_PAYLOAD,
         VALIDATE_CRC,
-        VALID_PAYLOAD,
         ERROR
-    } m_rxState;
+    }  m_rxState;
 
     spi_slave_transaction_t m_transaction;
 
@@ -57,6 +56,8 @@ class SpiStm : public ISpiStm {
     StaticTask_t m_stackBuffer;
     TaskHandle_t m_taskHandle;
     uint32_t m_loopRate;
+
+
 
     bool m_isBusy;
 };
