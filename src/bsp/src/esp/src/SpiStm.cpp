@@ -55,6 +55,7 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
             CRC::calculateCRC32(buffer, length);
         m_outboundMessage.m_sizeBytes = length;
         m_isBusy= true;
+        notifyMaster();
         xSemaphoreGive(m_semaphore);
         retVal = true;
     } else {
@@ -89,6 +90,7 @@ void SpiStm::execute() {
         if (m_inboundHeader->headerStruct.rxSizeWord << 2 == m_outboundMessage.m_sizeBytes &&
             m_outboundMessage.m_sizeBytes != 0) {
             m_logger.log(LogLevel::Debug, "Received valid header. Can now send payload");
+            gpio_set_level(STM_USER_0, 0);
             m_txState = transmitState::SENDING_PAYLOAD;
         } else {
             m_txState = transmitState::SENDING_HEADER;
@@ -138,11 +140,6 @@ void SpiStm::execute() {
         break;
     case transmitState::ERROR:
         break;
-    }
-
-    // Notify master if payload to send and CS is high (master inactive).
-    if (m_outboundMessage.m_sizeBytes != 0 && gpio_get_level(STM_CS) != 0) {
-        notifyMaster();
     }
 
     // The length field of m_transaction is in bits
