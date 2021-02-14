@@ -1,10 +1,10 @@
 #include "SpiStm.h"
-#include "common/CRC.h"
 #include "esp32/rom/crc.h"
 #include "hal/pin_map.h"
 #include "hal/spi_callbacks.h"
 #include <cstring>
 #include <driver/gpio.h>
+#include "c-common/software_crc.h"
 
 void task(void* instance) {
     while (true) {
@@ -52,7 +52,7 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
         }
         // Appending CRC32
         *(uint32_t*)(m_outboundMessage.m_data.data() + length) =
-            CRC::calculateCRC32(buffer, length);
+             calculateCRC32_software(buffer, length);
         m_outboundMessage.m_sizeBytes = length;
         m_isBusy= true;
         notifyMaster();
@@ -78,7 +78,7 @@ void SpiStm::execute() {
     case receiveState::PARSING_HEADER:
         m_inboundHeader = (StmSpi::Header*)m_inboundMessage.m_data.data();
         // Validate header
-        if (m_inboundHeader->headerStruct.crc8 != CRC::calculateCRC8(m_inboundHeader, 3)) {
+        if (m_inboundHeader->headerStruct.crc8 != calculateCRC8_software(m_inboundHeader, 3)) {
             m_logger.log(LogLevel::Error, "Received corrupted header");
             m_logger.log(LogLevel::Debug, "Bytes were: | %d | %d | %d | %d |",
                          m_inboundMessage.m_data[0], m_inboundMessage.m_data[1],
@@ -149,8 +149,8 @@ void SpiStm::execute() {
 
 
     if (m_txState != transmitState::ERROR && m_rxState != receiveState::ERROR) {
-        // This call is for the duration of m_loopRate.
-        esp_err_t err =  spi_slave_transmit(STM_SPI, &m_transaction, portMAX_DELAY);
+        // This call is blocking
+        spi_slave_transmit(STM_SPI, &m_transaction, portMAX_DELAY);
 
     }
     counter++;
@@ -160,7 +160,7 @@ void SpiStm::updateOutboundHeader() {
     m_outboundHeader.headerStruct.systemState.rawValue = counter; // TODO: get actual system state
     m_outboundHeader.headerStruct.txSizeWord = m_outboundMessage.m_sizeBytes >> 2;
     m_outboundHeader.headerStruct.rxSizeWord = m_inboundMessage.m_sizeBytes >> 2;
-    m_outboundHeader.headerStruct.crc8 = CRC::calculateCRC8(&m_outboundHeader, 3);
+    m_outboundHeader.headerStruct.crc8 = calculateCRC8_software(&m_outboundHeader, 3);
     if(m_outboundHeader.headerStruct.txSizeWord == 0) {
         m_isBusy = false;
     }

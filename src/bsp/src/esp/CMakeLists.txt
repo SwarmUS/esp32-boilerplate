@@ -29,8 +29,8 @@ target_link_libraries(${LIB_NAME}
         # Defined libraries
         SwarmUS::HiveConnect::FreeRTOS
         SwarmUS::HiveConnect::Logger
-        SwarmUS::HiveConnect::BSP::Common
         PRIVATE
         idf::esp32
         idf::driver
+        SwarmUS::Propolis::C::Common
 )

@@ -77,6 +77,7 @@ if(ENABLE_TESTS)
 endif()
 
 # Include sources
+include(propolis/common)
 add_subdirectory(src)
 
 #Additional tooling include
