@@ -1,18 +1,16 @@
 #include "SpiStm.h"
+#include "c-common/software_crc.h"
 #include "esp32/rom/crc.h"
 #include "hal/pin_map.h"
 #include "hal/spi_callbacks.h"
 #include <cstring>
 #include <driver/gpio.h>
-#include "c-common/software_crc.h"
 
 void task(void* instance) {
     while (true) {
         static_cast<SpiStm*>(instance)->execute();
     }
 }
-
-static uint8_t counter = 0;
 
 SpiStm::SpiStm(ILogger& logger) : m_logger(logger) {
     m_txState = transmitState::SENDING_HEADER;
@@ -21,7 +19,6 @@ SpiStm::SpiStm(ILogger& logger) : m_logger(logger) {
     m_outboundMessage = {0};
     m_inboundHeader = {0};
     m_outboundHeader = {0};
-    m_loopRate = 5;
     m_isBusy = false;
 
     setCallback(SpiStm::transactionCallback, this);
@@ -52,9 +49,11 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
         }
         // Appending CRC32
         *(uint32_t*)(m_outboundMessage.m_data.data() + length) =
-             calculateCRC32_software(buffer, length);
+            calculateCRC32_software(buffer, length);
+        ;
+        length += CRC32_SIZE;
         m_outboundMessage.m_sizeBytes = length;
-        m_isBusy= true;
+        m_isBusy = true;
         notifyMaster();
         xSemaphoreGive(m_semaphore);
         retVal = true;
@@ -73,12 +72,12 @@ void SpiStm::execute() {
 
     switch (m_rxState) {
     case receiveState::RECEIVING_HEADER:
-        rxLengthBytes = StmSpi::headerSize;
+        rxLengthBytes = StmHeader::sizeBytes;
         break;
     case receiveState::PARSING_HEADER:
-        m_inboundHeader = (StmSpi::Header*)m_inboundMessage.m_data.data();
+        m_inboundHeader = (StmHeader::Header*)m_inboundMessage.m_data.data();
         // Validate header
-        if (m_inboundHeader->headerStruct.crc8 != calculateCRC8_software(m_inboundHeader, 3)) {
+        if (m_inboundHeader->crc8 != calculateCRC8_software(m_inboundHeader, 3)) {
             m_logger.log(LogLevel::Error, "Received corrupted header");
             m_logger.log(LogLevel::Debug, "Bytes were: | %d | %d | %d | %d |",
                          m_inboundMessage.m_data[0], m_inboundMessage.m_data[1],
@@ -87,7 +86,7 @@ void SpiStm::execute() {
             break;
         }
 
-        if (m_inboundHeader->headerStruct.rxSizeWord << 2 == m_outboundMessage.m_sizeBytes &&
+        if (m_inboundHeader->rxSizeWord << 2 == m_outboundMessage.m_sizeBytes &&
             m_outboundMessage.m_sizeBytes != 0) {
             m_logger.log(LogLevel::Debug, "Received valid header. Can now send payload");
             gpio_set_level(STM_USER_0, 0);
@@ -98,29 +97,31 @@ void SpiStm::execute() {
         }
 
         // This will be sent on next header. Payload has priority over headers.
-        m_inboundMessage.m_sizeBytes = m_inboundHeader->headerStruct.txSizeWord << 2;
-        if (m_inboundMessage.m_sizeBytes == m_outboundHeader.headerStruct.rxSizeWord << 2 &&
+        m_inboundMessage.m_sizeBytes = m_inboundHeader->txSizeWord << 2;
+        if (m_inboundMessage.m_sizeBytes == m_outboundHeader.rxSizeWord << 2 &&
             m_inboundMessage.m_sizeBytes != 0) {
-            rxLengthBytes = m_inboundHeader->headerStruct.txSizeWord << 2;
+            rxLengthBytes = m_inboundHeader->txSizeWord << 2;
             m_logger.log(LogLevel::Debug, "Receiving payload");
             m_rxState = receiveState::RECEIVING_PAYLOAD;
         } else {
-            rxLengthBytes = StmSpi::headerSize;
+            rxLengthBytes = StmHeader::sizeBytes;
             m_rxState = receiveState::RECEIVING_HEADER;
         }
         break;
     case receiveState::RECEIVING_PAYLOAD:
-        rxLengthBytes = m_inboundHeader->headerStruct.txSizeWord << 2;
+        rxLengthBytes = m_inboundHeader->txSizeWord << 2;
         break;
     case receiveState::VALIDATE_CRC:
-        // TODO: validate CRC
-        m_logger.log(LogLevel::Debug, "Received valid payload");
-        m_logger.log(LogLevel::Info,"Stm says: %s", m_inboundMessage.m_data.data());
-        m_inboundMessage.m_sizeBytes = 0;
-
-
+        if (calculateCRC32_software(m_inboundMessage.m_data.data(),
+                                    m_inboundMessage.m_sizeBytes - CRC32_SIZE) !=
+            *(uint32_t*)&m_inboundMessage.m_data[m_inboundMessage.m_sizeBytes - CRC32_SIZE]) {
+            m_outboundHeader.systemState.stmSystemState.failedCrc = 1;
+        } else {
+            m_logger.log(LogLevel::Info, "Stm says: %s", m_inboundMessage.m_data.data());
+            m_inboundMessage.m_sizeBytes = 0;
+        }
         m_rxState = receiveState::RECEIVING_HEADER;
-        rxLengthBytes = StmSpi::headerSize;
+        rxLengthBytes = StmHeader::sizeBytes;
         break;
     case receiveState::ERROR:
         m_logger.log(LogLevel::Error, "Error within Spi driver STM");
@@ -132,7 +133,7 @@ void SpiStm::execute() {
     case transmitState::SENDING_HEADER:
         updateOutboundHeader();
         m_transaction.tx_buffer = &m_outboundHeader;
-        txLengthBytes = 4;
+        txLengthBytes = StmHeader::sizeBytes;
         break;
     case transmitState::SENDING_PAYLOAD:
         m_transaction.tx_buffer = m_outboundMessage.m_data.data();
@@ -147,21 +148,18 @@ void SpiStm::execute() {
     // Rx buffer should always be the inbound message buffer.
     m_transaction.rx_buffer = m_inboundMessage.m_data.data();
 
-
     if (m_txState != transmitState::ERROR && m_rxState != receiveState::ERROR) {
         // This call is blocking
         spi_slave_transmit(STM_SPI, &m_transaction, portMAX_DELAY);
-
     }
-    counter++;
 }
 
 void SpiStm::updateOutboundHeader() {
-    m_outboundHeader.headerStruct.systemState.rawValue = counter; // TODO: get actual system state
-    m_outboundHeader.headerStruct.txSizeWord = m_outboundMessage.m_sizeBytes >> 2;
-    m_outboundHeader.headerStruct.rxSizeWord = m_inboundMessage.m_sizeBytes >> 2;
-    m_outboundHeader.headerStruct.crc8 = calculateCRC8_software(&m_outboundHeader, 3);
-    if(m_outboundHeader.headerStruct.txSizeWord == 0) {
+    // TODO: get actual system state
+    m_outboundHeader.txSizeWord = m_outboundMessage.m_sizeBytes >> 2;
+    m_outboundHeader.rxSizeWord = m_inboundMessage.m_sizeBytes >> 2;
+    m_outboundHeader.crc8 = calculateCRC8_software(&m_outboundHeader, 3);
+    if (m_outboundHeader.txSizeWord == 0) {
         m_isBusy = false;
     }
 }
@@ -191,5 +189,4 @@ void IRAM_ATTR SpiStm::transactionCallback(void* instance, spi_slave_transaction
         _this->m_txState = transmitState::SENDING_HEADER;
         _this->m_outboundMessage.m_sizeBytes = 0;
     }
-
 }

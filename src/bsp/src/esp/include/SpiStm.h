@@ -23,14 +23,14 @@ class SpiStm : public ISpiStm {
 
   protected:
     ILogger& m_logger;
-    enum class transmitState { SENDING_HEADER, SENDING_PAYLOAD, ERROR }  m_txState;
+    enum class transmitState { SENDING_HEADER, SENDING_PAYLOAD, ERROR } m_txState;
     enum class receiveState {
         RECEIVING_HEADER,
         PARSING_HEADER,
         RECEIVING_PAYLOAD,
         VALIDATE_CRC,
         ERROR
-    }  m_rxState;
+    } m_rxState;
 
     spi_slave_transaction_t m_transaction;
 
@@ -40,8 +40,8 @@ class SpiStm : public ISpiStm {
         uint32_t m_sizeBytes;
     } m_inboundMessage, m_outboundMessage;
     // Used for transaction
-    WORD_ALIGNED_ATTR StmSpi::Header m_outboundHeader;
-    StmSpi::Header* m_inboundHeader;
+    WORD_ALIGNED_ATTR StmHeader::Header m_outboundHeader;
+    StmHeader::Header* m_inboundHeader;
 
     void updateOutboundHeader();
 
@@ -55,9 +55,6 @@ class SpiStm : public ISpiStm {
     std::array<StackType_t, 4096> m_stackData;
     StaticTask_t m_stackBuffer;
     TaskHandle_t m_taskHandle;
-    uint32_t m_loopRate;
-
-
 
     bool m_isBusy;
 };
