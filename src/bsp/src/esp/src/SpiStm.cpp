@@ -91,6 +91,10 @@ void SpiStm::execute() {
             m_logger.log(LogLevel::Debug, "Received valid header. Can now send payload");
             gpio_set_level(STM_USER_0, 0);
             m_txState = transmitState::SENDING_PAYLOAD;
+        }
+        else if (m_inboundHeader->rxSizeWord == 0 && !m_inboundHeader->systemState.espSystemState.failedCrc && m_outboundMessage.m_sent) {
+            m_outboundMessage.m_sizeBytes = 0;
+            m_txState = transmitState::SENDING_HEADER;
         } else {
             m_txState = transmitState::SENDING_HEADER;
             m_logger.log(LogLevel::Debug, "Received valid header but cannot send payload");
@@ -109,6 +113,7 @@ void SpiStm::execute() {
         }
         break;
     case receiveState::RECEIVING_PAYLOAD:
+        m_outboundHeader.systemState.stmSystemState.failedCrc = 0;
         rxLengthBytes = m_inboundHeader->txSizeWord << 2;
         break;
     case receiveState::VALIDATE_CRC:
@@ -120,6 +125,7 @@ void SpiStm::execute() {
             m_logger.log(LogLevel::Info, "Stm says: %s", m_inboundMessage.m_data.data());
             m_inboundMessage.m_sizeBytes = 0;
         }
+        m_inboundMessage.m_sizeBytes = 0;
         m_rxState = receiveState::RECEIVING_HEADER;
         rxLengthBytes = StmHeader::sizeBytes;
         break;
@@ -136,6 +142,7 @@ void SpiStm::execute() {
         txLengthBytes = StmHeader::sizeBytes;
         break;
     case transmitState::SENDING_PAYLOAD:
+        m_outboundMessage.m_sent = true;
         m_transaction.tx_buffer = m_outboundMessage.m_data.data();
         txLengthBytes = m_outboundMessage.m_sizeBytes;
         break;

@@ -38,6 +38,7 @@ class SpiStm : public ISpiStm {
         // These buffers need to be word-alligned for DMA.
         WORD_ALIGNED_ATTR std::array<uint8_t, STM_SPI_MAX_MESSAGE_LENGTH> m_data;
         uint32_t m_sizeBytes;
+        bool m_sent;
     } m_inboundMessage, m_outboundMessage;
     // Used for transaction
     WORD_ALIGNED_ATTR StmHeader::Header m_outboundHeader;
