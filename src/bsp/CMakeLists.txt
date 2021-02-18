@@ -24,6 +24,8 @@ target_include_directories(${LIB_NAME}
 target_link_libraries(${LIB_NAME}
         PRIVATE
         SwarmUs::HiveConnect::BSP::Platform
+        SwarmUs::HiveConnect::FreeRTOS
+        idf::driver
 )
 
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
