@@ -1,6 +1,6 @@
 #include "spi_callbacks.h"
 
-static slaveTransactionCompleteCallback callback = NULL;
+static slaveTransactionCompleteCallback_t callback = NULL;
 static void* slaveCallbackInstance = NULL;
 
 void IRAM_ATTR transactionCompleteCallback(spi_slave_transaction_t* transaction) {
@@ -9,7 +9,7 @@ void IRAM_ATTR transactionCompleteCallback(spi_slave_transaction_t* transaction)
     }
 }
 
-void setCallback(slaveTransactionCompleteCallback cb, void* instance) {
+void setCallback(slaveTransactionCompleteCallback_t cb, void* context) {
     callback = cb;
-    slaveCallbackInstance = instance;
+    slaveCallbackInstance = context;
 }

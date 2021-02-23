@@ -8,12 +8,12 @@ extern "C" {
 #include <driver/spi_common.h>
 #include <driver/spi_slave.h>
 
-typedef void (*slaveTransactionCompleteCallback)(void* instance,
+typedef void (*slaveTransactionCompleteCallback_t)(void* instance,
                                                  spi_slave_transaction_t* transaction);
 
 void transactionCompleteCallback(spi_slave_transaction_t* transaction);
 
-void setCallback(slaveTransactionCompleteCallback cb, void* instance);
+void setCallback(slaveTransactionCompleteCallback_t cb, void* context);
 
 #ifdef __cplusplus
 }
