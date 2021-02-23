@@ -56,7 +56,6 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
         // Appending CRC32
         *(uint32_t*)(m_outboundMessage.m_data.data() + length) =
             calculateCRC32_software(buffer, length);
-        ;
         length += CRC32_SIZE;
         m_outboundMessage.m_sizeBytes = length;
         m_isBusy = true;
