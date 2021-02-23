@@ -27,7 +27,7 @@ target_include_directories(${LIB_NAME}
 target_link_libraries(${LIB_NAME}
         PUBLIC
         # Defined libraries
-        SwarmUS::HiveConnect::FreeRTOS
+        SwarmUS::HiveConnect::OS
         SwarmUS::HiveConnect::Logger
         PRIVATE
         idf::esp32

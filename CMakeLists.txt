@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.13)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -38,7 +38,7 @@ add_executable(${EXECUTABLE_NAME} src/main.cpp) # Needs to be in the root of the
 # Link the libraries to the executable, depending on alias
 target_link_libraries(${EXECUTABLE_NAME}
         PUBLIC
-        SwarmUS::HiveConnect::FreeRTOS
+        SwarmUS::HiveConnect::OS
         SwarmUS::HiveConnect::BSP
         SwarmUS::HiveConnect::Logger
 )

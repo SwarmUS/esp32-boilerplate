@@ -1,0 +1,5 @@
+if (COMPILE_ESP)
+    add_subdirectory(freertos)
+else()
+    add_subdirectory(posix)
+endif()
