@@ -28,7 +28,6 @@
 #define STM_CS GPIO_NUM_17
 #endif
 
-
 // DMA_CHANNELS
 #define DMA_CHANNEL_SPI 1 // No dma
 

@@ -4,12 +4,10 @@
 #include "SpiHeader.h"
 #include "bsp/ISpiStm.h"
 #include "logger/ILogger.h"
-#include <FreeRTOS.h>
-#include <FreeRTOSConfig.h>
+#include <BaseTask.h>
+#include <Task.h>
 #include <array>
 #include <driver/spi_slave.h>
-#include <semphr.h>
-#include <task.h>
 
 class SpiStm : public ISpiStm {
   public:
@@ -21,7 +19,9 @@ class SpiStm : public ISpiStm {
 
     void execute();
 
-  protected:
+  private:
+    BaseTask<configMINIMAL_STACK_SIZE * 3> m_driverTask;
+
     ILogger& m_logger;
     enum class transmitState { SENDING_HEADER, SENDING_PAYLOAD, ERROR } m_txState;
     enum class receiveState {
@@ -44,17 +44,8 @@ class SpiStm : public ISpiStm {
     StmHeader::Header* m_inboundHeader;
 
     void updateOutboundHeader();
-
-  private:
     static void notifyMaster();
-    static void transactionCallback(void* instance, spi_slave_transaction_t* transaction);
-
-    StaticSemaphore_t m_semaphoreBuffer;
-    SemaphoreHandle_t m_semaphore;
-
-    std::array<StackType_t, 4096> m_stackData;
-    StaticTask_t m_stackBuffer;
-    TaskHandle_t m_taskHandle;
+    static void transactionCallback(void* context, spi_slave_transaction_t* transaction);
 
     bool m_isBusy;
 };

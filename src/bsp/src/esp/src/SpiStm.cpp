@@ -6,13 +6,22 @@
 #include <cstring>
 #include <driver/gpio.h>
 
-void task(void* instance) {
+/** These macros are used to convert the units of the size of a buffer from a number of words to a
+ * number of bytes and conversely from a size in bytes to a number of words, and similarly between a
+ * sizes in bits and bytes.
+ */
+#define WORDS_TO_BYTES(words) ((words << 2U))
+#define BYTES_TO_WORDS(bytes) ((bytes >> 2U))
+#define BYTES_TO_BITS(bytes) ((bytes << 3U))
+
+void task(void* context) {
     while (true) {
-        static_cast<SpiStm*>(instance)->execute();
+        static_cast<SpiStm*>(context)->execute();
     }
 }
 
-SpiStm::SpiStm(ILogger& logger) : m_logger(logger) {
+SpiStm::SpiStm(ILogger& logger) :
+    m_logger(logger), m_driverTask("stm_spi_driver", tskIDLE_PRIORITY + 1, task, this) {
     m_txState = transmitState::SENDING_HEADER;
     m_rxState = receiveState::RECEIVING_HEADER;
     m_inboundMessage = {0};
@@ -23,22 +32,19 @@ SpiStm::SpiStm(ILogger& logger) : m_logger(logger) {
 
     setCallback(SpiStm::transactionCallback, this);
 
-    m_semaphore = xSemaphoreCreateBinaryStatic(&m_semaphoreBuffer);
-    xSemaphoreGive(m_semaphore);
-
-    m_taskHandle = xTaskCreateStatic(task, "esp_spi_driver_task", 4096, this, 1u,
-                                     m_stackData.data(), &m_stackBuffer);
+    m_driverTask.start();
 }
 
 bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
-    bool retVal = false;
 
-    if (isBusy()) { // Not available
+    if (isBusy()) {
+        return false; // Not available
     } else if (length >= STM_SPI_MAX_MESSAGE_LENGTH) { // Message too long
         m_logger.log(LogLevel::Error,
                      "StmEsp: Message length of %d is larger than maximum allowed of %d", length,
                      STM_SPI_MAX_MESSAGE_LENGTH);
-    } else if (xSemaphoreTake(m_semaphore, 10) == pdTRUE) {
+        return false;
+    } else {
         m_logger.log(LogLevel::Debug, "Sending message of length %d", length);
         // Memcpy necessary to have buffer word-alligned for transfer
         std::memcpy(m_outboundMessage.m_data.data(), buffer, length);
@@ -55,13 +61,8 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
         m_outboundMessage.m_sizeBytes = length;
         m_isBusy = true;
         notifyMaster();
-        xSemaphoreGive(m_semaphore);
-        retVal = true;
-    } else {
-        m_logger.log(LogLevel::Debug, "Failed to acquire semaphore");
+        return true;
     }
-
-    return retVal;
 }
 
 bool SpiStm::isBusy() const { return m_isBusy; }
@@ -78,7 +79,7 @@ void SpiStm::execute() {
         m_inboundHeader = (StmHeader::Header*)m_inboundMessage.m_data.data();
         // Validate header
         if (m_inboundHeader->crc8 != calculateCRC8_software(m_inboundHeader, 3)) {
-            m_logger.log(LogLevel::Error, "Received corrupted header");
+            m_logger.log(LogLevel::Error, "Received corrupted STM SPI header");
             m_logger.log(LogLevel::Debug, "Bytes were: | %d | %d | %d | %d |",
                          m_inboundMessage.m_data[0], m_inboundMessage.m_data[1],
                          m_inboundMessage.m_data[2], m_inboundMessage.m_data[3]);
@@ -86,7 +87,7 @@ void SpiStm::execute() {
             break;
         }
 
-        if (m_inboundHeader->rxSizeWord << 2 == m_outboundMessage.m_sizeBytes &&
+        if (WORDS_TO_BYTES(m_inboundHeader->rxSizeWord) == m_outboundMessage.m_sizeBytes &&
             m_outboundMessage.m_sizeBytes != 0) {
             m_logger.log(LogLevel::Debug, "Received valid header. Can now send payload");
             gpio_set_level(STM_USER_0, 0);
@@ -97,10 +98,10 @@ void SpiStm::execute() {
         }
 
         // This will be sent on next header. Payload has priority over headers.
-        m_inboundMessage.m_sizeBytes = m_inboundHeader->txSizeWord << 2;
-        if (m_inboundMessage.m_sizeBytes == m_outboundHeader.rxSizeWord << 2 &&
+        m_inboundMessage.m_sizeBytes = WORDS_TO_BYTES(m_inboundHeader->txSizeWord);
+        if (m_inboundMessage.m_sizeBytes == WORDS_TO_BYTES(m_outboundHeader.rxSizeWord) &&
             m_inboundMessage.m_sizeBytes != 0) {
-            rxLengthBytes = m_inboundHeader->txSizeWord << 2;
+            rxLengthBytes = WORDS_TO_BYTES(m_inboundHeader->txSizeWord);
             m_logger.log(LogLevel::Debug, "Receiving payload");
             m_rxState = receiveState::RECEIVING_PAYLOAD;
         } else {
@@ -109,7 +110,7 @@ void SpiStm::execute() {
         }
         break;
     case receiveState::RECEIVING_PAYLOAD:
-        rxLengthBytes = m_inboundHeader->txSizeWord << 2;
+        rxLengthBytes = WORDS_TO_BYTES(m_inboundHeader->txSizeWord);
         break;
     case receiveState::VALIDATE_CRC:
         if (calculateCRC32_software(m_inboundMessage.m_data.data(),
@@ -117,6 +118,7 @@ void SpiStm::execute() {
             *(uint32_t*)&m_inboundMessage.m_data[m_inboundMessage.m_sizeBytes - CRC32_SIZE]) {
             m_outboundHeader.systemState.stmSystemState.failedCrc = 1;
         } else {
+            // TODO: Replace with proper reception handle
             m_logger.log(LogLevel::Info, "Stm says: %s", m_inboundMessage.m_data.data());
             m_inboundMessage.m_sizeBytes = 0;
         }
@@ -144,20 +146,22 @@ void SpiStm::execute() {
     }
 
     // The length field of m_transaction is in bits
-    m_transaction.length = std::max(rxLengthBytes, txLengthBytes) << 3U;
+    m_transaction.length = BYTES_TO_BITS(std::max(rxLengthBytes, txLengthBytes));
     // Rx buffer should always be the inbound message buffer.
     m_transaction.rx_buffer = m_inboundMessage.m_data.data();
 
     if (m_txState != transmitState::ERROR && m_rxState != receiveState::ERROR) {
-        // This call is blocking
+        // This call is blocking, so the rate of the of the loop is inferred byt the rate of the
+        // loop of the master driver in HiveMind. The loop needs no delay and shouldn't
+        // have one as it will only increase latency, which could lead to instability.
         spi_slave_transmit(STM_SPI, &m_transaction, portMAX_DELAY);
     }
 }
 
 void SpiStm::updateOutboundHeader() {
     // TODO: get actual system state
-    m_outboundHeader.txSizeWord = m_outboundMessage.m_sizeBytes >> 2;
-    m_outboundHeader.rxSizeWord = m_inboundMessage.m_sizeBytes >> 2;
+    m_outboundHeader.txSizeWord = BYTES_TO_WORDS(m_outboundMessage.m_sizeBytes);
+    m_outboundHeader.rxSizeWord = BYTES_TO_WORDS(m_inboundMessage.m_sizeBytes);
     m_outboundHeader.crc8 = calculateCRC8_software(&m_outboundHeader, 3);
     if (m_outboundHeader.txSizeWord == 0) {
         m_isBusy = false;
@@ -166,27 +170,30 @@ void SpiStm::updateOutboundHeader() {
 
 void SpiStm::notifyMaster() { gpio_set_level(STM_USER_0, 1); }
 
-void IRAM_ATTR SpiStm::transactionCallback(void* instance, spi_slave_transaction_t* transaction) {
-    auto* _this = static_cast<SpiStm*>(instance);
+void IRAM_ATTR SpiStm::transactionCallback(void* context, spi_slave_transaction_t* transaction) {
+    auto* instance = static_cast<SpiStm*>(context);
     if (transaction->length != transaction->trans_len) {
         // Transaction timed out before it could finish.
         return;
     }
-    switch (_this->m_rxState) {
+    switch (instance->m_rxState) {
 
     case receiveState::RECEIVING_HEADER:
-        _this->m_rxState = receiveState::PARSING_HEADER;
+        instance->m_rxState = receiveState::PARSING_HEADER;
         break;
     case receiveState::RECEIVING_PAYLOAD:
-        _this->m_rxState = receiveState::VALIDATE_CRC;
+        instance->m_rxState = receiveState::VALIDATE_CRC;
         break;
     default:
-        // Should never get here
+        // This should never be called. The state machine should never be in any other state during
+        // the ISR.
+        instance->m_logger.log(LogLevel::Error, "Interrupted called on invalid state");
+        instance->m_txState = transmitState::ERROR;
         break;
     }
 
-    if (_this->m_txState == transmitState::SENDING_PAYLOAD) { // TODO: confirm reception with ack
-        _this->m_txState = transmitState::SENDING_HEADER;
-        _this->m_outboundMessage.m_sizeBytes = 0;
+    if (instance->m_txState == transmitState::SENDING_PAYLOAD) { // TODO: confirm reception with ack
+        instance->m_txState = transmitState::SENDING_HEADER;
+        instance->m_outboundMessage.m_sizeBytes = 0;
     }
 }
