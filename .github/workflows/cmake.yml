@@ -63,6 +63,7 @@ jobs:
         cd build
         . $IDF_PATH/export.sh
         apt-get install python3-protobuf
+        pip3 install protobuf
         cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolchain-esp32.cmake
 
     - name: build
