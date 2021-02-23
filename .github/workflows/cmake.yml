@@ -55,7 +55,6 @@ jobs:
       image: swarmus/embedded
     steps:
       - uses: actions/checkout@v2
-
     - name: prepare
       run: |
         mkdir -p build
