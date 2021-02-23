@@ -3,6 +3,7 @@
 
 #include "bsp/ISpiStm.h"
 
+// TODO: implement this class as a tcp socket
 class SpiStm : public ISpiStm {
   public:
     SpiStm() = default;
