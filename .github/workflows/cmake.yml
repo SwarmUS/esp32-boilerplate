@@ -49,22 +49,22 @@ jobs:
         . /opt/ros/$ROS_DISTRO/setup.sh
         . ./devel/setup.sh
         catkin_make hive_connect_doc
+
   build-esp:
     runs-on: ubuntu-latest
     container:
       image: swarmus/embedded
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      - name: prepare
+    - name: prepare
       run: |
         mkdir -p build
         cd build
         . $IDF_PATH/export.sh
         cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolchain-esp32.cmake
 
-      - name: build-esp
+    - name: build
       run: |
         . $IDF_PATH/export.sh
         make
-        
