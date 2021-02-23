@@ -55,13 +55,15 @@ jobs:
       image: swarmus/embedded
     steps:
       - uses: actions/checkout@v2
-    - name: prepare
+
+      - name: prepare
       run: |
         mkdir -p build
         cd build
         . $IDF_PATH/export.sh
         cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolchain-esp32.cmake
-    - name: build-esp
+
+      - name: build-esp
       run: |
         . $IDF_PATH/export.sh
         make
