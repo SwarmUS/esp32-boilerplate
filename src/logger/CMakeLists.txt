@@ -1,4 +1,4 @@
-set(LIB_NAME "swarmus-connect-logger")
+set(LIB_NAME "swarmus-hiveconnect-logger")
 set(LIB_ALIAS "SwarmUS::HiveConnect::Logger")
 
 set(LIB_SOURCES

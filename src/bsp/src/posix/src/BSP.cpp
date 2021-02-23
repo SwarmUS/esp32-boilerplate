@@ -1,28 +1,18 @@
 #include "BSP.h"
-#include <FreeRTOS.h>
-#include <task.h>
+#include "BaseTask.h"
 #include <thread>
+
+constexpr uint8_t gc_spinnerCores = 1;
 
 BSP::~BSP() = default;
 
-void rosSpinTask(void* param) {
-    configASSERT(param != nullptr);
 
-    unsigned int loopRate = *(unsigned int*)param;
-    while (ros::ok()) {
-        ros::spinOnce();
-        vTaskDelay(loopRate);
-    }
-    vTaskEndScheduler();
-}
-
-BSP::BSP(const ros::NodeHandle& nodeHandle, const int loopRate) : m_loopRate(loopRate) {
+BSP::BSP(const ros::NodeHandle& nodeHandle, const int loopRate) : m_loopRate(loopRate), m_spinner(gc_spinnerCores)  {
     m_rosNodeHandle = std::make_shared<ros::NodeHandle>(nodeHandle);
 }
 
 void BSP::initChip() {
-    xTaskCreate(rosSpinTask, "ros_spinner", configMINIMAL_STACK_SIZE, (void*)&this->m_loopRate,
-                tskIDLE_PRIORITY + 1, NULL);
+    m_spinner.start();
 }
 
 ChipInfo BSP::getChipInfo() {

@@ -15,6 +15,7 @@ class BSP : public IBSP {
     std::shared_ptr<ros::NodeHandle> getNodeHandle();
 
   private:
+    ros::AsyncSpinner m_spinner;
     std::shared_ptr<ros::NodeHandle> m_rosNodeHandle;
     int m_loopRate;
 };

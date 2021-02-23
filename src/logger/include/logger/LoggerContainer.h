@@ -5,10 +5,10 @@
 
 namespace LoggerContainer {
 
-/**
- *@brief Return a reference to the global logger
- **/
-Logger& getLogger();
+    /**
+     *@brief Return a reference to the global logger
+     **/
+    Logger& getLogger();
 
 } // namespace LoggerContainer
 

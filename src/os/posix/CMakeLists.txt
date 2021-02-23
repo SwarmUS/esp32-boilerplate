@@ -21,6 +21,7 @@ target_include_directories(${LIB_NAME}
 target_link_libraries(${LIB_NAME}
     PRIVATE
         SwarmUS::Propolis::OS::POSIX
+        libpthread.so.0
 )
 
 
