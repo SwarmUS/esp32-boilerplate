@@ -141,6 +141,7 @@ void SpiStm::execute() {
         txLengthBytes = m_outboundMessage.m_sizeBytes;
         break;
     case transmitState::ERROR:
+        m_logger.log(LogLevel::Error, "Error within Spi driver STM");
         break;
     }
 

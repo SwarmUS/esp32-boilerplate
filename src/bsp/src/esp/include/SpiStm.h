@@ -35,7 +35,8 @@ class SpiStm : public ISpiStm {
     spi_slave_transaction_t m_transaction;
 
     struct Message {
-        // These buffers need to be word-alligned for DMA.
+        // These buffers need to be word-alligned for DMA. See:
+        // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/spi_slave.html#restrictions-and-known-issues
         WORD_ALIGNED_ATTR std::array<uint8_t, STM_SPI_MAX_MESSAGE_LENGTH> m_data;
         uint32_t m_sizeBytes;
     } m_inboundMessage, m_outboundMessage;
