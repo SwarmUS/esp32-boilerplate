@@ -1,7 +1,7 @@
 set(LIB_NAME "swarmus_hive_connect_freertos_posix")
 set(LIB_CONFIG_NAME "swarmus_hive_connect_freertos_posix_config")
-set(LIB_ALIAS "SwarmUs::HiveConnect::freertos::posix")
-set(LIB_CONFIG_ALIAS "SwarmUs::HiveConnect::freertos::posix::config")
+set(LIB_ALIAS "SwarmUS::HiveConnect::freertos::posix")
+set(LIB_CONFIG_ALIAS "SwarmUS::HiveConnect::freertos::posix::config")
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)

@@ -16,7 +16,7 @@ Project for the esp32 module and ros simulation node for SwarmUs.
 This project requires the esp-idf repo cloned and sourced to be able to compile. 
 It wil then need to be installed to set the the Extensa toolchain and other stuff. Simply run:
 ````
-git clone -b release/v4.2 --recurse-submodules https://github.com/espressif/esp-idf
+git clone -b v4.1 --recurse-submodules https://github.com/espressif/esp-idf
 esp-idf/install.xx (extension varies from platform to platform, use sh for linux and bat for windows)
 git clone https://github.com/SwarmUS/HiveConnect
 ````

@@ -1,5 +1,5 @@
 set(LIB_NAME "swarmus_hive_connect_bsp_posix")
-set(LIB_ALIAS "SwarmUs::HiveConnect::BSP::Platform")
+set(LIB_ALIAS "SwarmUS::HiveConnect::BSP::Platform")
 
 set(LIB_SOURCES
         src/BSP.cpp
@@ -12,6 +12,7 @@ set(LIB_PRIVATE_HEADERS
         include/BSP.h
         include/System.h
         include/UserInterface.h
+        include/SpiStm.h
 )
 
 add_library(${LIB_NAME} ${LIB_SOURCES} ${LIB_PRIVATE_HEADERS})
@@ -32,7 +33,7 @@ target_include_directories(${LIB_NAME}
 target_link_libraries(${LIB_NAME}
         PUBLIC
         # Defined libraries
-        SwarmUs::HiveConnect::FreeRTOS
+        SwarmUS::HiveConnect::OS
         PRIVATE
         ${catkin_LIBRARIES}
 )

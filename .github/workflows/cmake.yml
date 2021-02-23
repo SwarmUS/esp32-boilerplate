@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build-noetic:
     runs-on: ubuntu-latest
     container:
       image: swarmus/embedded
@@ -15,41 +15,59 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: true
+        path: 'catkin_ws/src/HiveConnect'
     # Verify local build
     - name: build-local
       run: |
+        cd catkin_ws
         . /opt/ros/$ROS_DISTRO/setup.sh
-        mkdir -p build-local
-        cd build-local
-        cmake ..
-        make
+        rosdep update
+        apt update
+        rosdep install --from-paths src --ignore-src -r -y
+        catkin_make
     # Run tests
     - name: tests
       run: |
-        . /opt/ros/$ROS_DISTRO/setup.sh
-        cd build-local
-        ctest -V
+        cd catkin_ws
+         . /opt/ros/$ROS_DISTRO/setup.sh
+         . ./devel/setup.sh
+         cd build/HiveConnect
+         ctest -V
 
     # Check format
     - name: format
       run: |
+        cd catkin_ws
         . /opt/ros/$ROS_DISTRO/setup.sh
-        cd build-local
-        make hive_connect_check_format
+        . ./devel/setup.sh
+        catkin_make hive_connect_check_format
 
     # Generate documentation
     - name: doc
       run: |
+        cd catkin_ws
         . /opt/ros/$ROS_DISTRO/setup.sh
-        cd build-local
-        make hive_connect_doc
+        . ./devel/setup.sh
+        catkin_make hive_connect_doc
 
-    # Verify esp build
-    - name: build-esp
+  build-esp:
+    runs-on: ubuntu-latest
+    container:
+      image: swarmus/embedded
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: prepare
+      run: |
+        mkdir -p build
+        cd build
+        . $IDF_PATH/export.sh
+        apt-get install python3-protobuf
+        pip3 install protobuf
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolchain-esp32.cmake
+
+    - name: build
       run: |
         . $IDF_PATH/export.sh
-        mkdir -p build-esp
-        cd build-esp
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolchain-esp32.cmake -DTARGET=esp32
+        cd build
         make
-        

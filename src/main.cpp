@@ -1,38 +1,39 @@
+#include "AbstractTask.h"
+#include "Task.h"
 #include "bsp/Container.h"
 #include "logger/Logger.h"
-#include <FreeRTOS.h>
-#include <FreeRTOSConfig.h>
-#include <task.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void dummyTask(void* param) {
-    (void)param;
-    printf("Hello world!\n");
+class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
+  public:
+    StmMessageSenderTask(const char* taskName, UBaseType_t priority) :
+        AbstractTask(taskName, priority) {}
 
-    /* Print chip information */
-    IBSP* bsp = &BspContainer::getBSP();
-    ChipInfo info = bsp->getChipInfo();
-    Logger logger = Logger(LogLevel::Info, BspContainer::getUserInterface());
+    ~StmMessageSenderTask() override = default;
 
-    while (true) {
-        logger.log(LogLevel::Info, "System has %d cores", info.m_cores);
-        if (info.m_osType == ChipInfo::ESP) {
-            logger.log(LogLevel::Info, "System is running on target");
-        } else {
-            logger.log(LogLevel::Info, "System is running locally");
+  private:
+    void task() override {
+        auto& spi = BspContainer::getSpiStm();
+        while (true) {
+            if (!spi.isBusy()) {
+                const char message[] = "Hello STM";
+                spi.send((uint8_t*)message, sizeof(message));
+            }
+            Task::delay(100);
         }
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
-}
+};
 
 void app_main(void) {
     IBSP* bsp = &BspContainer::getBSP();
     bsp->initChip();
 
-    xTaskCreate(dummyTask, "dumb", configMINIMAL_STACK_SIZE * 4, NULL, 0 + 2, NULL);
+    static StmMessageSenderTask s_spiMessageSend("spi_send", tskIDLE_PRIORITY + 1);
+
+    s_spiMessageSend.start();
 }
 
 #ifdef __cplusplus

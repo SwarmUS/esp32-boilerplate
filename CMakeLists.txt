@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.13)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 option(DISABLE_EXTERNAL_WARNINGS "Disables warnings from external libs (gtest, freertos, etc)" ON)
 
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 project(hive_connect C CXX ASM)
 
 
@@ -20,8 +20,8 @@ if(COMPILE_ESP)
                     # try and trim the build; additional components
                     # will be included as needed based on dependency tree
                     # epstool_py always required
-                    COMPONENTS esp32 freertos esptool_py
-                    SDKCONFIG ${CMAKE_BINARY_DIR}/sdkconfig
+                    COMPONENTS esp32 freertos esptool_py driver
+                    SDKCONFIG ${CMAKE_CURRENT_SOURCE_DIR}/sdkconfig
                     BUILD_DIR ${CMAKE_BINARY_DIR})
     set(EXECUTABLE_NAME "${CMAKE_PROJECT_NAME}.elf")
 else()
@@ -38,9 +38,9 @@ add_executable(${EXECUTABLE_NAME} src/main.cpp) # Needs to be in the root of the
 # Link the libraries to the executable, depending on alias
 target_link_libraries(${EXECUTABLE_NAME}
         PUBLIC
-        SwarmUs::HiveConnect::FreeRTOS
-        SwarmUs::HiveConnect::BSP
-        SwarmUs::HiveConnect::Logger
+        SwarmUS::HiveConnect::OS
+        SwarmUS::HiveConnect::BSP
+        SwarmUS::HiveConnect::Logger
 )
 
 
@@ -77,6 +77,7 @@ if(ENABLE_TESTS)
 endif()
 
 # Include sources
+include(propolis/common)
 add_subdirectory(src)
 
 #Additional tooling include

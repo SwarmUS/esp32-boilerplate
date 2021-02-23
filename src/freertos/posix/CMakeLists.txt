@@ -1,5 +1,5 @@
 set(LIB_NAME "swarmus_hive_connect_freertos")
-set(LIB_ALIAS "SwarmUs::HiveConnect::FreeRTOS")
+set(LIB_ALIAS "SwarmUS::HiveConnect::FreeRTOS")
 
 
 include(freertos/common)
@@ -34,10 +34,10 @@ target_include_directories(${LIB_NAME}
 
 target_link_libraries(${LIB_NAME}
         PUBLIC
-        SwarmUs::HiveConnect::freertos::posix::config
+        SwarmUS::HiveConnect::freertos::posix::config
 
         PRIVATE
-        SwarmUs::HiveConnect::freertos::posix
+        SwarmUS::HiveConnect::freertos::posix
 
         FreeRTOS::Coroutine
         FreeRTOS::EventGroups

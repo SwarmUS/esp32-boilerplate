@@ -1,13 +1,15 @@
-set(LIB_NAME "swarmus-connect-logger")
-set(LIB_ALIAS "SwarmUs::HiveConnect::Logger")
+set(LIB_NAME "swarmus-hiveconnect-logger")
+set(LIB_ALIAS "SwarmUS::HiveConnect::Logger")
 
 set(LIB_SOURCES
     src/Logger.cpp
+    src/LoggerContainer.cpp
 )
 
 set(LIB_HEADERS
     include/logger/ILogger.h
     include/logger/Logger.h
+    include/logger/LoggerContainer.h
 )
 
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS} ${LIB_SOURCES})
@@ -21,9 +23,8 @@ target_include_directories(${LIB_NAME}
 
 target_link_libraries(${LIB_NAME}
     PUBLIC
-        SwarmUs::HiveConnect::BSP
-        SwarmUs::HiveConnect::FreeRTOS
-        SwarmUs::HiveConnect::TaskManager
+        SwarmUS::HiveConnect::BSP
+        SwarmUS::HiveConnect::OS
 )
 
 if(ENABLE_TESTS)

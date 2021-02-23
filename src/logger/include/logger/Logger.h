@@ -4,20 +4,19 @@
 #include "logger/ILogger.h"
 #include <bsp/IUserInterface.h>
 
-#include <FreeRTOS.h>
-#include <semphr.h>
+#include <Mutex.h>
 
 class Logger : public ILogger {
   public:
     Logger(LogLevel level, const IUserInterface& ui);
-    ~Logger() override;
+    ~Logger() override = default;
 
-    LogRet log(LogLevel level, const char* format, ...) const override;
+    LogRet log(LogLevel level, const char* format, ...) override;
 
   private:
-    SemaphoreHandle_t m_semaphore;
-    LogLevel m_logLevel;
     const IUserInterface& m_ui;
+    Mutex m_mutex;
+    LogLevel m_logLevel;
 };
 
 #endif // __LOGGER_H_

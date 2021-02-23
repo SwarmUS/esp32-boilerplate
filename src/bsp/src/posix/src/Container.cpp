@@ -1,5 +1,6 @@
 #include "bsp/Container.h"
 #include "BSP.h"
+#include "SpiStm.h"
 #include "UserInterface.h"
 
 #define ROS_SPIN_LOOP_RATE_MS 200
@@ -17,5 +18,11 @@ IUserInterface& getUserInterface() {
     static UserInterface s_ui;
 
     return s_ui;
+}
+
+ISpiStm& getSpiStm() {
+    static SpiStm s_spiStm;
+
+    return s_spiStm;
 }
 } // namespace BspContainer

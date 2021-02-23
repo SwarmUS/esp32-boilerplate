@@ -1,10 +1,10 @@
 BasedOnStyle: LLVM
 Language: Cpp
-Standard: Cpp11
+Standard: c++17
 IndentWidth: 4
 ColumnLimit: 100
 BinPackParameters: false
-AlwaysBreakTemplateDeclarations: true
+AlwaysBreakTemplateDeclarations: Yes
 PenaltyReturnTypeOnItsOwnLine: 10000
 BreakConstructorInitializers: AfterColon
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
