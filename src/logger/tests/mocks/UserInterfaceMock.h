@@ -27,6 +27,44 @@ class UserInterfaceMock final : public IUserInterface {
         m_printCallCounter++;
         return 0;
     }
+
+    int printInfo(const char* format, va_list args) const override {
+        (void)format;
+        (void)args;
+        m_printCallCounter++;
+        return 0;
+    }
+
+    int printDebug(const char* format, va_list args) const override {
+        (void)format;
+        (void)args;
+        m_printCallCounter++;
+        return 0;
+    }
+
+    int printWarning(const char* format, va_list args) const override {
+        (void)format;
+        (void)args;
+        m_printCallCounter++;
+        return 0;
+    }
+
+    int printError(const char* format, va_list args) const override {
+        (void)format;
+        (void)args;
+        m_printCallCounter++;
+        return 0;
+    }
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern void app_main() {}
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __MOCK_UI_H_
