@@ -2,6 +2,7 @@
 #include "Task.h"
 #include "bsp/Container.h"
 #include "logger/Logger.h"
+#include "NetworkConfig.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,6 +35,7 @@ void app_main(void) {
     static StmMessageSenderTask s_spiMessageSend("spi_send", tskIDLE_PRIORITY + 1);
 
     s_spiMessageSend.start();
+    networkInit();
 }
 
 #ifdef __cplusplus
