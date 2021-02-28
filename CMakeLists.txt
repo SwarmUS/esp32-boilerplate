@@ -52,6 +52,14 @@ if(COMPILE_ESP)
             hive_connect_flash
             COMMAND openocd -f ${CMAKE_CURRENT_SOURCE_DIR}/tools/openocd/adafruit-esp.cfg -c "program_esp ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin 0x10000 verify exit"
     )
+    add_custom_target(
+            hive_connect_bootloader_flash
+            COMMAND openocd -f ${CMAKE_CURRENT_SOURCE_DIR}/tools/openocd/adafruit-esp.cfg -c "program_esp ${CMAKE_BINARY_DIR}/bootloader/bootloader.bin 0x10000 verify exit"
+    )
+    add_custom_target(
+            hive_connect_partition_table_flash
+            COMMAND openocd -f ${CMAKE_CURRENT_SOURCE_DIR}/tools/openocd/adafruit-esp.cfg -c "program_esp ${CMAKE_BINARY_DIR}/partition_table/partition-table.bin 0x8000 verify exit"
+    )
 else()
     #Target to launch local executable
     add_custom_target(
