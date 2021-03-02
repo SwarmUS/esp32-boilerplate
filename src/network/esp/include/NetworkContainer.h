@@ -9,11 +9,7 @@ namespace NetworkContainer {
 /**
  * @return The network manager instance
  */
-NetworkManager& getNetworkManager() {
-    static NetworkManager s_networkManager(LoggerContainer::getLogger());
-
-    return s_networkManager;
-}
+NetworkManager& getNetworkManager();
 } // namespace NetworkContainer
 
 #endif // __NETWORKCONTAINER_H__

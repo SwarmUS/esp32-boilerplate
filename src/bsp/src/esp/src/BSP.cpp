@@ -9,8 +9,7 @@
 #include "nvs_flash.h"
 #include <driver/gpio.h>
 
-BSP::BSP() = default;
-BSP::~BSP() = default;
+BSP::BSP(NetworkManager& networkManager) : m_networkManager(networkManager) {}
 
 void BSP::initChip() {
     // Init event loop
@@ -20,8 +19,7 @@ void BSP::initChip() {
     // Init spi slave
     initSPI();
 
-    NetworkManager* networkManager = &NetworkContainer::getNetworkManager();
-    networkManager->start();
+    m_networkManager.start();
 }
 
 ChipInfo BSP::getChipInfo() {

@@ -33,7 +33,7 @@ class NetworkManager {
 
   private:
     ILogger& m_logger;
-    BaseTask<configMINIMAL_STACK_SIZE * 3> m_driverTask;
+    BaseTask<configMINIMAL_STACK_SIZE * 3> m_networkExecuteTask;
     esp_ip_addr_t m_ipAddress;
     enum class NetworkState { CONNECTING = 0, CONNECTED, DISCONNECTED } m_state;
 

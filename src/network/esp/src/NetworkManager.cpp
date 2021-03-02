@@ -1,25 +1,29 @@
 #include "NetworkManager.h"
 #include "NetworkConfig.h"
 
-constexpr uint8_t gs_loopRate = 100;
+constexpr uint8_t gs_LOOP_RATE = 100;
 
-static void task(void* context) {
+static void networkExecuteTask(void* context) {
     if (context != nullptr) {
         while (true) {
             static_cast<NetworkManager*>(context)->execute();
+            Task::delay(gs_LOOP_RATE);
         }
     }
 }
 
 NetworkManager::NetworkManager(ILogger& logger) :
-    m_logger(logger), m_driverTask("stm_spi_driver", tskIDLE_PRIORITY + 1, task, this) {
-    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &eventHandler, this));
-    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &eventHandler, this));
+    m_logger(logger),
+    m_networkExecuteTask("stm_spi_driver", tskIDLE_PRIORITY + 1, networkExecuteTask, this) {
+
     // Initialise to 0.0.0.0
     m_ipAddress.u_addr.ip4.addr = 0;
 }
 
 void NetworkManager::initNetworkInterface() {
+    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &eventHandler, this));
+    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &eventHandler, this));
+
     ESP_ERROR_CHECK(esp_netif_init());
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -53,7 +57,7 @@ void NetworkManager::eventHandler(void* context,
 
 void NetworkManager::start() {
     initNetworkInterface();
-    m_driverTask.start();
+    m_networkExecuteTask.start();
 }
 
 void NetworkManager::execute() {
@@ -72,10 +76,9 @@ void NetworkManager::execute() {
     case NetworkState::DISCONNECTED:
         // TODO: handle disconnection to the network, like closing server socket and such
         break;
-        ;
+    default:
+        break;
     }
-
-    Task::delay(gs_loopRate);
 }
 
 esp_ip4_addr_t NetworkManager::getIP() const { return m_ipAddress.u_addr.ip4; }

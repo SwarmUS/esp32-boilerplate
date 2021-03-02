@@ -4,6 +4,7 @@ set(LIB_ALIAS "SwarmUS::HiveConnect::Network")
 set(LIB_SOURCES
         src/NetworkConfig.cpp
         src/NetworkManager.cpp
+        src/NetworkContainer.cpp
         )
 
 set(LIB_HEADERS

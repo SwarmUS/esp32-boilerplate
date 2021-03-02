@@ -1,5 +1,6 @@
 #include "bsp/Container.h"
 #include "BSP.h"
+#include "NetworkContainer.h"
 #include "SpiStm.h"
 #include "UserInterface.h"
 #include "logger/LoggerContainer.h"
@@ -7,7 +8,7 @@
 namespace BspContainer {
 
 IBSP& getBSP() {
-    static BSP s_bsp;
+    static BSP s_bsp(NetworkContainer::getNetworkManager());
 
     return s_bsp;
 }
