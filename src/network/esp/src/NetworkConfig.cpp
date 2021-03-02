@@ -14,6 +14,8 @@
 #include "esp_wifi.h"
 #include "nvs_flash.h"
 
+#include "DefaultNetworkConfig.h"
+
 static const char* TAG = "scan";
 
 static void event_handler(void* arg,
@@ -46,20 +48,33 @@ void networkInit() {
     assert(sta_netif);
 
     // Initialize and start WiFi
-    wifi_config_t wifi_config = {
+    /*wifi_config_t wifi_config = {
         .sta =
             {
                 .ssid = DEFAULT_SSID,
                 .password = DEFAULT_PWD,
                 .scan_method = DEFAULT_SCAN_METHOD,
-                .sort_method = DEFAULT_SORT_METHOD,
+                .sort_method = WIFI_CONNECT_AP_BY_SIGNAL,
                 .threshold.rssi = DEFAULT_RSSI,
                 .threshold.authmode = DEFAULT_AUTHMODE,
             },
     };
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
-    ESP_ERROR_CHECK(esp_wifi_start());
+    ESP_ERROR_CHECK(esp_wifi_start());*/
 }
 
-wifi_config_t getNetworkConfig() {}
+wifi_mode_t NetworkConfig::getMode() { return WIFI_MODE_STA; }
+
+wifi_config_t* NetworkConfig::getDefaultNetworkConfig() {
+    static wifi_config_t s_wifiConfig;
+    std::memcpy(s_wifiConfig.sta.ssid, DEFAULT_SSID, strlen(DEFAULT_SSID));
+    std::memcpy(s_wifiConfig.sta.password, PASSWORD_PASSWORD, strlen(DEFAULT_SSID));
+    s_wifiConfig.sta.scan_method = WIFI_FAST_SCAN;
+    s_wifiConfig.sta.sort_method = WIFI_CONNECT_AP_BY_SIGNAL;
+    s_wifiConfig.sta.threshold.rssi = -70;
+    s_wifiConfig.sta.threshold.authmode = DEFAULT_AUTH_MODE;
+    return &s_wifiConfig;
+}
+
+esp_interface_t NetworkConfig::getInterface() { return ESP_IF_WIFI_STA; }

@@ -3,8 +3,10 @@
 
 #include "esp_event.h"
 
-using network_event_handler_t = void*(void*, esp_event_base_t, int32_t, void*);
-
-void networkInit();
+namespace NetworkConfig {
+wifi_mode_t getMode();
+wifi_config_t* getDefaultNetworkConfig();
+esp_interface_t getInterface();
+} // namespace NetworkConfig
 
 #endif // HIVE_CONNECT_NETWORKCONFIG_H

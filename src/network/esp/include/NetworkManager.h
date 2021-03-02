@@ -17,22 +17,16 @@ class NetworkManager {
     void execute();
     esp_ip4_addr_t getIP() const;
 
-
   private:
     ILogger& m_logger;
     BaseTask<configMINIMAL_STACK_SIZE * 3> m_driverTask;
     esp_ip_addr_t m_ipAddress;
+    enum NetworkState { START = 0, MONITOR, ERROR } m_state;
 
     static void eventHandler(void* context,
                              esp_event_base_t eventBase,
                              int32_t eventId,
                              void* eventData);
-
-    enum NetworkState {
-        START = 0,
-        MONITOR,
-        ERROR
-    } m_state;
 };
 
 #endif // HIVE_CONNECT_NETWORKMANAGER_H
