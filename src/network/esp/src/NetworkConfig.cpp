@@ -15,7 +15,7 @@ wifi_config_t* NetworkConfig::getDefaultNetworkConfig() {
     std::memcpy(s_wifiConfig.sta.password, DEFAULT_PASSWORD, strlen(DEFAULT_PASSWORD));
     s_wifiConfig.sta.scan_method = WIFI_FAST_SCAN;
     s_wifiConfig.sta.sort_method = WIFI_CONNECT_AP_BY_SIGNAL;
-    s_wifiConfig.sta.threshold.rssi = -127;
+    s_wifiConfig.sta.threshold.rssi = INT8_MIN;
     s_wifiConfig.sta.threshold.authmode = DEFAULT_AUTH_MODE;
     return &s_wifiConfig;
 }
