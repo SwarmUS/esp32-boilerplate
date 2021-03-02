@@ -1,8 +1,8 @@
 #include "AbstractTask.h"
+#include "NetworkConfig.h"
 #include "Task.h"
 #include "bsp/Container.h"
 #include "logger/Logger.h"
-#include "NetworkConfig.h"
 
 #ifdef __cplusplus
 extern "C" {

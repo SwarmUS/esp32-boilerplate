@@ -3,10 +3,13 @@ set(LIB_ALIAS "SwarmUS::HiveConnect::Network")
 
 set(LIB_SOURCES
         src/NetworkConfig.cpp
+        src/NetworkManager.cpp
         )
 
 set(LIB_HEADERS
         include/NetworkConfig.h
+        include/NetworkContainer.h
+        include/NetworkManager.h
         )
 
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS} ${LIB_SOURCES})
@@ -20,8 +23,8 @@ target_include_directories(${LIB_NAME}
 
 target_link_libraries(${LIB_NAME}
         PUBLIC
-        SwarmUS::HiveConnect::BSP
         SwarmUS::HiveConnect::OS
+        SwarmUS::HiveConnect::Logger
         idf::nvs_flash
         )
 
