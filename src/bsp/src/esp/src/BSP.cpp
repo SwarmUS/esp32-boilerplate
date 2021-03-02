@@ -1,12 +1,13 @@
 #include "BSP.h"
+#include "NetworkContainer.h"
 #include "driver/spi_slave.h"
-#include "esp_system.h"
 #include "esp_event.h"
+#include "esp_system.h"
 #include "hal/gpio_types.h"
 #include "hal/pin_map.h"
 #include "hal/spi_callbacks.h"
-#include <driver/gpio.h>
 #include "nvs_flash.h"
+#include <driver/gpio.h>
 
 BSP::BSP() = default;
 BSP::~BSP() = default;
@@ -18,6 +19,9 @@ void BSP::initChip() {
     ESP_ERROR_CHECK(nvs_flash_init());
     // Init spi slave
     initSPI();
+
+    NetworkManager* networkManager = &NetworkContainer::getNetworkManager();
+    networkManager->start();
 }
 
 ChipInfo BSP::getChipInfo() {

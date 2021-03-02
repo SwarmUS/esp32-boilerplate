@@ -1,9 +1,6 @@
 #include "AbstractTask.h"
-#include "NetworkConfig.h"
-#include "NetworkContainer.h"
 #include "Task.h"
 #include "bsp/Container.h"
-#include "logger/Logger.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,12 +32,7 @@ void app_main(void) {
 
     static StmMessageSenderTask s_spiMessageSend("spi_send", tskIDLE_PRIORITY + 1);
 
-    static auto s_networkManager = NetworkContainer::getNetworkManager();
-
-    s_networkManager.initNetworkInterface();
-    s_networkManager.start();
-
-    // s_spiMessageSend.start();
+    s_spiMessageSend.start();
 }
 
 #ifdef __cplusplus

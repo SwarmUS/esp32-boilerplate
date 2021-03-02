@@ -49,7 +49,10 @@ void NetworkManager::eventHandler(void* context,
     }
 }
 
-void NetworkManager::start() { m_driverTask.start(); }
+void NetworkManager::start() {
+    initNetworkInterface();
+    m_driverTask.start();
+}
 
 void NetworkManager::execute() {
     switch (m_state) {
