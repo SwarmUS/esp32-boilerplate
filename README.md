@@ -51,7 +51,7 @@ This has been tested on Ubuntu 20.04 but the same logic should apply to any syst
 
 ## Network configuration
 
-The network SSID, password and encryption type need to be provided within the file src/network/esp/DefaultNetworkConfig.cmake. In the future, there will be a cleaner entry point to set thos parameter, but for now use this. The authentication method should work with pretty much every residential networks, if it needs to be changed, refer to the [doc from esp](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/network/esp_wifi.html#_CPPv416wifi_auth_mode_t) for the available types.
+The network SSID, password and encryption type need to be provided within the file src/network/esp/DefaultNetworkConfig.cmake. In the future, there will be a cleaner entry point to set those parameter, but for now use this. The authentication method should work with pretty much every residential networks, if it needs to be changed, refer to the [doc from esp](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/network/esp_wifi.html#_CPPv416wifi_auth_mode_t) for the available types.
 
 ## Running
 As can be seen in the scripts, the target can be run locally with a make run command and on the esp32 using the idf.py python script to flash and open a serial on the esp32.

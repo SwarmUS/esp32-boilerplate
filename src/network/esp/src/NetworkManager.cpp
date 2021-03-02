@@ -77,6 +77,7 @@ void NetworkManager::execute() {
         // TODO: handle disconnection to the network, like closing server socket and such
         break;
     default:
+        m_logger.log(LogLevel::Warn, "Reached unintended case within network manager");
         break;
     }
 }
