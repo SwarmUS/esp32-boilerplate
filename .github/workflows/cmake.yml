@@ -66,8 +66,8 @@ jobs:
         pip3 install protobuf
         cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/esp-idf/toolchain-esp32.cmake
 
-    - name: build
+    - name: build-target
       run: |
         . $IDF_PATH/export.sh
         cd build
-        make
+        make hive_connect.elf
