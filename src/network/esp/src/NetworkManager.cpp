@@ -38,13 +38,14 @@ void NetworkManager::eventHandler(void* context,
     if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_STA_START) {
         esp_wifi_connect();
     } else if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_STA_DISCONNECTED) {
-        esp_wifi_connect();
+        manager->m_logger.log(LogLevel::Error, "Network error, attempting to reconnect");
+        manager->m_state = NetworkState::CONNECTED;
     } else if (eventBase == IP_EVENT && eventId == IP_EVENT_STA_GOT_IP) {
         auto* event = (ip_event_got_ip_t*)eventData;
         manager->m_logger.log(LogLevel::Info, "Network manager got ip:" IPSTR,
                               IP2STR(&event->ip_info.ip));
         manager->m_ipAddress.u_addr.ip4 = event->ip_info.ip;
-        manager->m_state = NetworkState::MONITOR;
+        manager->m_state = NetworkState::CONNECTED;
     }
 }
 
@@ -53,19 +54,17 @@ void NetworkManager::start() { m_driverTask.start(); }
 void NetworkManager::execute() {
     switch (m_state) {
 
-    case NetworkState::START:
+    case NetworkState::CONNECTING:
         ESP_ERROR_CHECK(esp_wifi_set_mode(NetworkConfig::getMode()));
         ESP_ERROR_CHECK(esp_wifi_set_config(NetworkConfig::getInterface(),
                                             NetworkConfig::getDefaultNetworkConfig()));
         ESP_ERROR_CHECK(esp_wifi_start());
         break;
-    case NetworkState::MONITOR:
-        // TODO: start tcp server to monitor message and such
-        break;
-    case NetworkState::ERROR:
-        // TODO: upon detection of an error diconnect from network and retry connection
+    case NetworkState::CONNECTED:
+        // TODO: start tcp server to monitor messages and such
         break;
     }
+    Task::delay(100);
 }
 
 esp_ip4_addr_t NetworkManager::getIP() const { return m_ipAddress.u_addr.ip4; }
