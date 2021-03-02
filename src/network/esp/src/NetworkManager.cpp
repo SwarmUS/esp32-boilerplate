@@ -1,6 +1,8 @@
 #include "NetworkManager.h"
 #include "NetworkConfig.h"
 
+constexpr uint8_t gs_loopRate = 100;
+
 static void task(void* context) {
     if (context != nullptr) {
         while (true) {
@@ -39,7 +41,7 @@ void NetworkManager::eventHandler(void* context,
         esp_wifi_connect();
     } else if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_STA_DISCONNECTED) {
         manager->m_logger.log(LogLevel::Error, "Network error, attempting to reconnect");
-        manager->m_state = NetworkState::CONNECTED;
+        manager->m_state = NetworkState::DISCONNECTED;
     } else if (eventBase == IP_EVENT && eventId == IP_EVENT_STA_GOT_IP) {
         auto* event = (ip_event_got_ip_t*)eventData;
         manager->m_logger.log(LogLevel::Info, "Network manager got ip:" IPSTR,
@@ -55,6 +57,7 @@ void NetworkManager::start() {
 }
 
 void NetworkManager::execute() {
+
     switch (m_state) {
 
     case NetworkState::CONNECTING:
@@ -66,8 +69,13 @@ void NetworkManager::execute() {
     case NetworkState::CONNECTED:
         // TODO: start tcp server to monitor messages and such
         break;
+    case NetworkState::DISCONNECTED:
+        // TODO: handle disconnection to the network, like closing server socket and such
+        break;
+        ;
     }
-    Task::delay(100);
+
+    Task::delay(gs_loopRate);
 }
 
 esp_ip4_addr_t NetworkManager::getIP() const { return m_ipAddress.u_addr.ip4; }
