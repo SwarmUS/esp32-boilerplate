@@ -12,7 +12,7 @@
 #include "esp_mesh_internal.h"
 #include "esp_system.h"
 #include "esp_wifi.h"
-#include "nvs_flash.h"
+
 
 #include "DefaultNetworkConfig.h"
 
@@ -72,7 +72,7 @@ wifi_config_t* NetworkConfig::getDefaultNetworkConfig() {
     std::memcpy(s_wifiConfig.sta.password, DEFAULT_PASSWORD, strlen(DEFAULT_PASSWORD));
     s_wifiConfig.sta.scan_method = WIFI_FAST_SCAN;
     s_wifiConfig.sta.sort_method = WIFI_CONNECT_AP_BY_SIGNAL;
-    s_wifiConfig.sta.threshold.rssi = -70;
+    s_wifiConfig.sta.threshold.rssi = -127;
     s_wifiConfig.sta.threshold.authmode = DEFAULT_AUTH_MODE;
     return &s_wifiConfig;
 }

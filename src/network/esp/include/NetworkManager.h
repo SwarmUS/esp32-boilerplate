@@ -21,7 +21,7 @@ class NetworkManager {
     ILogger& m_logger;
     BaseTask<configMINIMAL_STACK_SIZE * 3> m_driverTask;
     esp_ip_addr_t m_ipAddress;
-    enum NetworkState { START = 0, MONITOR, ERROR } m_state;
+    enum class NetworkState { START = 0, MONITOR, ERROR } m_state;
 
     static void eventHandler(void* context,
                              esp_event_base_t eventBase,

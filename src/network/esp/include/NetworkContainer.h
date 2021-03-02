@@ -1,15 +1,16 @@
 #ifndef __NETWORKCONTAINER_H__
 #define __NETWORKCONTAINER_H__
 
-#include <array>
+#include "NetworkManager.h"
+#include "logger/LoggerContainer.h"
 
-enum class NetworkManagerStates {
-    INIT_NET_INTERFACE = 0,
-    JOIN_NETWORK,
-    MONITOR_MESSAGES,
-    LEAVE_NETWORK,
+namespace NetworkContainer {
 
-    STATE_COUNT
-};
+NetworkManager& getNetworkManager() {
+    static NetworkManager s_networkManager(LoggerContainer::getLogger());
+
+    return s_networkManager;
+}
+} // namespace NetworkContainer
 
 #endif // __NETWORKCONTAINER_H__

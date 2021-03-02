@@ -1,7 +1,7 @@
 #include "NetworkManager.h"
 #include "NetworkConfig.h"
 
-void task(void* context) {
+static void task(void* context) {
     if (context != nullptr) {
         while (true) {
             static_cast<NetworkManager*>(context)->execute();
@@ -19,7 +19,6 @@ NetworkManager::NetworkManager(ILogger& logger) :
 
 void NetworkManager::initNetworkInterface() {
     ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
@@ -45,6 +44,7 @@ void NetworkManager::eventHandler(void* context,
         manager->m_logger.log(LogLevel::Info, "Network manager got ip:" IPSTR,
                               IP2STR(&event->ip_info.ip));
         manager->m_ipAddress.u_addr.ip4 = event->ip_info.ip;
+        manager->m_state = NetworkState::MONITOR;
     }
 }
 
@@ -53,16 +53,16 @@ void NetworkManager::start() { m_driverTask.start(); }
 void NetworkManager::execute() {
     switch (m_state) {
 
-    case START:
+    case NetworkState::START:
         ESP_ERROR_CHECK(esp_wifi_set_mode(NetworkConfig::getMode()));
         ESP_ERROR_CHECK(esp_wifi_set_config(NetworkConfig::getInterface(),
                                             NetworkConfig::getDefaultNetworkConfig()));
         ESP_ERROR_CHECK(esp_wifi_start());
         break;
-    case MONITOR:
+    case NetworkState::MONITOR:
         // TODO: start tcp server to monitor message and such
         break;
-    case ERROR:
+    case NetworkState::ERROR:
         // TODO: upon detection of an error diconnect from network and retry connection
         break;
     }

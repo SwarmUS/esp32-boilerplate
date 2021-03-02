@@ -31,6 +31,5 @@ target_link_libraries(${LIB_NAME}
         PUBLIC
         SwarmUS::HiveConnect::OS
         SwarmUS::HiveConnect::Logger
-        idf::nvs_flash
         )
 

@@ -32,5 +32,6 @@ target_link_libraries(${LIB_NAME}
         PRIVATE
         idf::esp32
         idf::driver
+        idf::nvs_flash
         SwarmUS::Propolis::C::Common
 )

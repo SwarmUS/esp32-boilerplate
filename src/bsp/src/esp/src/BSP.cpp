@@ -1,15 +1,21 @@
 #include "BSP.h"
 #include "driver/spi_slave.h"
 #include "esp_system.h"
+#include "esp_event.h"
 #include "hal/gpio_types.h"
 #include "hal/pin_map.h"
 #include "hal/spi_callbacks.h"
 #include <driver/gpio.h>
+#include "nvs_flash.h"
 
 BSP::BSP() = default;
 BSP::~BSP() = default;
 
 void BSP::initChip() {
+    // Init event loop
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    // Init non volatile flash storage
+    ESP_ERROR_CHECK(nvs_flash_init());
     // Init spi slave
     initSPI();
 }
