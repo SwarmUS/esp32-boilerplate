@@ -9,7 +9,7 @@
  */
 
 #define DEFAULT_SSID "@SSID@"
-#define PASSWORD_PASSWORD "@PASSWORD@"
+#define DEFAULT_PASSWORD "@PASSWORD@"
 #define DEFAULT_AUTH_MODE @AUTH_MODE@
 
 // clang-format on

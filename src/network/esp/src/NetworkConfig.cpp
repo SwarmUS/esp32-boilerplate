@@ -69,7 +69,7 @@ wifi_mode_t NetworkConfig::getMode() { return WIFI_MODE_STA; }
 wifi_config_t* NetworkConfig::getDefaultNetworkConfig() {
     static wifi_config_t s_wifiConfig;
     std::memcpy(s_wifiConfig.sta.ssid, DEFAULT_SSID, strlen(DEFAULT_SSID));
-    std::memcpy(s_wifiConfig.sta.password, PASSWORD_PASSWORD, strlen(DEFAULT_SSID));
+    std::memcpy(s_wifiConfig.sta.password, DEFAULT_PASSWORD, strlen(DEFAULT_PASSWORD));
     s_wifiConfig.sta.scan_method = WIFI_FAST_SCAN;
     s_wifiConfig.sta.sort_method = WIFI_CONNECT_AP_BY_SIGNAL;
     s_wifiConfig.sta.threshold.rssi = -70;
