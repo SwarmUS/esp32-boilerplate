@@ -7,13 +7,28 @@
 
 #include "esp_wifi.h"
 
+/**
+ * @brief The network manager class. Handles the connnection to the network
+ */
 class NetworkManager {
   public:
     NetworkManager(ILogger& logger);
     ~NetworkManager() = default;
 
+    /**
+     * @brief Starts the network manager
+     */
     void start();
+
+    /**
+     * @brief Execution loop, called internally
+     */
     void execute();
+
+    /**
+     * @brief Returns the ip address of the module
+     * @return IPv4 address
+     */
     esp_ip4_addr_t getIP() const;
 
   private:

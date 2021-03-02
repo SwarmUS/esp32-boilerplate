@@ -6,6 +6,9 @@
 
 namespace NetworkContainer {
 
+/**
+ * @return The network manager instance
+ */
 NetworkManager& getNetworkManager() {
     static NetworkManager s_networkManager(LoggerContainer::getLogger());
 

@@ -3,9 +3,26 @@
 
 #include "esp_event.h"
 
+/**
+ * @brief Namespace for functions to get differecont configuration element for the netowrk
+ */
 namespace NetworkConfig {
+/**
+ * @brief Get the configured mode for the node (station, access-point, etc...)
+ * @return The configured mode
+ */
 wifi_mode_t getMode();
+
+/**
+ * @brief Get the network configuration (ssid, password, etc...)
+ * @return
+ */
 wifi_config_t* getDefaultNetworkConfig();
+
+/**
+ * @brief Get the interface to use for the network
+ * @return The netowrk interface
+ */
 esp_interface_t getInterface();
 } // namespace NetworkConfig
 
