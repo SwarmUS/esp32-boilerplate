@@ -60,10 +60,10 @@ void NetworkManager::execute() {
         ESP_ERROR_CHECK(esp_wifi_start());
         break;
     case MONITOR:
-        //TODO: start tcp server to monitor message and such
+        // TODO: start tcp server to monitor message and such
         break;
     case ERROR:
-        //TODO: upon detection of an error diconnect from network and retry connection
+        // TODO: upon detection of an error diconnect from network and retry connection
         break;
     }
 }
