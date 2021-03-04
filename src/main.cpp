@@ -1,7 +1,6 @@
 #include "AbstractTask.h"
 #include "Task.h"
 #include "bsp/Container.h"
-#include "logger/Logger.h"
 
 #ifdef __cplusplus
 extern "C" {
