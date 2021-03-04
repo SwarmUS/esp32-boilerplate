@@ -5,12 +5,17 @@ set(LIB_SOURCES
         src/NetworkConfig.cpp
         src/NetworkManager.cpp
         src/NetworkContainer.cpp
+        src/SocketFactory.cpp
+        src/TCPServer.cpp
         )
 
 set(LIB_HEADERS
         include/NetworkConfig.h
         include/NetworkContainer.h
         include/NetworkManager.h
+        include/SocketFactory.h
+        include/TCPClient.h
+        include/TCPServer.h
         )
 
 include(DefaultNetworkConfig.cmake)
@@ -32,5 +37,7 @@ target_link_libraries(${LIB_NAME}
         PUBLIC
         SwarmUS::HiveConnect::OS
         SwarmUS::HiveConnect::Logger
+        PRIVATE
+        idf::lwip
         )
 

@@ -4,15 +4,18 @@
 #include "logger/ILogger.h"
 #include <BaseTask.h>
 #include <Task.h>
+#include "TCPServer.h"
+#include "memory"
 
 #include "esp_wifi.h"
+
 
 /**
  * @brief The network manager class. Handles the connnection to the network
  */
 class NetworkManager {
   public:
-    NetworkManager(ILogger& logger);
+    NetworkManager(ILogger& logger, TCPServer& server);
     ~NetworkManager() = default;
 
     /**
@@ -33,6 +36,7 @@ class NetworkManager {
 
   private:
     ILogger& m_logger;
+    TCPServer& m_server;
     BaseTask<configMINIMAL_STACK_SIZE * 3> m_networkExecuteTask;
     esp_ip_addr_t m_ipAddress;
     enum class NetworkState { CONNECTING = 0, CONNECTED, DISCONNECTED } m_state;

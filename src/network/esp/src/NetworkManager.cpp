@@ -1,7 +1,10 @@
 #include "NetworkManager.h"
 #include "NetworkConfig.h"
+#include "SocketFactory.h"
+
 
 constexpr uint8_t gs_LOOP_RATE = 100;
+constexpr uint16_t gs_SERVER_PORT = 8000;
 
 static void networkExecuteTask(void* context) {
     if (context != nullptr) {
@@ -12,9 +15,11 @@ static void networkExecuteTask(void* context) {
     }
 }
 
-NetworkManager::NetworkManager(ILogger& logger) :
+NetworkManager::NetworkManager(ILogger& logger, TCPServer& server) :
     m_logger(logger),
-    m_networkExecuteTask("stm_spi_driver", tskIDLE_PRIORITY + 1, networkExecuteTask, this) {
+    m_networkExecuteTask("network_manager", tskIDLE_PRIORITY + 1, networkExecuteTask, this),
+    m_server(server) {
+    
 
     // Initialise to 0.0.0.0
     m_ipAddress.u_addr.ip4.addr = 0;
