@@ -1,21 +1,21 @@
 #ifndef HIVE_CONNECT_NETWORKMANAGER_H
 #define HIVE_CONNECT_NETWORKMANAGER_H
 
+#include "TCPServer.h"
 #include "logger/ILogger.h"
+#include "memory"
 #include <BaseTask.h>
 #include <Task.h>
-#include "TCPServer.h"
-#include "memory"
+#include <optional>
 
 #include "esp_wifi.h"
-
 
 /**
  * @brief The network manager class. Handles the connnection to the network
  */
 class NetworkManager {
   public:
-    NetworkManager(ILogger& logger, TCPServer& server);
+    NetworkManager(ILogger& logger);
     ~NetworkManager() = default;
 
     /**
@@ -36,10 +36,16 @@ class NetworkManager {
 
   private:
     ILogger& m_logger;
-    TCPServer& m_server;
-    BaseTask<configMINIMAL_STACK_SIZE * 3> m_networkExecuteTask;
+    TCPServer m_server;
+    BaseTask<configMINIMAL_STACK_SIZE * 4> m_networkExecuteTask;
     esp_ip_addr_t m_ipAddress;
-    enum class NetworkState { CONNECTING = 0, CONNECTED, DISCONNECTED } m_state;
+    enum class NetworkState {
+        INIT = 0,
+        LOOKING_FOR_NETWORK,
+        CONNECTED,
+        RUNNING,
+        DISCONNECTED
+    } m_state;
 
     static void eventHandler(void* context,
                              esp_event_base_t eventBase,

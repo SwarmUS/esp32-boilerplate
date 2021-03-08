@@ -22,5 +22,4 @@ class TCPClient {
     const sockaddr_in m_address;
 };
 
-
 #endif // HIVE_CONNECT_TCPCLIENT_H

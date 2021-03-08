@@ -1,10 +1,11 @@
 #include "NetworkContainer.h"
 #include "SocketFactory.h"
 
-NetworkManager& NetworkContainer::getNetworkManager() {
-    std::optional<TCPServer> server = SocketFactory::createTCPServer(8000);
+constexpr uint16_t g_SERVER_PORT = 8000;
 
-    static NetworkManager s_networkManager(LoggerContainer::getLogger(), server.value());
+NetworkManager& NetworkContainer::getNetworkManager() {
+
+    static NetworkManager s_networkManager(LoggerContainer::getLogger());
 
     return s_networkManager;
 }

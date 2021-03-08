@@ -3,14 +3,14 @@
 
 #include "TCPClient.h"
 #include "TCPServer.h"
-#include <optional>
 #include <memory>
+#include <optional>
 
-
+#define NO_SOCKET (-1)
 
 namespace SocketFactory {
 
-std::optional<TCPServer> createTCPServer(uint16_t port);
+int createTCPServerSocket(uint16_t port);
 
 std::optional<TCPClient> createTCPClient(const char* address, uint16_t port);
 

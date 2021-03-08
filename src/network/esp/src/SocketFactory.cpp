@@ -3,12 +3,12 @@
 
 #include "lwip/sockets.h"
 
-std::optional<TCPServer> SocketFactory::createTCPServer(uint16_t port) {
+int SocketFactory::createTCPServerSocket(uint16_t port) {
     sockaddr_in localAddress = {0};
     int socket = lwip_socket(AF_INET, SOCK_STREAM, 0);
     if (socket < 0) {
         // Failed to create socket
-        return {};
+        return -1;
     }
 
     localAddress.sin_family = AF_INET;
@@ -18,17 +18,16 @@ std::optional<TCPServer> SocketFactory::createTCPServer(uint16_t port) {
 
     if (lwip_bind(socket, (sockaddr*)&localAddress, sizeof(localAddress)) < 0) {
         lwip_close(socket);
-        return {};
+        return -1;
     }
 
-    // Not sure what this does...
+    // Puts the socket in listening mode
     if (lwip_listen(socket, 20) != 0) {
         lwip_close(socket);
-        return {};
+        return -1;
     }
 
-
-    return TCPServer(socket, LoggerContainer::getLogger());
+    return socket;
 }
 
 std::optional<TCPClient> SocketFactory::createTCPClient(const char* address, uint16_t port) {
