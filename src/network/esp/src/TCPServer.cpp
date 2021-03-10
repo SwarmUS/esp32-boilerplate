@@ -1,6 +1,6 @@
 #include "TCPServer.h"
-#include "SocketFactory.h"
 #include "NetworkConfig.h"
+#include "SocketFactory.h"
 #include "Task.h"
 #include "lwip/sockets.h"
 

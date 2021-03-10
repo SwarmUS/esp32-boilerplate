@@ -101,10 +101,9 @@ void NetworkManager::execute() {
         break;
     case NetworkState::RUNNING:
         // Idle state. To be replaced, used for tests
-        if(m_client.setDestination("10.0.0.162")) {
+        if (m_client.setDestination("10.0.0.162")) {
             m_client.send((uint8_t*)message, sizeof(message));
         }
-        //m_client.reset();
 
         break;
     case NetworkState::DISCONNECTED:

@@ -1,8 +1,8 @@
 #ifndef HIVE_CONNECT_NETWORKMANAGER_H
 #define HIVE_CONNECT_NETWORKMANAGER_H
 
-#include "TCPServer.h"
 #include "TCPClient.h"
+#include "TCPServer.h"
 #include "logger/ILogger.h"
 #include "memory"
 #include <BaseTask.h>

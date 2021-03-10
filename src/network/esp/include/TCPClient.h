@@ -20,7 +20,6 @@ class TCPClient {
     int m_socketFd;
     bool m_isBusy;
     bool m_hasSocket;
-
 };
 
 #endif // HIVE_CONNECT_TCPCLIENT_H
