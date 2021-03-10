@@ -1,11 +1,10 @@
 #include "TCPServer.h"
 #include "SocketFactory.h"
+#include "NetworkConfig.h"
 #include "Task.h"
 #include "lwip/sockets.h"
 
 constexpr uint8_t gs_LOOP_RATE = 10;
-
-constexpr uint16_t gs_SERVER_PORT = 6969;
 
 static void serverReceiveTask(void* context) {
 
@@ -52,6 +51,7 @@ void TCPServer::receiveTask() {
                 do {
                     if (nbytes > 0) {
                         lwip_send(clientfd, buffer, nbytes, 0); // echo action
+                        // TODO: Replace by proper action for receiving
                         m_logger.log(LogLevel::Info, "Received: %s", buffer);
                     }
                     nbytes = lwip_recv(clientfd, buffer, sizeof(buffer), 0);
@@ -68,7 +68,7 @@ void TCPServer::receiveTask() {
 
 bool TCPServer::start() {
     m_logger.log(LogLevel::Info, "Starting tcp server");
-    m_socket = SocketFactory::createTCPServerSocket(gs_SERVER_PORT);
+    m_socket = SocketFactory::createTCPServerSocket(NetworkConfig::getCommunicationPort());
 
     return m_socket != NO_SOCKET;
 }

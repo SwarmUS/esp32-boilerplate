@@ -21,9 +21,15 @@ wifi_config_t* getDefaultNetworkConfig();
 
 /**
  * @brief Get the interface to use for the network
- * @return The netowrk interface
+ * @return The network interface
  */
 esp_interface_t getInterface();
+
+/**
+ * @brief Get the communication port used for sockets in the network
+ * @return The port number
+ */
+uint16_t getCommunicationPort();
 } // namespace NetworkConfig
 
 #endif // HIVE_CONNECT_NETWORKCONFIG_H

@@ -2,6 +2,7 @@
 #define HIVE_CONNECT_NETWORKMANAGER_H
 
 #include "TCPServer.h"
+#include "TCPClient.h"
 #include "logger/ILogger.h"
 #include "memory"
 #include <BaseTask.h>
@@ -11,11 +12,11 @@
 #include "esp_wifi.h"
 
 /**
- * @brief The network manager class. Handles the connnection to the network
+ * @brief The network manager class. Handles the connection to the network
  */
 class NetworkManager {
   public:
-    NetworkManager(ILogger& logger);
+    NetworkManager(ILogger& logger, TCPServer& server, TCPClient& client);
     ~NetworkManager() = default;
 
     /**
@@ -36,7 +37,8 @@ class NetworkManager {
 
   private:
     ILogger& m_logger;
-    TCPServer m_server;
+    TCPServer& m_server;
+    TCPClient& m_client;
     BaseTask<configMINIMAL_STACK_SIZE * 4> m_networkExecuteTask;
     esp_ip_addr_t m_ipAddress;
     enum class NetworkState {

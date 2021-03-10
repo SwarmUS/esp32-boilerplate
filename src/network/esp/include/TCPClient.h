@@ -6,20 +6,21 @@
 
 class TCPClient {
   public:
-    TCPClient(int socket, sockaddr_in address, ILogger& logger);
+    TCPClient(ILogger& logger);
 
     ~TCPClient() = default;
 
-    bool receive(uint8_t* data, uint16_t length);
-
     bool send(const uint8_t* data, uint16_t length);
-
-    bool close();
+    bool setDestination(const char* address);
+    bool isReady() const;
+    void reset();
 
   private:
     ILogger& m_logger;
-    const int m_socketFd;
-    const sockaddr_in m_address;
+    int m_socketFd;
+    bool m_isBusy;
+    bool m_hasSocket;
+
 };
 
 #endif // HIVE_CONNECT_TCPCLIENT_H

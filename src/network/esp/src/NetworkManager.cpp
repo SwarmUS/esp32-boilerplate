@@ -15,10 +15,11 @@ static void networkExecuteTask(void* context) {
     }
 }
 
-NetworkManager::NetworkManager(ILogger& logger) :
+NetworkManager::NetworkManager(ILogger& logger, TCPServer& server, TCPClient& client) :
     m_logger(logger),
     m_networkExecuteTask("network_manager", tskIDLE_PRIORITY + 1, networkExecuteTask, this),
-    m_server(logger) {
+    m_server(server),
+    m_client(client) {
 
     // Initialise to 0.0.0.0
     m_ipAddress.u_addr.ip4.addr = 0;
@@ -72,6 +73,7 @@ void NetworkManager::start() {
 }
 
 void NetworkManager::execute() {
+    char message[] = "Test message";
     switch (m_state) {
 
     case NetworkState::INIT:
@@ -98,7 +100,12 @@ void NetworkManager::execute() {
 
         break;
     case NetworkState::RUNNING:
-        // Idle state
+        // Idle state. To be replaced, used for tests
+        if(m_client.setDestination("10.0.0.162")) {
+            m_client.send((uint8_t*)message, sizeof(message));
+        }
+        //m_client.reset();
+
         break;
     case NetworkState::DISCONNECTED:
         m_logger.log(LogLevel::Error, "Handling the network error");

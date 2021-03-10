@@ -7,6 +7,7 @@ set(LIB_SOURCES
         src/NetworkContainer.cpp
         src/SocketFactory.cpp
         src/TCPServer.cpp
+        src/TCPClient.cpp
         )
 
 set(LIB_HEADERS

@@ -1,7 +1,6 @@
 #include "SocketFactory.h"
 #include "lwip/sockets.h"
 
-
 int SocketFactory::createTCPServerSocket(uint16_t port) {
     sockaddr_in localAddress = {0};
     int socket = lwip_socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
@@ -29,6 +28,23 @@ int SocketFactory::createTCPServerSocket(uint16_t port) {
     return socket;
 }
 
-std::optional<TCPClient> SocketFactory::createTCPClient(const char* address, uint16_t port) {
-    return {};
+int SocketFactory::createTCPClient(const char* address, uint16_t port) {
+    sockaddr_in destination = {0};
+
+    int socket = lwip_socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+    if (socket < 0) {
+        // Failed to create socket
+        return -1;
+    }
+
+    destination.sin_addr.s_addr = inet_addr(address);
+    destination.sin_family = AF_INET;
+    destination.sin_port = htons(port);
+
+    int err = connect(socket, (sockaddr*)&destination, sizeof(destination));
+    if (err != 0) {
+        return -1;
+    }
+
+    return socket;
 }
