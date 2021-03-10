@@ -5,7 +5,7 @@
 
 constexpr uint8_t gs_LOOP_RATE = 10;
 
-constexpr uint16_t gs_SERVER_PORT = 8000;
+constexpr uint16_t gs_SERVER_PORT = 6969;
 
 static void serverReceiveTask(void* context) {
 
@@ -50,13 +50,16 @@ void TCPServer::receiveTask() {
             nbytes = lwip_recv(clientfd, buffer, sizeof(buffer), 0);
             if (nbytes > 0) { // client is active
                 do {
-                    nbytes = lwip_recv(clientfd, buffer, sizeof(buffer), 0);
-                    if (nbytes > 0)
+                    if (nbytes > 0) {
                         lwip_send(clientfd, buffer, nbytes, 0); // echo action
+                        m_logger.log(LogLevel::Info, "Received: %s", buffer);
+                    }
+                    nbytes = lwip_recv(clientfd, buffer, sizeof(buffer), 0);
                 } while (nbytes > 0);
             }
             m_logger.log(LogLevel::Info, "Client terminated connection");
             lwip_close(clientfd);
+            m_isBusy = false;
         }
     } else {
         Task::delay(1000); // Sleep if no socket

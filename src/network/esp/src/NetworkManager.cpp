@@ -89,12 +89,10 @@ void NetworkManager::execute() {
     case NetworkState::CONNECTED:
         m_logger.log(LogLevel::Info, "Connected to network!");
 
-
-        if(m_server.start()) {
+        if (m_server.start()) {
             m_logger.log(LogLevel::Error, "Tcp server started");
             m_state = NetworkState::RUNNING;
-        }
-        else {
+        } else {
             m_logger.log(LogLevel::Error, "Failed to start tcp server");
         }
 

@@ -20,7 +20,7 @@ class TCPServer {
 
     int m_socket;
     bool m_isBusy;
-    BaseTask<configMINIMAL_STACK_SIZE * 3> m_serverTask;
+    BaseTask<configMINIMAL_STACK_SIZE * 4> m_serverTask;
 };
 
 #endif // HIVE_CONNECT_TCPSERVER_H
