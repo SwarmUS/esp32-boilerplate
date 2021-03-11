@@ -1,8 +1,8 @@
 #ifndef __NETWORKCONTAINER_H__
 #define __NETWORKCONTAINER_H__
 
-#include "INetworkManager.h"
 #include "INetworkDeserializer.h"
+#include "INetworkManager.h"
 #include "INetworkSerializer.h"
 #include "logger/LoggerContainer.h"
 

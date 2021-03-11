@@ -49,7 +49,7 @@ void NetworkManager::eventHandler(void* context,
                                   int32_t eventId,
                                   void* eventData) {
     (void)context;
-    auto * manager = (NetworkManager*)(&NetworkContainer::getNetworkManager());
+    auto* manager = (NetworkManager*)(&NetworkContainer::getNetworkManager());
 
     if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_STA_START) {
         manager->m_logger.log(LogLevel::Error, "Started wifi, attempting to connect...");

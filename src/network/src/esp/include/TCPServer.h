@@ -23,7 +23,6 @@ class TCPServer : public INetworkDeserializer {
 
     void receiveTask();
 
-
   private:
     ILogger& m_logger;
     std::array<uint8_t, g_MAX_BUFFER_SIZE> m_buffer;

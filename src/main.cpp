@@ -1,7 +1,7 @@
 #include "AbstractTask.h"
+#include "NetworkContainer.h"
 #include "Task.h"
 #include "bsp/Container.h"
-#include "NetworkContainer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,7 +27,6 @@ class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
     }
 };
 
-
 class TCPMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
   public:
     TCPMessageSenderTask(const char* taskName, UBaseType_t priority) :
@@ -38,7 +37,8 @@ class TCPMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
   private:
     void task() override {
         auto& client = NetworkContainer::getTCPClient();
-        while (NetworkContainer::getNetworkManager().getNetworkStatus() != NetworkStatus::Connected) {
+        while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
+               NetworkStatus::Connected) {
             Task::delay(500);
         }
         while (true) {

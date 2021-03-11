@@ -1,6 +1,6 @@
 #include "NetworkContainer.h"
-#include "SocketFactory.h"
 #include "NetworkManager.h"
+#include "SocketFactory.h"
 
 INetworkManager& NetworkContainer::getNetworkManager() {
     static NetworkManager s_networkManager(LoggerContainer::getLogger(), getTCPServer());
