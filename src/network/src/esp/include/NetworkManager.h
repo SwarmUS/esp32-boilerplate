@@ -17,7 +17,7 @@
  */
 class NetworkManager : public INetworkManager {
   public:
-    NetworkManager(ILogger& logger, TCPServer& server, TCPClient& client);
+    NetworkManager(ILogger& logger, INetworkDeserializer& server);
     ~NetworkManager() = default;
 
     void start() override;
@@ -37,8 +37,7 @@ class NetworkManager : public INetworkManager {
 
   private:
     ILogger& m_logger;
-    TCPServer& m_server;
-    TCPClient& m_client;
+    INetworkDeserializer& m_server;
     BaseTask<configMINIMAL_STACK_SIZE * 4> m_networkExecuteTask;
     esp_ip_addr_t m_ipAddress;
     enum class NetworkState {

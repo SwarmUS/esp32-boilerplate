@@ -17,11 +17,12 @@ class TCPServer : public INetworkDeserializer {
 
     bool receive(uint8_t* data, uint16_t length) override;
     bool send(const uint8_t* data, uint16_t length) override;
+    bool start() override;
+    bool stop() override;
     bool isReady() override;
 
     void receiveTask();
-    bool start();
-    void stop();
+
 
   private:
     ILogger& m_logger;

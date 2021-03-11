@@ -15,11 +15,10 @@ static void networkExecuteTask(void* context) {
     }
 }
 
-NetworkManager::NetworkManager(ILogger& logger, TCPServer& server, TCPClient& client) :
+NetworkManager::NetworkManager(ILogger& logger, INetworkDeserializer& server) :
     m_logger(logger),
     m_networkExecuteTask("network_manager", tskIDLE_PRIORITY + 1, networkExecuteTask, this),
-    m_server(server),
-    m_client(client) {
+    m_server(server) {
 
     // Initialise to 0.0.0.0
     m_ipAddress.u_addr.ip4.addr = 0;
@@ -50,7 +49,7 @@ void NetworkManager::eventHandler(void* context,
                                   int32_t eventId,
                                   void* eventData) {
     (void)context;
-    auto* manager = &NetworkContainer::getNetworkManager();
+    auto * manager = (NetworkManager*)(&NetworkContainer::getNetworkManager());
 
     if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_STA_START) {
         manager->m_logger.log(LogLevel::Error, "Started wifi, attempting to connect...");
@@ -72,7 +71,20 @@ void NetworkManager::start() {
     m_networkExecuteTask.start();
 }
 
-NetworkStatus NetworkManager::getNetworkStatus() {}
+NetworkStatus NetworkManager::getNetworkStatus() {
+    switch (m_state) {
+    case NetworkState::LOOKING_FOR_NETWORK:
+        return NetworkStatus::Connecting;
+    case NetworkState::CONNECTED:
+    case NetworkState::RUNNING:
+        return NetworkStatus::Connected;
+
+    case NetworkState::INIT:
+    case NetworkState::DISCONNECTED:
+    default:
+        return NetworkStatus::NotConnected;
+    }
+}
 
 void NetworkManager::getNetworkingID(std::string& id) {
     char buff[16];
@@ -109,11 +121,7 @@ void NetworkManager::execute() {
 
         break;
     case NetworkState::RUNNING:
-        // Idle state. To be replaced, used for tests
-        if (m_client.setDestination("10.0.0.162")) {
-            m_client.send((uint8_t*)message, sizeof(message));
-        }
-
+        // Idle state.
         break;
     case NetworkState::DISCONNECTED:
         m_logger.log(LogLevel::Error, "Handling the network error");

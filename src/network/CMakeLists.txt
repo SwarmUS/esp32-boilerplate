@@ -9,6 +9,7 @@ set(LIB_HEADERS
     include/INetworkManager.h
     include/INetworkSerializer.h
     include/INetworkDeserializer.h
+    include/NetworkContainer.h
 )
 
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS})

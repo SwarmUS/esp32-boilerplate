@@ -30,12 +30,26 @@ class INetworkDeserializer : public IProtobufStream {
     virtual bool send(const uint8_t* data, uint16_t length) = 0;
 
     /**
-     *@brief Closes the stream
+     *@brief Check if the stream is ready
      *
      *@return true if the deserializer is ready to send/receive bytes
-     *closed)
+     *)
      **/
     virtual bool isReady() = 0;
+
+    /**
+     * @brief Start the reception stream
+     *
+     * @return true if successfully started
+     */
+    virtual bool start() = 0;
+
+    /**
+     * @brief Stop the reception stream
+     *
+     * @return true if successfully stopped
+     */
+    virtual bool stop() = 0;
 };
 
 #endif // HIVE_CONNECT_INETWORKDESERIALIZER_H

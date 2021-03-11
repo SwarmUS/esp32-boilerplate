@@ -9,7 +9,7 @@
 #include "nvs_flash.h"
 #include <driver/gpio.h>
 
-BSP::BSP(NetworkManager& networkManager) : m_networkManager(networkManager) {}
+BSP::BSP(INetworkManager& networkManager) : m_networkManager(networkManager) {}
 
 void BSP::initChip() {
     // Init event loop

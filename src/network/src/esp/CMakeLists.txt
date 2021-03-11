@@ -13,7 +13,6 @@ set(LIB_SOURCES
 set(LIB_HEADERS
 
         include/NetworkConfig.h
-        include/NetworkContainer.h
         include/NetworkManager.h
         include/SocketFactory.h
         include/TCPClient.h

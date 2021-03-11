@@ -1,9 +1,9 @@
 #ifndef __NETWORKCONTAINER_H__
 #define __NETWORKCONTAINER_H__
 
-#include "NetworkManager.h"
-#include "TCPClient.h"
-#include "TCPServer.h"
+#include "INetworkManager.h"
+#include "INetworkDeserializer.h"
+#include "INetworkSerializer.h"
 #include "logger/LoggerContainer.h"
 
 namespace NetworkContainer {
@@ -11,17 +11,17 @@ namespace NetworkContainer {
 /**
  * @return The network manager instance
  */
-NetworkManager& getNetworkManager();
+INetworkManager& getNetworkManager();
 
 /**
  * @return The TCP server instance
  */
-TCPServer& getTCPServer();
+INetworkDeserializer& getTCPServer();
 
 /**
  * @return The TCP client instance
  */
-TCPClient& getTCPClient();
+INetworkSerializer& getTCPClient();
 } // namespace NetworkContainer
 
 #endif // __NETWORKCONTAINER_H__

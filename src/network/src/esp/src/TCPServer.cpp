@@ -75,6 +75,8 @@ void TCPServer::receiveTask() {
                     if (nbytes > 0) {
                         LockGuard lock = LockGuard(m_serverMutex);
                         CircularBuff_put(&m_circularBuffer, buffer, nbytes);
+                        // TODO: remove this log call
+                        m_logger.log(LogLevel::Info, "Received: %s", buffer);
                     }
                     nbytes = lwip_recv(clientfd, buffer, sizeof(buffer), 0);
                 } while (nbytes > 0);
@@ -95,10 +97,12 @@ bool TCPServer::start() {
     return m_socket != NO_SOCKET;
 }
 
-void TCPServer::stop() {
+bool TCPServer::stop() {
     m_logger.log(LogLevel::Info, "Stopping tcp server");
-    if (m_socket != NO_SOCKET) {
-        lwip_close(m_socket);
+    if (m_socket != NO_SOCKET && lwip_close(m_socket) == 0) {
+        m_socket = NO_SOCKET;
+        return true;
     }
-    m_socket = NO_SOCKET; // Reset socket
+    m_logger.log(LogLevel::Error, "Failed to stop TCP server");
+    return false;
 }
