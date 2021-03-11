@@ -2,6 +2,7 @@
 #include "NetworkContainer.h"
 #include "Task.h"
 #include "bsp/Container.h"
+#include "logger/LoggerContainer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,7 +39,7 @@ class TCPMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
     void task() override {
         char message[50];
         uint16_t id = 0;
-        auto& client = NetworkContainer::getTCPClient();
+        auto& client = NetworkContainer::getSerializer();
         while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
                NetworkStatus::Connected) {
             Task::delay(500);
@@ -49,6 +50,8 @@ class TCPMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
                 sprintf(message, "ID is %d", id);
                 client.send((uint8_t*)message, sizeof(message));
                 id++;
+            } else {
+                LoggerContainer::getLogger().log(LogLevel::Warn, "Fail");
             }
             Task::delay(100);
         }

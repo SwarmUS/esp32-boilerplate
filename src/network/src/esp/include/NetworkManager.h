@@ -40,7 +40,7 @@ class NetworkManager : public INetworkManager {
     INetworkDeserializer& m_server;
     BaseTask<configMINIMAL_STACK_SIZE * 4> m_networkExecuteTask;
     esp_ip_addr_t m_ipAddress;
-    enum class NetworkState {
+    enum class NetworkManagerState {
         INIT = 0,
         LOOKING_FOR_NETWORK,
         CONNECTED,

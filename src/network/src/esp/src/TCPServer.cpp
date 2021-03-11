@@ -32,6 +32,7 @@ TCPServer::TCPServer(ILogger& logger) :
 bool TCPServer::send(const uint8_t* data, uint16_t length) {
     (void)data;
     (void)length;
+    m_logger.log(LogLevel::Error, "Sending not supported on TCP server");
     return false;
 }
 

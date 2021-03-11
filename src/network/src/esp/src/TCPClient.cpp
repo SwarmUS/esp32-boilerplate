@@ -43,6 +43,7 @@ bool TCPClient::send(const uint8_t* data, uint16_t length) {
 bool TCPClient::receive(uint8_t* data, uint16_t length) {
     (void)data;
     (void)length;
+    m_logger.log(LogLevel::Error, "Receiving not supported on TCP client");
     return false;
 }
 

@@ -22,7 +22,7 @@ NetworkManager::NetworkManager(ILogger& logger, INetworkDeserializer& server) :
 
     // Initialise to 0.0.0.0
     m_ipAddress.u_addr.ip4.addr = 0;
-    m_state = NetworkState::INIT;
+    m_state = NetworkManagerState::INIT;
 }
 
 void NetworkManager::initNetworkInterface() {
@@ -56,10 +56,10 @@ void NetworkManager::eventHandler(void* context,
         esp_wifi_connect();
     } else if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_STA_DISCONNECTED) {
         manager->m_logger.log(LogLevel::Error, "Network error, attempting to reconnect");
-        manager->m_state = NetworkState::DISCONNECTED;
+        manager->m_state = NetworkManagerState::DISCONNECTED;
     } else if (eventBase == IP_EVENT && eventId == IP_EVENT_STA_GOT_IP) {
         auto* event = (ip_event_got_ip_t*)eventData;
-        manager->m_state = NetworkState::CONNECTED;
+        manager->m_state = NetworkManagerState::CONNECTED;
         manager->m_logger.log(LogLevel::Info, "Network manager got ip:" IPSTR,
                               IP2STR(&event->ip_info.ip));
         manager->m_ipAddress.u_addr.ip4 = event->ip_info.ip;
@@ -73,14 +73,14 @@ void NetworkManager::start() {
 
 NetworkStatus NetworkManager::getNetworkStatus() {
     switch (m_state) {
-    case NetworkState::LOOKING_FOR_NETWORK:
+    case NetworkManagerState::LOOKING_FOR_NETWORK:
         return NetworkStatus::Connecting;
-    case NetworkState::CONNECTED:
-    case NetworkState::RUNNING:
+    case NetworkManagerState::CONNECTED:
+    case NetworkManagerState::RUNNING:
         return NetworkStatus::Connected;
 
-    case NetworkState::INIT:
-    case NetworkState::DISCONNECTED:
+    case NetworkManagerState::INIT:
+    case NetworkManagerState::DISCONNECTED:
     default:
         return NetworkStatus::NotConnected;
     }
@@ -97,44 +97,44 @@ void NetworkManager::execute() {
     char message[] = "Test message";
     switch (m_state) {
 
-    case NetworkState::INIT:
+    case NetworkManagerState::INIT:
         m_logger.log(LogLevel::Info, "Connecting to network...");
         ESP_ERROR_CHECK(esp_wifi_set_mode(NetworkConfig::getMode()));
         ESP_ERROR_CHECK(esp_wifi_set_config(NetworkConfig::getInterface(),
                                             NetworkConfig::getDefaultNetworkConfig()));
         ESP_ERROR_CHECK(esp_wifi_start());
 
-        m_state = NetworkState::LOOKING_FOR_NETWORK;
+        m_state = NetworkManagerState::LOOKING_FOR_NETWORK;
         break;
-    case NetworkState::LOOKING_FOR_NETWORK:
+    case NetworkManagerState::LOOKING_FOR_NETWORK:
         // Idle state
         break;
-    case NetworkState::CONNECTED:
+    case NetworkManagerState::CONNECTED:
         m_logger.log(LogLevel::Info, "Connected to network!");
 
         if (m_server.start()) {
             m_logger.log(LogLevel::Error, "Tcp server started");
-            m_state = NetworkState::RUNNING;
+            m_state = NetworkManagerState::RUNNING;
         } else {
             m_logger.log(LogLevel::Error, "Failed to start tcp server");
         }
 
         break;
-    case NetworkState::RUNNING:
+    case NetworkManagerState::RUNNING:
         // Idle state.
         break;
-    case NetworkState::DISCONNECTED:
+    case NetworkManagerState::DISCONNECTED:
         m_logger.log(LogLevel::Error, "Handling the network error");
         m_server.stop();
 
         // Behavior to validate
         ESP_ERROR_CHECK(esp_wifi_stop());
 
-        m_state = NetworkState::INIT;
+        m_state = NetworkManagerState::INIT;
         break;
     default:
         m_logger.log(LogLevel::Warn, "Reached unintended case within network manager");
-        m_state = NetworkState::INIT; // Probably the best way to handle it
+        m_state = NetworkManagerState::INIT; // Probably the best way to handle it
         break;
     }
 }
