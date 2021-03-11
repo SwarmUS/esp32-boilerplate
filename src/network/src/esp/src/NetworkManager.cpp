@@ -72,6 +72,15 @@ void NetworkManager::start() {
     m_networkExecuteTask.start();
 }
 
+NetworkStatus NetworkManager::getNetworkStatus() {}
+
+void NetworkManager::getNetworkingID(std::string& id) {
+    char buff[16];
+    esp_ip4_addr_t ip = getIP();
+    sprintf(buff, IPSTR, IP2STR(&ip));
+    id.assign(buff);
+}
+
 void NetworkManager::execute() {
     char message[] = "Test message";
     switch (m_state) {

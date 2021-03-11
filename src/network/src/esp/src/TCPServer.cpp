@@ -1,4 +1,5 @@
 #include "TCPServer.h"
+#include "LockGuard.h"
 #include "NetworkConfig.h"
 #include "SocketFactory.h"
 #include "Task.h"
@@ -19,11 +20,33 @@ static void serverReceiveTask(void* context) {
 TCPServer::TCPServer(ILogger& logger) :
     m_serverTask("server_socket", tskIDLE_PRIORITY + 1, serverReceiveTask, this),
     m_socket(NO_SOCKET),
-    m_logger(logger) {
+    m_logger(logger),
+    m_serverMutex(10) {
     m_isBusy = false;
+
+    CircularBuff_init(&m_circularBuffer, m_buffer.data(), m_buffer.size());
 
     m_serverTask.start();
 }
+
+bool TCPServer::send(const uint8_t* data, uint16_t length) {
+    (void)data;
+    (void)length;
+    return false;
+}
+
+bool TCPServer::receive(uint8_t* data, uint16_t length) {
+    if (data == nullptr || length > m_buffer.size()) {
+        m_logger.log(LogLevel::Warn, "Invalid parameters for Server receive");
+        return false;
+    }
+
+    LockGuard lock = LockGuard(m_serverMutex);
+    CircularBuff_get(&m_circularBuffer, data, length);
+    return true;
+}
+
+bool TCPServer::isReady() { return m_socket != NO_SOCKET; }
 
 TCPServer::~TCPServer() {
     if (m_socket != NO_SOCKET) {
@@ -37,7 +60,7 @@ void TCPServer::receiveTask() {
         int clientfd;
         sockaddr_in clientAddr;
         socklen_t addrlen = sizeof(clientAddr);
-        char buffer[1024];
+        uint8_t buffer[g_MAX_BUFFER_SIZE];
         int nbytes;
 
         // lwip_accept is blocking
@@ -50,9 +73,8 @@ void TCPServer::receiveTask() {
             if (nbytes > 0) { // client is active
                 do {
                     if (nbytes > 0) {
-                        lwip_send(clientfd, buffer, nbytes, 0); // echo action
-                        // TODO: Replace by proper action for receiving
-                        m_logger.log(LogLevel::Info, "Received: %s", buffer);
+                        LockGuard lock = LockGuard(m_serverMutex);
+                        CircularBuff_put(&m_circularBuffer, buffer, nbytes);
                     }
                     nbytes = lwip_recv(clientfd, buffer, sizeof(buffer), 0);
                 } while (nbytes > 0);
@@ -80,5 +102,3 @@ void TCPServer::stop() {
     }
     m_socket = NO_SOCKET; // Reset socket
 }
-
-bool TCPServer::isBusy() const { return m_isBusy; }

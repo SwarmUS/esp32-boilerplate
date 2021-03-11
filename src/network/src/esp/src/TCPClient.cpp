@@ -4,7 +4,6 @@
 #include "lwip/sockets.h"
 
 TCPClient::TCPClient(ILogger& logger) : m_logger(logger) {
-    m_isBusy = false;
     m_hasSocket = false;
     m_socketFd = NO_SOCKET;
 }
@@ -41,11 +40,18 @@ bool TCPClient::send(const uint8_t* data, uint16_t length) {
     return false;
 }
 
-bool TCPClient::isReady() const { return m_hasSocket; }
+bool TCPClient::receive(uint8_t* data, uint16_t length) {
+    (void)data;
+    (void)length;
+    return false;
+}
 
-void TCPClient::reset() {
-    if (m_socketFd != NO_SOCKET) {
-        lwip_close(m_socketFd);
+bool TCPClient::close() {
+    if (m_socketFd != NO_SOCKET && lwip_close(m_socketFd) == 0) {
+        m_socketFd = NO_SOCKET;
         m_hasSocket = false;
+        return true;
     }
+
+    return false;
 }

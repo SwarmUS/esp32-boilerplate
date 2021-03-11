@@ -1,5 +1,5 @@
 set(LIB_NAME swarmus-hiveconnect-network-ros)
-set(LIB_ALIAS SwarmUS::HiveConnect::Network)
+set(LIB_ALIAS SwarmUS::HiveConnect::Network::Platform)
 
 
 add_library(${LIB_NAME} INTERFACE)

@@ -1,5 +1,5 @@
-set(LIB_NAME "swarmus-hiveconnect-network")
-set(LIB_ALIAS "SwarmUS::HiveConnect::Network")
+set(LIB_NAME "swarmus-hiveconnect-network-esp")
+set(LIB_ALIAS "SwarmUS::HiveConnect::Network::Platform")
 
 set(LIB_SOURCES
         src/NetworkConfig.cpp
@@ -11,6 +11,7 @@ set(LIB_SOURCES
         )
 
 set(LIB_HEADERS
+
         include/NetworkConfig.h
         include/NetworkContainer.h
         include/NetworkManager.h
@@ -27,17 +28,22 @@ add_library(${LIB_ALIAS} ALIAS ${LIB_NAME})
 
 target_include_directories(${LIB_NAME}
         PUBLIC
+        include
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
+        ${NETWORK_CMAKE_DIR}/include
 
         #Include the generated DefaultNetworkConfig.h
         ${CMAKE_CURRENT_BINARY_DIR}/include
+
         )
 
 target_link_libraries(${LIB_NAME}
         PUBLIC
         SwarmUS::HiveConnect::OS
         SwarmUS::HiveConnect::Logger
+        SwarmUS::Propolis::C::Common
+        SwarmUS::Propolis::Pheromones::Common
         PRIVATE
         idf::lwip
         )

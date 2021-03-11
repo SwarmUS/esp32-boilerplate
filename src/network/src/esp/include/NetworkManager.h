@@ -1,6 +1,7 @@
 #ifndef HIVE_CONNECT_NETWORKMANAGER_H
 #define HIVE_CONNECT_NETWORKMANAGER_H
 
+#include "INetworkManager.h"
 #include "TCPClient.h"
 #include "TCPServer.h"
 #include "logger/ILogger.h"
@@ -14,15 +15,14 @@
 /**
  * @brief The network manager class. Handles the connection to the network
  */
-class NetworkManager {
+class NetworkManager : public INetworkManager {
   public:
     NetworkManager(ILogger& logger, TCPServer& server, TCPClient& client);
     ~NetworkManager() = default;
 
-    /**
-     * @brief Starts the network manager
-     */
-    void start();
+    void start() override;
+    NetworkStatus getNetworkStatus() override;
+    void getNetworkingID(std::string& id) override;
 
     /**
      * @brief Execution loop, called internally
