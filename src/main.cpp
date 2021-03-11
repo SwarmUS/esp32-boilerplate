@@ -36,15 +36,19 @@ class TCPMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
 
   private:
     void task() override {
+        char message[50];
+        uint16_t id = 0;
         auto& client = NetworkContainer::getTCPClient();
         while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
                NetworkStatus::Connected) {
             Task::delay(500);
         }
         while (true) {
+
             if (client.setDestination("10.0.0.162")) {
-                const char message[] = "Hello Server";
+                sprintf(message, "ID is %d", id);
                 client.send((uint8_t*)message, sizeof(message));
+                id++;
             }
             Task::delay(100);
         }
