@@ -9,8 +9,6 @@
 #include "nvs_flash.h"
 #include <driver/gpio.h>
 
-BSP::BSP(INetworkManager& networkManager) : m_networkManager(networkManager) {}
-
 void BSP::initChip() {
     // Init event loop
     ESP_ERROR_CHECK(esp_event_loop_create_default());
@@ -18,8 +16,6 @@ void BSP::initChip() {
     ESP_ERROR_CHECK(nvs_flash_init());
     // Init spi slave
     initSPI();
-
-    m_networkManager.start();
 }
 
 ChipInfo BSP::getChipInfo() {

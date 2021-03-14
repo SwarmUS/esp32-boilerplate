@@ -1,9 +1,9 @@
 #ifndef HIVE_CONNECT_DUMMYNETWORKSERIALIZER_H
 #define HIVE_CONNECT_DUMMYNETWORKSERIALIZER_H
 
-#include "INetworkSerializer.h"
+#include "INetworkOutputStream.h"
 
-class DummyNetworkSerializer : public INetworkSerializer {
+class DummyNetworkSerializer : public INetworkOutputStream {
   public:
     DummyNetworkSerializer() = default;
     ~DummyNetworkSerializer() = default;

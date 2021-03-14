@@ -7,8 +7,8 @@ add_subdirectory(src)
 
 set(LIB_HEADERS
     include/INetworkManager.h
-    include/INetworkSerializer.h
-    include/INetworkDeserializer.h
+        include/INetworkOutputStream.h
+        include/INetworkInputStream.h
     include/NetworkContainer.h
 )
 

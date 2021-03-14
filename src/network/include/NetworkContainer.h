@@ -1,9 +1,9 @@
 #ifndef __NETWORKCONTAINER_H__
 #define __NETWORKCONTAINER_H__
 
-#include "INetworkDeserializer.h"
+#include "INetworkInputStream.h"
 #include "INetworkManager.h"
-#include "INetworkSerializer.h"
+#include "INetworkOutputStream.h"
 #include "logger/LoggerContainer.h"
 
 namespace NetworkContainer {
@@ -16,12 +16,12 @@ INetworkManager& getNetworkManager();
 /**
  * @return The Network deserializer instance
  */
-INetworkDeserializer& getDeserializer();
+INetworkInputStream& getDeserializer();
 
 /**
  * @return The Network serializer instance
  */
-INetworkSerializer& getSerializer();
+INetworkOutputStream& getSerializer();
 } // namespace NetworkContainer
 
 #endif // __NETWORKCONTAINER_H__

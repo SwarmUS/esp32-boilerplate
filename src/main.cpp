@@ -51,7 +51,7 @@ class TCPMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
                 client.send((uint8_t*)message, sizeof(message));
                 id++;
             } else {
-                LoggerContainer::getLogger().log(LogLevel::Warn, "Fail");
+                LoggerContainer::getLogger().log(LogLevel::Warn, "Failed to set destination");
             }
             Task::delay(100);
         }
@@ -61,6 +61,8 @@ class TCPMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
 void app_main(void) {
     IBSP* bsp = &BspContainer::getBSP();
     bsp->initChip();
+    INetworkManager* networkManager = &NetworkContainer::getNetworkManager();
+    networkManager->start();
 
     static StmMessageSenderTask s_spiMessageSend("spi_send", tskIDLE_PRIORITY + 1);
     static TCPMessageSenderTask s_tcpMessageSender("tcp_send", tskIDLE_PRIORITY + 1);

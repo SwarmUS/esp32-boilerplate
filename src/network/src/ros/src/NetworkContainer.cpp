@@ -8,7 +8,7 @@ INetworkManager& NetworkContainer::getNetworkManager() {
     return s_networkManager;
 }
 
-INetworkSerializer& NetworkContainer::getSerializer() {
+INetworkOutputStream& NetworkContainer::getSerializer() {
     static DummyNetworkSerializer s_networkSerializer;
 
     return s_networkSerializer;

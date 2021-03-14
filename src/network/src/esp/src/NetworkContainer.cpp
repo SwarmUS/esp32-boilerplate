@@ -8,13 +8,13 @@ INetworkManager& NetworkContainer::getNetworkManager() {
     return s_networkManager;
 }
 
-INetworkDeserializer& NetworkContainer::getDeserializer() {
+INetworkInputStream& NetworkContainer::getDeserializer() {
     static TCPServer s_server(LoggerContainer::getLogger());
 
     return s_server;
 }
 
-INetworkSerializer& NetworkContainer::getSerializer() {
+INetworkOutputStream& NetworkContainer::getSerializer() {
     static TCPClient s_client(LoggerContainer::getLogger());
 
     return s_client;

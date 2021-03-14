@@ -29,18 +29,18 @@ TCPServer::TCPServer(ILogger& logger) :
     m_serverTask.start();
 }
 
-bool TCPServer::send(const uint8_t* data, uint16_t length) {
-    (void)data;
-    (void)length;
-    m_logger.log(LogLevel::Error, "Sending not supported on TCP server");
-    return false;
-}
-
 bool TCPServer::receive(uint8_t* data, uint16_t length) {
     if (data == nullptr || length > m_buffer.size()) {
         m_logger.log(LogLevel::Warn, "Invalid parameters for Server receive");
         return false;
     }
+
+    m_receivingTaskHandle = xTaskGetCurrentTaskHandle();
+    while (CircularBuff_getLength(&m_circularBuffer) < length) {
+        // Gets notified everytime a new packet is appended to stream
+        ulTaskNotifyTake(pdTRUE, 500);
+    }
+    m_receivingTaskHandle = NULL;
 
     LockGuard lock = LockGuard(m_serverMutex);
     CircularBuff_get(&m_circularBuffer, data, length);
@@ -71,21 +71,21 @@ void TCPServer::receiveTask() {
         if (clientfd > 0) {
             m_isBusy = true;
             nbytes = lwip_recv(clientfd, buffer, sizeof(buffer), 0);
-            if (nbytes > 0) { // client is active
-                do {
-                    if (nbytes > 0) {
-                        LockGuard lock = LockGuard(m_serverMutex);
-                        CircularBuff_put(&m_circularBuffer, buffer, nbytes);
-                        // TODO: remove this log call
-                        m_logger.log(LogLevel::Info, "Received: %s", buffer);
+            while (nbytes > 0) { // client is active
+                LockGuard lock = LockGuard(m_serverMutex);
+                if (CircularBuff_getFreeSize(&m_circularBuffer) >= nbytes) {
+                    CircularBuff_put(&m_circularBuffer, buffer, nbytes);
+                    // Notify the waiting task that new data has been received
+                    if (m_receivingTaskHandle != NULL) {
+                        xTaskNotifyGive(m_receivingTaskHandle);
                     }
-                    nbytes = lwip_recv(clientfd, buffer, sizeof(buffer), 0);
-                } while (nbytes > 0);
+                }
+                nbytes = lwip_recv(clientfd, buffer, sizeof(buffer), 0);
             }
-            m_logger.log(LogLevel::Info, "Client terminated connection");
-            lwip_close(clientfd);
-            m_isBusy = false;
         }
+        m_logger.log(LogLevel::Info, "Client terminated connection");
+        lwip_close(clientfd);
+        m_isBusy = false;
     } else {
         Task::delay(1000); // Sleep if no socket
     }

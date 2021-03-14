@@ -4,18 +4,18 @@
 #include "SocketFactory.h"
 #include <new>
 
-constexpr uint8_t gs_LOOP_RATE = 100;
+constexpr uint8_t g_LOOP_RATE = 100;
 
 static void networkExecuteTask(void* context) {
     if (context != nullptr) {
         while (true) {
             static_cast<NetworkManager*>(context)->execute();
-            Task::delay(gs_LOOP_RATE);
+            Task::delay(g_LOOP_RATE);
         }
     }
 }
 
-NetworkManager::NetworkManager(ILogger& logger, INetworkDeserializer& server) :
+NetworkManager::NetworkManager(ILogger& logger, INetworkInputStream& server) :
     m_logger(logger),
     m_networkExecuteTask("network_manager", tskIDLE_PRIORITY + 1, networkExecuteTask, this),
     m_server(server) {
@@ -26,7 +26,7 @@ NetworkManager::NetworkManager(ILogger& logger, INetworkDeserializer& server) :
 }
 
 void NetworkManager::initNetworkInterface() {
-    // Sadly the uevent_handler_arg copied in the event handler, therefore we cannot use it to pass
+    // Sadly the event_handler_arg copied in the event handler, therefore we cannot use it to pass
     // pointer to this instance
     ESP_ERROR_CHECK(
         esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &eventHandler, nullptr));
@@ -52,10 +52,10 @@ void NetworkManager::eventHandler(void* context,
     auto* manager = (NetworkManager*)(&NetworkContainer::getNetworkManager());
 
     if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_STA_START) {
-        manager->m_logger.log(LogLevel::Error, "Started wifi, attempting to connect...");
+        manager->m_logger.log(LogLevel::Info, "Started wifi, attempting to connect...");
         esp_wifi_connect();
     } else if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_STA_DISCONNECTED) {
-        manager->m_logger.log(LogLevel::Error, "Network error, attempting to reconnect");
+        manager->m_logger.log(LogLevel::Warn, "Network error, attempting to reconnect");
         manager->m_state = NetworkManagerState::DISCONNECTED;
     } else if (eventBase == IP_EVENT && eventId == IP_EVENT_STA_GOT_IP) {
         auto* event = (ip_event_got_ip_t*)eventData;
@@ -113,7 +113,7 @@ void NetworkManager::execute() {
         m_logger.log(LogLevel::Info, "Connected to network!");
 
         if (m_server.start()) {
-            m_logger.log(LogLevel::Error, "Tcp server started");
+            m_logger.log(LogLevel::Info, "Tcp server started");
             m_state = NetworkManagerState::RUNNING;
         } else {
             m_logger.log(LogLevel::Error, "Failed to start tcp server");
