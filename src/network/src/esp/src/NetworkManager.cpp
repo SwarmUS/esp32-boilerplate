@@ -86,11 +86,12 @@ NetworkStatus NetworkManager::getNetworkStatus() {
     }
 }
 
-void NetworkManager::getNetworkingID(std::string& id) {
-    char buff[16];
+bool NetworkManager::getNetworkingID(char* buffer, size_t maxLength) {
+    if (buffer == nullptr) {
+        return false;
+    }
     esp_ip4_addr_t ip = getIP();
-    sprintf(buff, IPSTR, IP2STR(&ip));
-    id.assign(buff);
+    return snprintf(buffer, maxLength, IPSTR, IP2STR(&ip)) <= maxLength;
 }
 
 void NetworkManager::execute() {

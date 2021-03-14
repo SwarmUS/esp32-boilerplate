@@ -19,7 +19,11 @@ class DummyNetworkManager : public INetworkManager {
      * will be an IP address and on ROS probably a topic.
      * @return The networking ID for the module
      */
-    void getNetworkingID(std::string& id) override { (void)id; }
+    bool getNetworkingID(char* buffer, size_t maxLength) override {
+        (void)buffer;
+        (void)maxLength;
+        return false;
+    }
 };
 
 #endif // HIVE_CONNECT_DUMMYNETWORKMANAGER_H

@@ -8,12 +8,6 @@ class DummyNetworkSerializer : public INetworkOutputStream {
     DummyNetworkSerializer() = default;
     ~DummyNetworkSerializer() = default;
 
-    bool receive(uint8_t* data, uint16_t length) override {
-        (void)data;
-        (void)length;
-        return false;
-    };
-
     bool send(const uint8_t* data, uint16_t length) override {
         (void)data;
         (void)length;

@@ -20,9 +20,11 @@ class INetworkManager {
     /**
      * @brief Returns ID of the module in the network as a char array. In the wifi network, this
      * will be an IP address and on ROS probably a topic.
-     * @return The networking ID for the module
+     * @param [out] buffer The buffer to write the Id into
+     * @param [in] maxLength The maximum length of the buffer in bytes
+     * @return True if operation successful, false otherwise
      */
-    virtual void getNetworkingID(std::string& id) = 0;
+    virtual bool getNetworkingID(char* buffer, size_t maxLength) = 0;
 };
 
 #endif // HIVE_CONNECT_INETWORKMANAGER_H

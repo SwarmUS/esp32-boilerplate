@@ -22,7 +22,7 @@ class NetworkManager : public INetworkManager {
 
     void start() override;
     NetworkStatus getNetworkStatus() override;
-    void getNetworkingID(std::string& id) override;
+    bool getNetworkingID(char* buffer, size_t maxLength) override;
 
     /**
      * @brief Execution loop, called internally
