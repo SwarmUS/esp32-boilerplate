@@ -23,3 +23,5 @@ wifi_config_t* NetworkConfig::getDefaultNetworkConfig() {
 }
 
 esp_interface_t NetworkConfig::getInterface() { return ESP_IF_WIFI_STA; }
+
+uint16_t NetworkConfig::getCommunicationPort() { return (uint16_t)DEFAULT_PORT; }
