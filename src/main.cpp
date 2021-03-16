@@ -39,7 +39,7 @@ class TCPMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
     void task() override {
         char message[50] = "Hello Server!";
         uint16_t id = 0;
-        auto& client = NetworkContainer::getSerializer();
+        auto& client = NetworkContainer::getNetworkOutputStream();
         while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
                NetworkStatus::Connected) {
             Task::delay(500);

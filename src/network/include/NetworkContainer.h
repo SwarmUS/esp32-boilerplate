@@ -14,14 +14,14 @@ namespace NetworkContainer {
 INetworkManager& getNetworkManager();
 
 /**
- * @return The Network deserializer instance
+ * @return The Network input stream instance
  */
-INetworkInputStream& getDeserializer();
+INetworkInputStream& getNetworkInputStream();
 
 /**
- * @return The Network serializer instance
+ * @return The Network output stream instance
  */
-INetworkOutputStream& getSerializer();
+INetworkOutputStream& getNetworkOutputStream();
 } // namespace NetworkContainer
 
 #endif // __NETWORKCONTAINER_H__

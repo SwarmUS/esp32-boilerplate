@@ -1,6 +1,7 @@
 #include "NetworkContainer.h"
 #include "DummyNetworkManager.h"
-#include "DummyNetworkSerializer.h"
+#include "DummyNetworkOutputStream.h"
+#include "DummyNetworkInputStream.h"
 
 INetworkManager& NetworkContainer::getNetworkManager() {
     static DummyNetworkManager s_networkManager;
@@ -8,8 +9,14 @@ INetworkManager& NetworkContainer::getNetworkManager() {
     return s_networkManager;
 }
 
-INetworkOutputStream& NetworkContainer::getSerializer() {
-    static DummyNetworkSerializer s_networkSerializer;
+INetworkInputStream & NetworkContainer::getNetworkInputStream() {
+    static DummyNetworkInputStream s_inputStream;
 
-    return s_networkSerializer;
+    return s_inputStream;
+}
+
+INetworkOutputStream& NetworkContainer::getNetworkOutputStream() {
+    static DummyNetworkOutputStream s_outputStream;
+
+    return s_outputStream;
 }

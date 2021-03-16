@@ -3,18 +3,18 @@
 #include "SocketFactory.h"
 
 INetworkManager& NetworkContainer::getNetworkManager() {
-    static NetworkManager s_networkManager(LoggerContainer::getLogger(), getDeserializer());
+    static NetworkManager s_networkManager(LoggerContainer::getLogger(), getNetworkInputStream());
 
     return s_networkManager;
 }
 
-INetworkInputStream& NetworkContainer::getDeserializer() {
+INetworkInputStream& NetworkContainer::getNetworkInputStream() {
     static TCPServer s_server(LoggerContainer::getLogger());
 
     return s_server;
 }
 
-INetworkOutputStream& NetworkContainer::getSerializer() {
+INetworkOutputStream& NetworkContainer::getNetworkOutputStream() {
     static TCPClient s_client(LoggerContainer::getLogger());
 
     return s_client;

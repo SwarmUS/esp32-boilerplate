@@ -3,7 +3,8 @@ set(LIB_ALIAS "SwarmUS::HiveConnect::Network::Platform")
 
 set(LIB_HEADERS
         include/DummyNetworkManager.h
-        include/DummyNetworkSerializer.h
+        include/DummyNetworkOutputStream.h
+        include/DummyNetworkInputStream.h
         )
 
 set(LIB_SOURCES

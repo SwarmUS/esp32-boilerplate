@@ -1,12 +1,12 @@
-#ifndef HIVE_CONNECT_DUMMYNETWORKSERIALIZER_H
-#define HIVE_CONNECT_DUMMYNETWORKSERIALIZER_H
+#ifndef HIVE_CONNECT_DUMMYNETWORKOUTPUTSTREAM_H
+#define HIVE_CONNECT_DUMMYNETWORKOUTPUTSTREAM_H
 
 #include "INetworkOutputStream.h"
 
-class DummyNetworkSerializer : public INetworkOutputStream {
+class DummyNetworkOutputStream : public INetworkOutputStream {
   public:
-    DummyNetworkSerializer() = default;
-    ~DummyNetworkSerializer() = default;
+    DummyNetworkOutputStream() = default;
+    ~DummyNetworkOutputStream() = default;
 
     bool send(const uint8_t* data, uint16_t length) override {
         (void)data;
@@ -22,4 +22,4 @@ class DummyNetworkSerializer : public INetworkOutputStream {
     bool close() override { return false; };
 };
 
-#endif // HIVE_CONNECT_DUMMYNETWORKSERIALIZER_H
+#endif // HIVE_CONNECT_DUMMYNETWORKOUTPUTSTREAM_H
