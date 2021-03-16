@@ -13,7 +13,7 @@ constexpr uint16_t g_MAX_BUFFER_SIZE = 1024;
 class TCPServer : public INetworkInputStream {
   public:
     TCPServer(ILogger& logger);
-    ~TCPServer();
+    ~TCPServer() override;
 
     bool receive(uint8_t* data, uint16_t length) override;
     bool start() override;
@@ -24,12 +24,9 @@ class TCPServer : public INetworkInputStream {
 
   private:
     ILogger& m_logger;
-    std::array<uint8_t, g_MAX_BUFFER_SIZE> m_buffer;
-    CircularBuff m_circularBuffer;
-    int m_socket;
-    bool m_isBusy;
+    int m_acceptingSocket;
+    int m_clientSocket;
     BaseTask<configMINIMAL_STACK_SIZE * 5> m_serverTask;
-    Mutex m_serverMutex;
     TaskHandle_t m_receivingTaskHandle;
 };
 

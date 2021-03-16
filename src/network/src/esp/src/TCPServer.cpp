@@ -19,89 +19,91 @@ static void serverReceiveTask(void* context) {
 
 TCPServer::TCPServer(ILogger& logger) :
     m_serverTask("server_socket", tskIDLE_PRIORITY + 1, serverReceiveTask, this),
-    m_socket(NO_SOCKET),
-    m_logger(logger),
-    m_serverMutex(10) {
-    m_isBusy = false;
-
-    CircularBuff_init(&m_circularBuffer, m_buffer.data(), m_buffer.size());
+    m_acceptingSocket(NO_SOCKET),
+    m_clientSocket(NO_SOCKET),
+    m_logger(logger) {
 
     m_serverTask.start();
 }
 
 bool TCPServer::receive(uint8_t* data, uint16_t length) {
-    if (data == nullptr || length > m_buffer.size()) {
-        m_logger.log(LogLevel::Warn, "Invalid parameters for Server receive");
-        return false;
-    }
 
     m_receivingTaskHandle = xTaskGetCurrentTaskHandle();
-    while (CircularBuff_getLength(&m_circularBuffer) < length) {
+    while (m_clientSocket == NO_SOCKET) {
         // Gets notified everytime a new packet is appended to stream
         ulTaskNotifyTake(pdTRUE, 500);
     }
     m_receivingTaskHandle = NULL;
 
-    LockGuard lock = LockGuard(m_serverMutex);
-    CircularBuff_get(&m_circularBuffer, data, length);
-    return true;
+    ssize_t receivedBytes = lwip_recv(m_clientSocket, data, (length - receivedBytes), 0);
+
+    if (receivedBytes < 0) {
+        m_logger.log(LogLevel::Error, "Failed to read data from fresh connection");
+        lwip_close(m_clientSocket);
+        m_clientSocket = NO_SOCKET;
+        return false;
+    }
+
+    while (receivedBytes <= length) {
+        ssize_t nbytes = lwip_recv(m_clientSocket, data + receivedBytes, (length - receivedBytes), 0);
+
+        if (nbytes < 0) {
+            // Only close socket after client disconnected. When client is still connected but not
+            // transmitting, lwip_rcv will return 0. When the client disconnects, lwip_rcv will
+            // return -1.
+            m_logger.log(LogLevel::Info, "Client terminated connection");
+            lwip_close(m_clientSocket);
+            m_clientSocket = NO_SOCKET;
+            break;
+        }
+        receivedBytes += nbytes;
+    }
+
+    return receivedBytes == length;
 }
 
-bool TCPServer::isReady() { return m_socket != NO_SOCKET; }
+bool TCPServer::isReady() { return m_acceptingSocket != NO_SOCKET; }
 
 TCPServer::~TCPServer() {
-    if (m_socket != NO_SOCKET) {
-        lwip_close(m_socket);
+    if (m_acceptingSocket != NO_SOCKET) {
+        lwip_close(m_acceptingSocket);
     }
 }
 
 void TCPServer::receiveTask() {
-    // Only receive with a valid socket
-    if (m_socket != NO_SOCKET) {
-        int clientfd;
+    // Only receive with a valid server socket
+    if (m_acceptingSocket != NO_SOCKET) {
         sockaddr_in clientAddr;
         socklen_t addrlen = sizeof(clientAddr);
-        uint8_t buffer[g_MAX_BUFFER_SIZE];
-        int nbytes;
 
         // lwip_accept is blocking
         m_logger.log(LogLevel::Info, "Awaiting connection..");
-        clientfd = lwip_accept(m_socket, (sockaddr*)&clientAddr, &addrlen);
+        m_clientSocket = lwip_accept(m_acceptingSocket, (sockaddr*)&clientAddr, &addrlen);
 
-        if (clientfd > 0) {
-            m_isBusy = true;
-            nbytes = lwip_recv(clientfd, buffer, sizeof(buffer), 0);
-            while (nbytes > 0) { // client is active
-                LockGuard lock = LockGuard(m_serverMutex);
-                if (CircularBuff_getFreeSize(&m_circularBuffer) >= nbytes) {
-                    CircularBuff_put(&m_circularBuffer, buffer, nbytes);
-                    // Notify the waiting task that new data has been received
-                    if (m_receivingTaskHandle != NULL) {
-                        xTaskNotifyGive(m_receivingTaskHandle);
-                    }
-                }
-                nbytes = lwip_recv(clientfd, buffer, sizeof(buffer), 0);
-            }
+        // Notify the waiting task that new connection was established
+        if (m_receivingTaskHandle != NULL) {
+            xTaskNotifyGive(m_receivingTaskHandle);
         }
-        m_logger.log(LogLevel::Info, "Client terminated connection");
-        lwip_close(clientfd);
-        m_isBusy = false;
+        while (m_clientSocket != NO_SOCKET) {
+            // Wait for client to have disconnected
+            Task::delay(10);
+        }
     } else {
-        Task::delay(1000); // Sleep if no socket
+        Task::delay(1000); // Sleep if no valid server socket
     }
 }
 
 bool TCPServer::start() {
     m_logger.log(LogLevel::Info, "Starting tcp server");
-    m_socket = SocketFactory::createTCPServerSocket(NetworkConfig::getCommunicationPort());
+    m_acceptingSocket = SocketFactory::createTCPServerSocket(NetworkConfig::getCommunicationPort());
 
-    return m_socket != NO_SOCKET;
+    return m_acceptingSocket != NO_SOCKET;
 }
 
 bool TCPServer::stop() {
     m_logger.log(LogLevel::Info, "Stopping tcp server");
-    if (m_socket != NO_SOCKET && lwip_close(m_socket) == 0) {
-        m_socket = NO_SOCKET;
+    if (m_acceptingSocket != NO_SOCKET && lwip_close(m_acceptingSocket) == 0) {
+        m_acceptingSocket = NO_SOCKET;
         return true;
     }
     m_logger.log(LogLevel::Error, "Failed to stop TCP server");

@@ -37,7 +37,7 @@ class TCPMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
 
   private:
     void task() override {
-        char message[50];
+        char message[50] = "Hello Server!";
         uint16_t id = 0;
         auto& client = NetworkContainer::getSerializer();
         while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
@@ -46,13 +46,37 @@ class TCPMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
         }
         while (true) {
 
-            if (client.setDestination("10.0.0.162")) {
-                sprintf(message, "ID is %d", id);
+            if (client.setDestination("10.0.0.163")) {
                 client.send((uint8_t*)message, sizeof(message));
                 id++;
+                client.close();
             } else {
                 LoggerContainer::getLogger().log(LogLevel::Warn, "Failed to set destination");
             }
+            Task::delay(100);
+        }
+    }
+};
+
+class TCPMessageReceiverTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+  public:
+    TCPMessageReceiverTask(const char* taskName, UBaseType_t priority) :
+        AbstractTask(taskName, priority) {}
+
+    ~TCPMessageReceiverTask() override = default;
+
+  private:
+    void task() override {
+        char message[50];
+        uint16_t id = 0;
+        auto& server = NetworkContainer::getNetworkInputStream();
+        while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
+               NetworkStatus::Connected) {
+            Task::delay(500);
+        }
+        while (true) {
+            server.receive((uint8_t*)message, sizeof(message));
+            LoggerContainer::getLogger().log(LogLevel::Info, "Received: %s", message);
             Task::delay(100);
         }
     }
@@ -66,8 +90,10 @@ void app_main(void) {
 
     static StmMessageSenderTask s_spiMessageSend("spi_send", tskIDLE_PRIORITY + 1);
     static TCPMessageSenderTask s_tcpMessageSender("tcp_send", tskIDLE_PRIORITY + 1);
+    static TCPMessageReceiverTask s_tcpMessageReceiver("tcp_receive", tskIDLE_PRIORITY + 1);
 
     // s_spiMessageSend.start();
+    s_tcpMessageReceiver.start();
     s_tcpMessageSender.start();
 }
 

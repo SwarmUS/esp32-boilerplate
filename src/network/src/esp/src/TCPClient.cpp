@@ -24,15 +24,30 @@ bool TCPClient::send(const uint8_t* data, uint16_t length) {
         m_logger.log(LogLevel::Error, "Trying to send message with no socket client socket set");
         return false;
     }
+    ssize_t sentBytes = lwip_send(m_socketFd, data , length , 0);
 
-    if (lwip_send(m_socketFd, data, length, 0) < 0) {
-        m_logger.log(LogLevel::Error, "Failed to send message");
-    } else {
+    if ( sentBytes < 0) {
+        m_logger.log(LogLevel::Error, "Failed to send data");
         lwip_close(m_socketFd);
         m_socketFd = NO_SOCKET;
-        return true;
+        return false;
     }
-    return false;
+
+    while (sentBytes < length) {
+        ssize_t nbytes = lwip_send(m_socketFd, data + sentBytes, (length - sentBytes), 0);
+
+        if (nbytes < 0) {
+
+            m_logger.log(LogLevel::Error, "Error while sending data from socket");
+            lwip_close(m_socketFd);
+            m_socketFd = NO_SOCKET;
+            return false;
+        }
+        sentBytes += nbytes;
+    }
+
+    return sentBytes == length;
+
 }
 
 bool TCPClient::close() {
