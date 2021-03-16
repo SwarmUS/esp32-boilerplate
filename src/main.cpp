@@ -68,14 +68,15 @@ class TCPMessageReceiverTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE>
   private:
     void task() override {
         char message[50];
-        uint16_t id = 0;
         auto& server = NetworkContainer::getNetworkInputStream();
         while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
                NetworkStatus::Connected) {
             Task::delay(500);
         }
         while (true) {
-            server.receive((uint8_t*)message, sizeof(message));
+            if (!server.receive((uint8_t*)message, sizeof(message))) {
+                LoggerContainer::getLogger().log(LogLevel::Error, "Failed to receive");
+            }
             LoggerContainer::getLogger().log(LogLevel::Info, "Received: %s", message);
             Task::delay(100);
         }
