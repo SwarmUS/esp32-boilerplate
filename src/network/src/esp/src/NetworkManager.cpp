@@ -2,7 +2,6 @@
 #include "NetworkConfig.h"
 #include "NetworkContainer.h"
 #include "SocketFactory.h"
-#include <new>
 
 constexpr uint8_t g_LOOP_RATE = 100;
 
@@ -25,7 +24,7 @@ NetworkManager::NetworkManager(ILogger& logger, INetworkInputStream& server) :
     m_state = NetworkManagerState::INIT;
 }
 
-void NetworkManager::initNetworkInterface() {
+bool NetworkManager::initNetworkInterface() {
     // Sadly the event_handler_arg copied in the event handler, therefore we cannot use it to pass
     // pointer to this instance
     ESP_ERROR_CHECK(
@@ -40,8 +39,7 @@ void NetworkManager::initNetworkInterface() {
 
     // Initialize default station as network interface instance. Will change in the future when
     // enabling mesh capabilities
-    auto* networkInterface = esp_netif_create_default_wifi_sta();
-    assert(networkInterface);
+    return esp_netif_create_default_wifi_sta() != nullptr;
 }
 
 void NetworkManager::eventHandler(void* context,
@@ -95,7 +93,6 @@ bool NetworkManager::getNetworkingID(char* buffer, size_t maxLength) {
 }
 
 void NetworkManager::execute() {
-    char message[] = "Test message";
     switch (m_state) {
 
     case NetworkManagerState::INIT:

@@ -1,7 +1,7 @@
 #include "NetworkContainer.h"
+#include "DummyNetworkInputStream.h"
 #include "DummyNetworkManager.h"
 #include "DummyNetworkOutputStream.h"
-#include "DummyNetworkInputStream.h"
 
 INetworkManager& NetworkContainer::getNetworkManager() {
     static DummyNetworkManager s_networkManager;
@@ -9,7 +9,7 @@ INetworkManager& NetworkContainer::getNetworkManager() {
     return s_networkManager;
 }
 
-INetworkInputStream & NetworkContainer::getNetworkInputStream() {
+INetworkInputStream& NetworkContainer::getNetworkInputStream() {
     static DummyNetworkInputStream s_inputStream;
 
     return s_inputStream;

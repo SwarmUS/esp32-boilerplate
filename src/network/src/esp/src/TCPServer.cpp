@@ -26,6 +26,8 @@ TCPServer::TCPServer(ILogger& logger) :
     m_serverTask.start();
 }
 
+TCPServer::~TCPServer() { stop(); }
+
 bool TCPServer::receive(uint8_t* data, uint16_t length) {
 
     m_receivingTaskHandle = xTaskGetCurrentTaskHandle();
@@ -45,7 +47,8 @@ bool TCPServer::receive(uint8_t* data, uint16_t length) {
     }
 
     while (receivedBytes <= length) {
-        ssize_t nbytes = lwip_recv(m_clientSocket, data + receivedBytes, (length - receivedBytes), 0);
+        ssize_t nbytes =
+            lwip_recv(m_clientSocket, data + receivedBytes, (length - receivedBytes), 0);
 
         if (nbytes < 0) {
             // Only close socket after client disconnected. When client is still connected but not
@@ -63,12 +66,6 @@ bool TCPServer::receive(uint8_t* data, uint16_t length) {
 }
 
 bool TCPServer::isReady() { return m_acceptingSocket != NO_SOCKET; }
-
-TCPServer::~TCPServer() {
-    if (m_acceptingSocket != NO_SOCKET) {
-        lwip_close(m_acceptingSocket);
-    }
-}
 
 void TCPServer::receiveTask() {
     // Only receive with a valid server socket

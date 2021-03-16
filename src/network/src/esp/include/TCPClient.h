@@ -9,7 +9,7 @@ class TCPClient : public INetworkOutputStream {
   public:
     TCPClient(ILogger& logger);
 
-    ~TCPClient() override = default;
+    ~TCPClient() override;
 
     bool send(const uint8_t* data, uint16_t length) override;
     bool setDestination(const char* destination) override;

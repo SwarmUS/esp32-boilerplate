@@ -5,6 +5,8 @@
 
 TCPClient::TCPClient(ILogger& logger) : m_logger(logger) { m_socketFd = NO_SOCKET; }
 
+TCPClient::~TCPClient() { close(); }
+
 bool TCPClient::setDestination(const char* address) {
     if (m_socketFd != NO_SOCKET) {
         m_logger.log(LogLevel::Error, "Trying to override socket for TCP client");
@@ -24,9 +26,9 @@ bool TCPClient::send(const uint8_t* data, uint16_t length) {
         m_logger.log(LogLevel::Error, "Trying to send message with no socket client socket set");
         return false;
     }
-    ssize_t sentBytes = lwip_send(m_socketFd, data , length , 0);
+    ssize_t sentBytes = lwip_send(m_socketFd, data, length, 0);
 
-    if ( sentBytes < 0) {
+    if (sentBytes < 0) {
         m_logger.log(LogLevel::Error, "Failed to send data");
         lwip_close(m_socketFd);
         m_socketFd = NO_SOCKET;
@@ -47,7 +49,6 @@ bool TCPClient::send(const uint8_t* data, uint16_t length) {
     }
 
     return sentBytes == length;
-
 }
 
 bool TCPClient::close() {

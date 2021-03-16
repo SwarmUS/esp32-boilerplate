@@ -5,10 +5,8 @@
 #include "TCPClient.h"
 #include "TCPServer.h"
 #include "logger/ILogger.h"
-#include "memory"
 #include <BaseTask.h>
 #include <Task.h>
-#include <optional>
 
 #include "esp_wifi.h"
 
@@ -52,7 +50,7 @@ class NetworkManager : public INetworkManager {
                              esp_event_base_t eventBase,
                              int32_t eventId,
                              void* eventData);
-    void initNetworkInterface();
+    bool initNetworkInterface();
 };
 
 #endif // HIVE_CONNECT_NETWORKMANAGER_H
