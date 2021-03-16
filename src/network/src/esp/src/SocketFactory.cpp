@@ -19,7 +19,8 @@ int SocketFactory::createTCPServerSocket(uint16_t port) {
         return -1;
     }
 
-    // Puts the socket in listening mode. Can only accept one connection at a time
+    // Puts the socket in listening mode. Can only accept one connection at a time based on LWIP
+    // implementation of the socket API
     if (lwip_listen(socket, 1) != 0) {
         lwip_close(socket);
         return -1;

@@ -20,7 +20,7 @@ class TCPServer : public INetworkInputStream {
     bool stop() override;
     bool isReady() override;
 
-    void receiveTask();
+    void acceptingClients();
 
   private:
     ILogger& m_logger;

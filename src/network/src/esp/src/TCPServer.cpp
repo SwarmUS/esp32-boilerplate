@@ -11,7 +11,7 @@ static void serverReceiveTask(void* context) {
 
     if (context != nullptr) {
         while (true) {
-            static_cast<TCPServer*>(context)->receiveTask();
+            static_cast<TCPServer*>(context)->acceptingClients();
             Task::delay(gs_LOOP_RATE);
         }
     }
@@ -37,11 +37,11 @@ bool TCPServer::receive(uint8_t* data, uint16_t length) {
     }
     m_receivingTaskHandle = NULL;
 
-    ssize_t receivedBytes = lwip_recv(m_clientSocket, data, (length - receivedBytes), 0);
+    ssize_t receivedBytes = lwip_recv(m_clientSocket, data, length, 0);
 
     if (receivedBytes < 0) {
         m_logger.log(LogLevel::Error, "Failed to read data from fresh connection");
-        lwip_close(m_clientSocket);
+        closesocket(m_clientSocket);
         m_clientSocket = NO_SOCKET;
         return false;
     }
@@ -55,7 +55,7 @@ bool TCPServer::receive(uint8_t* data, uint16_t length) {
             // transmitting, lwip_rcv will return 0. When the client disconnects, lwip_rcv will
             // return -1.
             m_logger.log(LogLevel::Info, "Client terminated connection");
-            lwip_close(m_clientSocket);
+            closesocket(m_clientSocket);
             m_clientSocket = NO_SOCKET;
             break;
         }
@@ -67,7 +67,7 @@ bool TCPServer::receive(uint8_t* data, uint16_t length) {
 
 bool TCPServer::isReady() { return m_acceptingSocket != NO_SOCKET; }
 
-void TCPServer::receiveTask() {
+void TCPServer::acceptingClients() {
     // Only receive with a valid server socket
     if (m_acceptingSocket != NO_SOCKET) {
         sockaddr_in clientAddr;
@@ -99,7 +99,7 @@ bool TCPServer::start() {
 
 bool TCPServer::stop() {
     m_logger.log(LogLevel::Info, "Stopping tcp server");
-    if (m_acceptingSocket != NO_SOCKET && lwip_close(m_acceptingSocket) == 0) {
+    if (m_acceptingSocket != NO_SOCKET && closesocket(m_acceptingSocket) == 0) {
         m_acceptingSocket = NO_SOCKET;
         return true;
     }
