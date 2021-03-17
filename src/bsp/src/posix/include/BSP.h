@@ -6,18 +6,20 @@
 
 class BSP : public IBSP {
   public:
-    BSP(const ros::NodeHandle& nodeHandle, int loopRate);
+    BSP(const ros::NodeHandle& nodeHandle);
     ~BSP() override;
 
     void initChip() override;
     ChipInfo getChipInfo() override;
+    uint16_t getUUID() override;
+    void setUUID(uint16_t uuid) override;
 
     std::shared_ptr<ros::NodeHandle> getNodeHandle();
 
   private:
     ros::AsyncSpinner m_spinner;
     std::shared_ptr<ros::NodeHandle> m_rosNodeHandle;
-    int m_loopRate;
+    uint16_t m_UUID;
 };
 
 #endif //_BSP_H

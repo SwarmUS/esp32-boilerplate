@@ -24,6 +24,17 @@ class IBSP {
      * @return The chip info for the BSP initiated
      */
     virtual ChipInfo getChipInfo() = 0;
+
+    /**
+     * @brief Get the uuid of the system
+     * @return The uuid value
+     */
+    virtual uint16_t getUUID() = 0;
+
+    /**
+     * @brief Set the uuid of the system
+     */
+    virtual void setUUID(uint16_t uuid) = 0;
 };
 
 #endif // IBSP_H
