@@ -4,7 +4,6 @@
 #include "UserInterface.h"
 #include "logger/LoggerContainer.h"
 
-
 namespace BspContainer {
 
 IBSP& getBSP() {
