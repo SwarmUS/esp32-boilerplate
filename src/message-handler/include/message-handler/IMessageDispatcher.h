@@ -2,7 +2,8 @@
 #define __IMESSAGEDISPATCHER_H_
 
 /**
- *@brief A class to manage message dispatching to queues, sending messages at the right place*/
+ *@brief A class to manage incoming messages by either handling them of  dispatching them to queues,
+ *sending messages at the right place*/
 class IMessageDispatcher {
 
   public:
