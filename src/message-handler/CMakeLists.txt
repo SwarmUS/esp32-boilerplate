@@ -3,16 +3,18 @@ set(LIB_ALIAS "SwarmUS::HiveConnect::MessageHandler")
 
 set(LIB_SOURCES
     src/MessageSender.cpp
-    src/SwarmApiRequestHandler.cpp
+    src/NetworkAPIHandler.cpp
+    src/MessageDispatcher.cpp
         )
 
 set(LIB_HEADERS
     include/message-handler/IMessageDispatcher.h
     include/message-handler/IMessageSender.h
-    include/message-handler/ISwarmApiRequestHandler.h
+        include/message-handler/INetworkAPIHandler.h
 
+    include/message-handler/MessageDispatcher.h
     include/message-handler/MessageSender.h
-    include/message-handler/SwarmApiRequestHandler.h
+    include/message-handler/NetworkAPIHandler.h
         )
 
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS} ${LIB_SOURCES})
@@ -29,10 +31,14 @@ target_include_directories(${LIB_NAME}
 
 target_link_libraries(${LIB_NAME}
         PUBLIC
-        SwarmUS::HiveConnect::BSP
         SwarmUS::HiveConnect::Logger
+        SwarmUS::Propolis::OS::Common
         SwarmUS::Propolis::Cpp::Common
         SwarmUS::Propolis::Pheromones::HiveMind::Host
+
+        PRIVATE
+        SwarmUS::HiveConnect::BSP
+        SwarmUS::HiveConnect::OS
         )
 
 if(ENABLE_TESTS)
