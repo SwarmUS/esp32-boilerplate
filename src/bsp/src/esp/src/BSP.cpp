@@ -9,9 +9,7 @@
 #include "nvs_flash.h"
 #include <driver/gpio.h>
 
-BSP::BSP() {
-    m_UUID = 0;
-}
+BSP::BSP() { m_UUID = 0; }
 
 void BSP::initChip() {
     // Init event loop
@@ -68,10 +66,6 @@ void BSP::initSPI() {
     gpio_set_pull_mode(STM_CS, GPIO_PULLUP_ONLY);
 }
 
-uint16_t BSP::getUUID() {
-    return m_UUID;
-}
+uint16_t BSP::getUUID() { return m_UUID; }
 
-void BSP::setUUID(uint16_t uuid) {
-    m_UUID = uuid;
-}
+void BSP::setUUID(uint16_t uuid) { m_UUID = uuid; }

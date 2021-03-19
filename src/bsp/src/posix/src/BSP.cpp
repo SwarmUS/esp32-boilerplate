@@ -6,8 +6,7 @@ constexpr uint8_t gc_spinnerCores = 1;
 
 BSP::~BSP() = default;
 
-BSP::BSP(const ros::NodeHandle& nodeHandle) :
-    m_spinner(gc_spinnerCores) {
+BSP::BSP(const ros::NodeHandle& nodeHandle) : m_spinner(gc_spinnerCores) {
     m_rosNodeHandle = std::make_shared<ros::NodeHandle>(nodeHandle);
 }
 
@@ -20,10 +19,6 @@ ChipInfo BSP::getChipInfo() {
 
 std::shared_ptr<ros::NodeHandle> BSP::getNodeHandle() { return m_rosNodeHandle; }
 
-uint16_t BSP::getUUID() {
-    return m_UUID;
-}
+uint16_t BSP::getUUID() { return m_UUID; }
 
-void BSP::setUUID(uint16_t uuid) {
-    m_UUID = uuid;
-}
+void BSP::setUUID(uint16_t uuid) { m_UUID = uuid; }
