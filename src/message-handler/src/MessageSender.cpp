@@ -1,7 +1,10 @@
 #include "MessageSender.h"
 
-MessageSender::MessageSender(ICircularQueue<MessageDTO>& inputQueue, IHiveMindHostSerializer& serializer, IBSP& bsp, ILogger& logger) :
-   m_inputQueue(inputQueue), m_serializer(serializer), m_bsp(bsp), m_logger(logger) {}
+MessageSender::MessageSender(ICircularQueue<MessageDTO>& inputQueue,
+                             IHiveMindHostSerializer& serializer,
+                             IBSP& bsp,
+                             ILogger& logger) :
+    m_inputQueue(inputQueue), m_serializer(serializer), m_bsp(bsp), m_logger(logger) {}
 
 bool MessageSender::greet() {
     uint16_t uuid = m_bsp.getUUID();

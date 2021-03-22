@@ -42,5 +42,5 @@ target_link_libraries(${LIB_NAME}
         )
 
 if(ENABLE_TESTS)
-    #add_subdirectory(tests)
+    add_subdirectory(tests)
 endif()
