@@ -15,7 +15,7 @@ set(LIB_PRIVATE_HEADERS
         include/SpiStm.h
 )
 
-add_library(${LIB_NAME} ${LIB_SOURCES} ${LIB_PRIVATE_HEADERS})
+add_library(${LIB_NAME} STATIC ${LIB_SOURCES} ${LIB_PRIVATE_HEADERS})
 add_library(${LIB_ALIAS} ALIAS ${LIB_NAME})
 
 # Make ROS messages/services available in headers
@@ -26,9 +26,7 @@ target_include_directories(${LIB_NAME}
         PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         ${BSP_CMAKE_DIR}/include
-        PUBLIC
-        include
-        )
+)
 
 target_link_libraries(${LIB_NAME}
         PUBLIC
@@ -36,6 +34,8 @@ target_link_libraries(${LIB_NAME}
         SwarmUS::HiveConnect::OS
         PRIVATE
         ${catkin_LIBRARIES}
+        SwarmUS::HiveConnect::Logger
+        SwarmUS::Propolis::Pheromones::Common
 )
 
-set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+#set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)

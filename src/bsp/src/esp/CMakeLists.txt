@@ -28,11 +28,11 @@ target_link_libraries(${LIB_NAME}
         PUBLIC
         # Defined libraries
         SwarmUS::HiveConnect::OS
-        SwarmUS::HiveConnect::Logger
         SwarmUS::HiveConnect::Network
         PRIVATE
         idf::esp32
         idf::driver
         idf::nvs_flash
         SwarmUS::Propolis::C::Common
+        #SwarmUS::HiveConnect::Logger
 )

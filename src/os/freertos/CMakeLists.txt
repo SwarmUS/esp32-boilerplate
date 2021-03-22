@@ -20,4 +20,5 @@ target_link_libraries(${LIB_NAME}
         idf::esp_common
         PUBLIC
         SwarmUS::Propolis::OS::FreeRTOS
+        SwarmUS::Propolis::OS::Common
         )
