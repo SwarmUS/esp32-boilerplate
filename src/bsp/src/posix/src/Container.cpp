@@ -1,7 +1,8 @@
 #include "bsp/Container.h"
 #include "BSP.h"
-#include "SpiStm.h"
+#include "SpiStmMock.h"
 #include "UserInterface.h"
+#include "logger/LoggerContainer.h"
 
 #define ROS_SPIN_LOOP_RATE_MS 200
 
@@ -21,7 +22,7 @@ IUserInterface& getUserInterface() {
 }
 
 ISpiStm& getSpiStm() {
-    static SpiStm s_spiStm;
+    static SpiStmMock s_spiStm(LoggerContainer::getLogger());
 
     return s_spiStm;
 }

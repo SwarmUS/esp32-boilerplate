@@ -6,16 +6,17 @@ set(LIB_SOURCES
         src/Container.cpp
         src/System.cpp
         src/UserInterface.cpp
+        src/SpiStmMock.cpp
 )
 
 set(LIB_PRIVATE_HEADERS
         include/BSP.h
         include/System.h
         include/UserInterface.h
-        include/SpiStm.h
+        include/SpiStmMock.h
 )
 
-add_library(${LIB_NAME} STATIC ${LIB_SOURCES} ${LIB_PRIVATE_HEADERS})
+add_library(${LIB_NAME} STATIC ${LIB_PRIVATE_HEADERS} ${LIB_SOURCES} )
 add_library(${LIB_ALIAS} ALIAS ${LIB_NAME})
 
 # Make ROS messages/services available in headers
@@ -26,6 +27,8 @@ target_include_directories(${LIB_NAME}
         PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         ${BSP_CMAKE_DIR}/include
+        PUBLIC
+        include
 )
 
 target_link_libraries(${LIB_NAME}
