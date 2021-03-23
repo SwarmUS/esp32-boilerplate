@@ -5,6 +5,6 @@
 
         <!-- BSP settings -->
         <param name="spi_mock_address" value="127.0.0.1" />
-        <param name="spi_mock_port" value="6969" />
+        <param name="spi_mock_port" value="9001" />
     </node>
 </launch>
