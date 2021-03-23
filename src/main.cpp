@@ -3,6 +3,8 @@
 #include "Task.h"
 #include "bsp/Container.h"
 #include "logger/LoggerContainer.h"
+#include "message-handler/MessageHandlerContainer.h"
+#include "message-handler/MessageSender.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,21 +13,35 @@ extern "C" {
 class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
   public:
     StmMessageSenderTask(const char* taskName, UBaseType_t priority) :
-        AbstractTask(taskName, priority) {}
+        AbstractTask(taskName, priority),
+        m_logger(LoggerContainer::getLogger()) {}
 
     ~StmMessageSenderTask() override = default;
 
   private:
+    ILogger& m_logger;
+
     void task() override {
         auto& spi = BspContainer::getSpiStm();
         while (!spi.isConnected()) {
             Task::delay(500);
         }
+        HiveMindHostSerializer serializer(spi);
+        MessageSender messageSender(MessageHandlerContainer::getHivemindOutputQueue(), serializer, BspContainer::getBSP(), m_logger);
+        while (!spi.isConnected()) {
+            Task::delay(100);
+        }
+
         while (true) {
-            if (!spi.isBusy()) {
-                const char message[] = "Hello STM";
-                spi.send((uint8_t*)message, sizeof(message));
-                LoggerContainer::getLogger().log(LogLevel::Info, "Sent message to spi");
+            // Note: this is place-holder logic for handling the greet process. The proper loop for this will be addressed in future development
+            while (!spi.isConnected()) {
+                messageSender.greet();
+                if (!messageSender.processAndSerialize()) {
+                    m_logger.log(LogLevel::Warn, "Fail to process/serialize spi while greeting");
+                }
+            }
+            if (!messageSender.processAndSerialize()) {
+                m_logger.log(LogLevel::Warn, "Fail to process/serialize spi");
             }
             Task::delay(100);
         }

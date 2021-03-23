@@ -4,8 +4,6 @@
 #include "hivemind-host/MessageDTO.h"
 #include "gmock/gmock.h"
 
-
-
 // Simple matcher to check that DTO matches inside function call. If required
 MATCHER_P(NetworkApiDTOMatcher, expected, "Equality matcher for NetworkApiDTO)") {
     auto value = std::get<0>(arg).getApiCall();
@@ -27,7 +25,5 @@ MATCHER_P(NetworkApiDTOMatcher, expected, "Equality matcher for NetworkApiDTO)")
     // Return false otherwise
     return false;
 }
-
-
 
 #endif // HIVE_CONNECT_DTOMATCHERS_H

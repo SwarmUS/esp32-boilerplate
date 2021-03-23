@@ -42,6 +42,7 @@ target_link_libraries(${EXECUTABLE_NAME}
         SwarmUS::HiveConnect::BSP
         SwarmUS::HiveConnect::Logger
         SwarmUS::HiveConnect::Network
+        SwarmUS::HiveConnect::MessageHandler
 )
 
 
