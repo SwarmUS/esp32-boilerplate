@@ -1,8 +1,8 @@
 #ifndef __ISPISTM_H__
 #define __ISPISTM_H__
 
-#include <cstdint>
 #include "common/IProtobufStream.h"
+#include <cstdint>
 
 #define CRC32_SIZE (sizeof(uint32_t))
 #define STM_SPI_MAX_MESSAGE_LENGTH (2048u - CRC32_SIZE)
@@ -10,7 +10,6 @@
 class ISpiStm : public IProtobufStream {
   public:
     ~ISpiStm() override = default;
-
 
     /**
      * @brief Sends a buffer to the Stm via spi by appending with the length and the CRC32
@@ -27,7 +26,6 @@ class ISpiStm : public IProtobufStream {
      * @return true if successful, false otherwise
      */
     bool receive(uint8_t* data, uint16_t length) override = 0;
-
 
     /**
      * @brief Checks if driver is already busy transmitting data.

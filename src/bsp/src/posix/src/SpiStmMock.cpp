@@ -1,15 +1,14 @@
 #include "SpiStmMock.h"
-#include <unistd.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
 #include "Task.h"
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 SpiStmMock::SpiStmMock(ILogger& logger, const char* address, int port) : m_logger(logger) {
     m_socket = -1;
     m_address.sin_family = AF_INET;
     m_address.sin_port = htons(port);
     m_address.sin_addr.s_addr = (inet_addr(address));
-
 
     while (m_socket < 0) {
         m_logger.log(LogLevel::Error, "Attempting connection to HiveMind");
@@ -18,12 +17,10 @@ SpiStmMock::SpiStmMock(ILogger& logger, const char* address, int port) : m_logge
     }
 }
 
-SpiStmMock::~SpiStmMock() noexcept {
-    close();
-}
+SpiStmMock::~SpiStmMock() noexcept { close(); }
 
 bool SpiStmMock::send(const uint8_t* buffer, uint16_t length) {
-    if(m_socket < 0) {
+    if (m_socket < 0) {
         return false;
     }
     if (::send(m_socket, buffer, length, 0) != length) {
@@ -40,7 +37,7 @@ bool SpiStmMock::send(const uint8_t* buffer, uint16_t length) {
 }
 
 bool SpiStmMock::receive(uint8_t* data, uint16_t length) {
-    if(m_socket < 0) {
+    if (m_socket < 0) {
         return false;
     }
     auto ret = ::recv(m_socket, data, length, MSG_WAITALL);
@@ -62,17 +59,17 @@ bool SpiStmMock::receive(uint8_t* data, uint16_t length) {
 }
 
 bool SpiStmMock::connect() {
-    if(m_socket > 0) {
+    if (m_socket > 0) {
         m_logger.log(LogLevel::Error, "Trying to override spi mock socket");
         return false;
     }
 
     m_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if(m_socket < 0) {
+    if (m_socket < 0) {
         m_logger.log(LogLevel::Error, "Could not open socket");
     }
 
-    if (::connect(m_socket, (sockaddr*)&m_address, sizeof(m_address)) < 0 ) {
+    if (::connect(m_socket, (sockaddr*)&m_address, sizeof(m_address)) < 0) {
         m_logger.log(LogLevel::Error, "Could not connect to server");
         ::close(m_socket);
         m_socket = -1;
@@ -87,10 +84,6 @@ void SpiStmMock::close() {
     m_socket = -1;
 }
 
-bool SpiStmMock::isConnected() const {
-    return m_socket != -1;
-}
+bool SpiStmMock::isConnected() const { return m_socket != -1; }
 
-bool SpiStmMock::isBusy() const {
-    return false;
-}
+bool SpiStmMock::isBusy() const { return false; }
