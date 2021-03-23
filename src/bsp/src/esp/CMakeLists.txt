@@ -34,5 +34,4 @@ target_link_libraries(${LIB_NAME}
         idf::driver
         idf::nvs_flash
         SwarmUS::Propolis::C::Common
-        #SwarmUS::HiveConnect::Logger
 )

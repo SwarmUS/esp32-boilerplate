@@ -41,4 +41,4 @@ target_link_libraries(${LIB_NAME}
         SwarmUS::Propolis::Pheromones::Common
 )
 
-#set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)

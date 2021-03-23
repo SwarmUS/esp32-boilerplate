@@ -98,8 +98,8 @@ void app_main(void) {
     static TCPMessageReceiverTask s_tcpMessageReceiver("tcp_receive", tskIDLE_PRIORITY + 1);
 
     s_spiMessageSend.start();
-    // s_tcpMessageReceiver.start();
-    // s_tcpMessageSender.start();
+    s_tcpMessageReceiver.start();
+    s_tcpMessageSender.start();
 }
 
 #ifdef __cplusplus
