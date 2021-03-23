@@ -22,7 +22,8 @@ IUserInterface& getUserInterface() {
 }
 
 ISpiStm& getSpiStm() {
-    static SpiStmMock s_spiStm(LoggerContainer::getLogger());
+    int port = 6868;
+    static SpiStmMock s_spiStm(LoggerContainer::getLogger(), port);
 
     return s_spiStm;
 }
