@@ -22,8 +22,10 @@ IUserInterface& getUserInterface() {
 }
 
 ISpiStm& getSpiStm() {
-    int port = 6868;
-    static SpiStmMock s_spiStm(LoggerContainer::getLogger(), port);
+    ros::NodeHandle nodeHandle("~/");
+    int port = nodeHandle.param("spi_mock_port", 6969);
+    std::string address = nodeHandle.param("spi_mock_address", std::string("127.0.0.1"));
+    static SpiStmMock s_spiStm(LoggerContainer::getLogger(), address.c_str(), port);
 
     return s_spiStm;
 }
