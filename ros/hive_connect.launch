@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- Generic launch file for a hiveconnect node -->
+<launch>
+    <node name="hive_connect" pkg="hive_connect" type="hive_connect"  output="screen" >
+
+        <!-- BSP settings -->
+        <param name="spi_mock_address" value="127.0.0.1" />
+        <param name="spi_mock_port" value="6969" />
+    </node>
+</launch>

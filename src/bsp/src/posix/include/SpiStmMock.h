@@ -7,25 +7,21 @@
 
 class SpiStmMock : public ISpiStm {
   public:
-    SpiStmMock(ILogger& logger, int port);
-    ~SpiStmMock() override = default;
+    SpiStmMock(ILogger& logger, const char* address, int port);
+    ~SpiStmMock() override;
 
     bool send(const uint8_t* buffer, uint16_t length) override;
     bool receive(uint8_t *data, uint16_t length) override;
     bool isBusy() const override;
     bool isConnected() const override;
 
-    void openSocket(int port);
     bool connect();
     void close();
 
   private:
     ILogger& m_logger;
-
-    int m_port;
     int m_socket;
-    int m_addressLength;
-    struct sockaddr_in m_address;
+    sockaddr_in m_address;
 };
 
 #endif // HIVE_CONNECT_SPISTMMOCK_H

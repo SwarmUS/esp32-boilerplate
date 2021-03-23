@@ -18,10 +18,14 @@ class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
   private:
     void task() override {
         auto& spi = BspContainer::getSpiStm();
+        while (!spi.isConnected()) {
+            Task::delay(500);
+        }
         while (true) {
-            if (!spi.isBusy()) {
+            if (!spi.isBusy() && spi.isConnected()) {
                 const char message[] = "Hello STM";
                 spi.send((uint8_t*)message, sizeof(message));
+                LoggerContainer::getLogger().log(LogLevel::Info, "Sent message to spi");
             }
             Task::delay(100);
         }
@@ -93,9 +97,9 @@ void app_main(void) {
     static TCPMessageSenderTask s_tcpMessageSender("tcp_send", tskIDLE_PRIORITY + 1);
     static TCPMessageReceiverTask s_tcpMessageReceiver("tcp_receive", tskIDLE_PRIORITY + 1);
 
-    // s_spiMessageSend.start();
-    s_tcpMessageReceiver.start();
-    s_tcpMessageSender.start();
+     s_spiMessageSend.start();
+    //s_tcpMessageReceiver.start();
+    //s_tcpMessageSender.start();
 }
 
 #ifdef __cplusplus
