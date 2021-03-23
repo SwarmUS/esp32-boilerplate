@@ -9,7 +9,7 @@
 
 class ISpiStm : public IProtobufStream {
   public:
-    ~ISpiStm() override = default;
+    virtual ~ISpiStm() = default;
 
     /**
      * @brief Sends a buffer to the Stm via spi by appending with the length and the CRC32
@@ -17,7 +17,7 @@ class ISpiStm : public IProtobufStream {
      * @param length Number of bytes to send
      * @return True if transfer started. False otherwise.
      */
-    bool send(const uint8_t* buffer, uint16_t length) override = 0;
+    virtual bool send(const uint8_t* buffer, uint16_t length) = 0;
 
     /**
      * @brief Receive data from spi inside a buffer
@@ -25,7 +25,7 @@ class ISpiStm : public IProtobufStream {
      * @param length The number of bytes to read
      * @return true if successful, false otherwise
      */
-    bool receive(uint8_t* data, uint16_t length) override = 0;
+    virtual bool receive(uint8_t* data, uint16_t length) = 0;
 
     /**
      * @brief Checks if driver is already busy transmitting data.

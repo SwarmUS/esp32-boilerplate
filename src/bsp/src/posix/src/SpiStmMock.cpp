@@ -17,7 +17,7 @@ SpiStmMock::SpiStmMock(ILogger& logger, const char* address, int port) : m_logge
     }
 }
 
-SpiStmMock::~SpiStmMock() noexcept { close(); }
+SpiStmMock::~SpiStmMock() { close(); }
 
 bool SpiStmMock::send(const uint8_t* buffer, uint16_t length) {
     if (m_socket < 0) {
