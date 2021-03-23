@@ -13,7 +13,7 @@ function(propolis_fetch_populate)
         ${PROJECT_NAME}_propolis
 
         GIT_REPOSITORY https://github.com/SwarmUS/Propolis
-        GIT_TAG        3c08bae # TODO: change this for the real propolis master after PR has been merged
+        GIT_TAG        4614e38 # TODO: change this for the real propolis master after PR has been merged
         GIT_PROGRESS   TRUE
     )
 
