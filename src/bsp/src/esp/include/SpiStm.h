@@ -14,10 +14,16 @@ class SpiStm : public ISpiStm {
     SpiStm(ILogger& logger);
 
     bool send(const uint8_t* buffer, uint16_t length) override;
-
     bool isBusy() const override;
-
     void execute();
+
+    // TODO: implement these function (SWARINFO-250: Finalisation du driver SPI)
+    bool receive(uint8_t* data, uint16_t length) override {
+        (void)data;
+        (void)length;
+        return false;
+    };
+    bool isConnected() const { return false; };
 
   private:
     BaseTask<configMINIMAL_STACK_SIZE * 3> m_driverTask;

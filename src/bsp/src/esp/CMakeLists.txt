@@ -5,7 +5,7 @@ set(LIB_SOURCES
         src/BSP.cpp
         src/Container.cpp
         src/UserInterface.cpp
-        src/SpiStm.cpp
+        src/SpiStmMock.cpp
         hal/spi_callbacks.c)
 
 set(LIB_PRIVATE_HEADERS
@@ -28,7 +28,6 @@ target_link_libraries(${LIB_NAME}
         PUBLIC
         # Defined libraries
         SwarmUS::HiveConnect::OS
-        SwarmUS::HiveConnect::Logger
         SwarmUS::HiveConnect::Network
         PRIVATE
         idf::esp32
