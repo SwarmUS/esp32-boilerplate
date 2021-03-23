@@ -5,6 +5,7 @@ set(LIB_SOURCES
     src/MessageSender.cpp
     src/NetworkAPIHandler.cpp
     src/MessageDispatcher.cpp
+    src/MessageHandlerContainer.cpp
         )
 
 set(LIB_HEADERS
