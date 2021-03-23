@@ -22,7 +22,7 @@ class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
             Task::delay(500);
         }
         while (true) {
-            if (!spi.isBusy() && spi.isConnected()) {
+            if (!spi.isBusy()) {
                 const char message[] = "Hello STM";
                 spi.send((uint8_t*)message, sizeof(message));
                 LoggerContainer::getLogger().log(LogLevel::Info, "Sent message to spi");
