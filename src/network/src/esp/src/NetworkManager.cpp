@@ -84,12 +84,17 @@ NetworkStatus NetworkManager::getNetworkStatus() {
     }
 }
 
-bool NetworkManager::getNetworkingID(char* buffer, size_t maxLength) {
+bool NetworkManager::getSelfIP(char* buffer, size_t maxLength) {
     if (buffer == nullptr) {
         return false;
     }
     esp_ip4_addr_t ip = getIP();
     return snprintf(buffer, maxLength, IPSTR, IP2STR(&ip)) <= maxLength;
+}
+
+bool NetworkManager::getIPFromRobotID(uint16_t robotID, char* buffer, size_t maxLength) {
+    m_logger.log(LogLevel::Error, "No list initialised");
+    return false;
 }
 
 void NetworkManager::execute() {
