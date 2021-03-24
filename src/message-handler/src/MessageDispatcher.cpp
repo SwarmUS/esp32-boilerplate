@@ -21,6 +21,7 @@ bool MessageDispatcher::deserializeAndDispatch() {
     if (m_deserializer.deserializeFromStream(message)) {
         // Handle greet
         if (const auto* greeting = std::get_if<GreetingDTO>(&message.getMessage())) {
+            m_logger.log(LogLevel::Info, "Received greeting, ID obtained is %d", greeting->getId());
             m_bsp.setUUID(greeting->getId());
             return true;
         }

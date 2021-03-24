@@ -38,11 +38,12 @@ class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
         while (true) {
             // Note: this is place-holder logic for handling the greet process. The proper loop for
             // this will be addressed in future development
-            while (!spi.isConnected()) {
+            while (BspContainer::getBSP().getUUID() == 0) {
                 messageSender.greet();
                 if (!messageSender.processAndSerialize()) {
                     m_logger.log(LogLevel::Warn, "Fail to process/serialize spi while greeting");
                 }
+                Task::delay(100);
             }
             if (!messageSender.processAndSerialize()) {
                 m_logger.log(LogLevel::Warn, "Fail to process/serialize spi");
@@ -69,9 +70,10 @@ class StmMessageDispatcherTask : public AbstractTask<10 * configMINIMAL_STACK_SI
                 if (!dispatcher.deserializeAndDispatch()) {
                     m_logger.log(LogLevel::Error, "Failed to deserialize/dispatch STM");
                 }
+            } else {
+                m_logger.log(LogLevel::Warn, "Cannot deserialize/dispatch STM while disconnected");
+                Task::delay(500);
             }
-            m_logger.log(LogLevel::Warn, "Cannot deserialize/dispatch STM while disconnected");
-            Task::delay(500);
         }
     }
 
@@ -148,10 +150,12 @@ void app_main(void) {
     networkManager->start();
 
     static StmMessageSenderTask s_spiMessageSend("spi_send", tskIDLE_PRIORITY + 1);
+    static StmMessageDispatcherTask s_spiDispatch("spi_receiver", tskIDLE_PRIORITY + 1);
     static UnicastMessageSenderTask s_tcpMessageSender("tcp_send", tskIDLE_PRIORITY + 1);
     static UnicastMessageDispatcher s_tcpMessageReceiver("tcp_receive", tskIDLE_PRIORITY + 1);
 
     s_spiMessageSend.start();
+    s_spiDispatch.start();
     s_tcpMessageReceiver.start();
     s_tcpMessageSender.start();
 }
