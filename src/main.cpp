@@ -13,12 +13,12 @@
 extern "C" {
 #endif
 
-class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
+class HiveMindMessageSender : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
   public:
-    StmMessageSenderTask(const char* taskName, UBaseType_t priority) :
+    HiveMindMessageSender(const char* taskName, UBaseType_t priority) :
         AbstractTask(taskName, priority), m_logger(LoggerContainer::getLogger()) {}
 
-    ~StmMessageSenderTask() override = default;
+    ~HiveMindMessageSender() override = default;
 
   private:
     ILogger& m_logger;
@@ -54,9 +54,9 @@ class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
     }
 };
 
-class StmMessageDispatcherTask : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
+class HiveMindDispatcher : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
   public:
-    StmMessageDispatcherTask(const char* taskName, UBaseType_t priority) :
+    HiveMindDispatcher(const char* taskName, UBaseType_t priority) :
         AbstractTask(taskName, priority), m_logger(LoggerContainer::getLogger()) {}
 
     void task() override {
@@ -150,10 +150,10 @@ void app_main(void) {
     INetworkManager* networkManager = &NetworkContainer::getNetworkManager();
     networkManager->start();
 
-    static StmMessageSenderTask s_spiMessageSend("spi_send", tskIDLE_PRIORITY + 1);
-    static StmMessageDispatcherTask s_spiDispatch("spi_receiver", tskIDLE_PRIORITY + 1);
-    static UnicastMessageSenderTask s_tcpMessageSender("tcp_send", tskIDLE_PRIORITY + 1);
-    static UnicastMessageDispatcher s_tcpMessageReceiver("tcp_receive", tskIDLE_PRIORITY + 1);
+    static HiveMindMessageSender s_spiMessageSend("hivemind_send", tskIDLE_PRIORITY + 1);
+    static HiveMindDispatcher s_spiDispatch("hivemind_receive", tskIDLE_PRIORITY + 1);
+    static UnicastMessageSenderTask s_tcpMessageSender("unicast_send", tskIDLE_PRIORITY + 1);
+    static UnicastMessageDispatcher s_tcpMessageReceiver("unicast_receive", tskIDLE_PRIORITY + 1);
 
     s_spiMessageSend.start();
     s_spiDispatch.start();
