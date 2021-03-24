@@ -92,8 +92,6 @@ class UnicastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZ
     ILogger& m_logger;
     INetworkManager& m_networkManager;
     void task() override {
-        char message[50] = "Hello Server!";
-        uint16_t id = 0;
         auto& stream = NetworkContainer::getNetworkOutputStream();
         NetworkSerializer serializer(stream, m_networkManager);
         MessageSender messageSender(MessageHandlerContainer::getUnicastOutputQueue(), serializer,
