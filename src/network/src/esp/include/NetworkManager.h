@@ -21,7 +21,12 @@ class NetworkManager : public INetworkManager {
     void start() override;
     NetworkStatus getNetworkStatus() override;
     bool getSelfIP(char* buffer, size_t maxLength) override;
-    bool getIPFromRobotID(uint32_t robotID, char* buffer, size_t maxLength) override;
+
+    // TODO: implement this function
+    bool getIPFromRobotID(uint32_t robotID, char* buffer, size_t maxLength) override {
+        m_logger.log(LogLevel::Error, "No list initialised");
+        return false;
+    }
 
     /**
      * @brief Execution loop, called internally

@@ -92,11 +92,6 @@ bool NetworkManager::getSelfIP(char* buffer, size_t maxLength) {
     return snprintf(buffer, maxLength, IPSTR, IP2STR(&ip)) <= maxLength;
 }
 
-bool NetworkManager::getIPFromRobotID(uint32_t robotID, char* buffer, size_t maxLength) {
-    m_logger.log(LogLevel::Error, "No list initialised");
-    return false;
-}
-
 void NetworkManager::execute() {
     switch (m_state) {
 
