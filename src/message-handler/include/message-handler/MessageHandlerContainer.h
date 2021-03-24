@@ -8,10 +8,10 @@
 namespace MessageHandlerContainer {
 
 /**
- * @brief get the networkAPIHandler instance
- * @return the instance of the networkApiHandler
+ * @brief create NetworkAPIHandler instance
+ * @return A new NetworkApiHandler instance
  */
-NetworkAPIHandler getNetworkApiHandler();
+NetworkAPIHandler createNetworkApiHandler();
 
 /**
  *@brief create a message dispatcher

@@ -6,7 +6,7 @@
 #include "common/IProtobufOutputStream.h"
 #include "hivemind-host/IHiveMindHostSerializer.h"
 
-class NetworkSerializer : IHiveMindHostSerializer {
+class NetworkSerializer : public IHiveMindHostSerializer {
   public:
     NetworkSerializer(INetworkOutputStream& stream, INetworkManager& networkManager);
     virtual ~NetworkSerializer() = default;

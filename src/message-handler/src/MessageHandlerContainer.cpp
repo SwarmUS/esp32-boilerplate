@@ -7,7 +7,7 @@
 // Could be raised in the future if needed
 constexpr uint16_t gc_queueMaxSize = 8;
 
-NetworkAPIHandler MessageHandlerContainer::getNetworkApiHandler() {
+NetworkAPIHandler MessageHandlerContainer::createNetworkApiHandler() {
     return NetworkAPIHandler(BspContainer::getBSP(), LoggerContainer::getLogger());
 }
 
