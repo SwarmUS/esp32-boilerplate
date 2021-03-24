@@ -6,16 +6,21 @@ set(LIB_SOURCES
     src/NetworkAPIHandler.cpp
     src/MessageDispatcher.cpp
     src/MessageHandlerContainer.cpp
+    src/NetworkSerializer.cpp
+    src/NetworkDeserializer.cpp
         )
 
 set(LIB_HEADERS
     include/message-handler/IMessageDispatcher.h
     include/message-handler/IMessageSender.h
-        include/message-handler/INetworkAPIHandler.h
+    include/message-handler/INetworkAPIHandler.h
+
 
     include/message-handler/MessageDispatcher.h
     include/message-handler/MessageSender.h
     include/message-handler/NetworkAPIHandler.h
+    include/message-handler/NetworkSerializer.h
+    include/message-handler/NetworkDeserializer.h
         )
 
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS} ${LIB_SOURCES})
@@ -40,6 +45,7 @@ target_link_libraries(${LIB_NAME}
         PRIVATE
         SwarmUS::HiveConnect::BSP
         SwarmUS::HiveConnect::OS
+        SwarmUS::HiveConnect::Network
         )
 
 if(ENABLE_TESTS)
