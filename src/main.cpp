@@ -36,19 +36,20 @@ class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
         }
 
         while (true) {
-            // Note: this is place-holder logic for handling the greet process. The proper loop for
-            // this will be addressed in future development
-            while (BspContainer::getBSP().getUUID() == 0) {
-                messageSender.greet();
-                if (!messageSender.processAndSerialize()) {
-                    m_logger.log(LogLevel::Warn, "Fail to process/serialize spi while greeting");
+            while (true) {
+                if (BspContainer::getBSP().getUUID() == 0) {
+                    messageSender.greet();
+                    if (!messageSender.processAndSerialize()) {
+                        m_logger.log(LogLevel::Warn,
+                                     "Fail to process/serialize spi while greeting");
+                    }
+                    Task::delay(100);
                 }
-                Task::delay(100);
+
+                if (!messageSender.processAndSerialize()) {
+                    m_logger.log(LogLevel::Warn, "Fail to process/serialize spi");
+                }
             }
-            if (!messageSender.processAndSerialize()) {
-                m_logger.log(LogLevel::Warn, "Fail to process/serialize spi");
-            }
-            Task::delay(100);
         }
     }
 };
