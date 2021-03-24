@@ -21,7 +21,7 @@ class NetworkManager : public INetworkManager {
     void start() override;
     NetworkStatus getNetworkStatus() override;
     bool getSelfIP(char* buffer, size_t maxLength) override;
-    bool getIPFromRobotID(uint32_t robotID, char *buffer, size_t maxLength) override;
+    bool getIPFromRobotID(uint32_t robotID, char* buffer, size_t maxLength) override;
 
     /**
      * @brief Execution loop, called internally

@@ -1,10 +1,10 @@
 #ifndef HIVE_CONNECT_NETWORKSERIALIZER_H
 #define HIVE_CONNECT_NETWORKSERIALIZER_H
 
-#include "hivemind-host/IHiveMindHostSerializer.h"
-#include "common/IProtobufOutputStream.h"
-#include "INetworkOutputStream.h"
 #include "INetworkManager.h"
+#include "INetworkOutputStream.h"
+#include "common/IProtobufOutputStream.h"
+#include "hivemind-host/IHiveMindHostSerializer.h"
 
 class NetworkSerializer : IHiveMindHostSerializer {
   public:

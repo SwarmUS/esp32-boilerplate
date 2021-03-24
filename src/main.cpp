@@ -13,8 +13,7 @@ extern "C" {
 class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
   public:
     StmMessageSenderTask(const char* taskName, UBaseType_t priority) :
-        AbstractTask(taskName, priority),
-        m_logger(LoggerContainer::getLogger()) {}
+        AbstractTask(taskName, priority), m_logger(LoggerContainer::getLogger()) {}
 
     ~StmMessageSenderTask() override = default;
 
@@ -27,13 +26,15 @@ class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
             Task::delay(500);
         }
         HiveMindHostSerializer serializer(spi);
-        MessageSender messageSender(MessageHandlerContainer::getHivemindOutputQueue(), serializer, BspContainer::getBSP(), m_logger);
+        MessageSender messageSender(MessageHandlerContainer::getHivemindOutputQueue(), serializer,
+                                    BspContainer::getBSP(), m_logger);
         while (!spi.isConnected()) {
             Task::delay(100);
         }
 
         while (true) {
-            // Note: this is place-holder logic for handling the greet process. The proper loop for this will be addressed in future development
+            // Note: this is place-holder logic for handling the greet process. The proper loop for
+            // this will be addressed in future development
             while (!spi.isConnected()) {
                 messageSender.greet();
                 if (!messageSender.processAndSerialize()) {

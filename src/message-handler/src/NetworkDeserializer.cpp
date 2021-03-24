@@ -1,7 +1,8 @@
 #include "NetworkDeserializer.h"
 #include <pb_decode.h>
 
-NetworkDeserializer::NetworkDeserializer(INetworkInputStream& inputStream, INetworkManager& networkManager) :
+NetworkDeserializer::NetworkDeserializer(INetworkInputStream& inputStream,
+                                         INetworkManager& networkManager) :
     m_inputStream(inputStream), m_networkManager(networkManager) {}
 
 bool NetworkDeserializer::deserializeFromStream(MessageDTO& message) {
@@ -18,9 +19,7 @@ bool NetworkDeserializer::deserializeFromStream(MessageDTO& message) {
     return status;
 }
 
-
 bool NetworkDeserializer::streamCallback(pb_istream_t* stream, pb_byte_t* buf, size_t count) {
-
     auto* deserializer = (NetworkDeserializer*)stream->state;
     return deserializer->m_inputStream.receive(buf, count);
 }

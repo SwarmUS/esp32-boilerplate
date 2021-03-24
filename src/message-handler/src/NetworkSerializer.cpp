@@ -1,14 +1,16 @@
 #include "NetworkSerializer.h"
 #include <pb_encode.h>
 
-NetworkSerializer::NetworkSerializer(INetworkOutputStream& stream, INetworkManager& manager) : m_outputStream(stream), m_networkManager(manager) {}
+NetworkSerializer::NetworkSerializer(INetworkOutputStream& stream, INetworkManager& manager) :
+    m_outputStream(stream), m_networkManager(manager) {}
 
 bool NetworkSerializer::serializeToStream(const MessageDTO& message) {
     Message msg;
     message.serialize(msg);
 
     char destination[16];
-    if (!m_networkManager.getIPFromRobotID(message.getDestinationId(), destination, sizeof(destination))) {
+    if (!m_networkManager.getIPFromRobotID(message.getDestinationId(), destination,
+                                           sizeof(destination))) {
         return false;
     }
 

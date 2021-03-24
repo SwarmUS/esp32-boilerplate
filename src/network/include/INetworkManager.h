@@ -31,7 +31,8 @@ class INetworkManager {
      * @param [in] robotID The target robot ID
      * @param [out] buffer The buffer to store the IP
      * @param [in] maxLength The maxLength of the buffer to write into
-     * @return True if the IP was known and it could be written in the supplied buffer, false otherwise.
+     * @return True if the IP was known and it could be written in the supplied buffer, false
+     * otherwise.
      */
     virtual bool getIPFromRobotID(uint32_t robotID, char* buffer, size_t maxLength) = 0;
 };
