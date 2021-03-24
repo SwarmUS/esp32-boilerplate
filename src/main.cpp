@@ -2,9 +2,12 @@
 #include "NetworkContainer.h"
 #include "Task.h"
 #include "bsp/Container.h"
+#include "hivemind-host/HiveMindHostDeserializer.h"
 #include "logger/LoggerContainer.h"
 #include "message-handler/MessageHandlerContainer.h"
 #include "message-handler/MessageSender.h"
+#include "message-handler/NetworkDeserializer.h"
+#include "message-handler/NetworkSerializer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,57 +52,93 @@ class StmMessageSenderTask : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
     }
 };
 
-class TCPMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+class StmMessageDispatcherTask : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
   public:
-    TCPMessageSenderTask(const char* taskName, UBaseType_t priority) :
-        AbstractTask(taskName, priority) {}
+    StmMessageDispatcherTask(const char* taskName, UBaseType_t priority) :
+        AbstractTask(taskName, priority), m_logger(LoggerContainer::getLogger()) {}
 
-    ~TCPMessageSenderTask() override = default;
+    void task() override {
+        auto& spi = BspContainer::getSpiStm();
+        HiveMindHostDeserializer deserializer(spi);
+        NetworkAPIHandler networkApiHandler = MessageHandlerContainer::createNetworkApiHandler();
+        MessageDispatcher dispatcher =
+            MessageHandlerContainer::createMessageDispatcher(deserializer, networkApiHandler);
+
+        while (true) {
+            if (spi.isConnected()) {
+                if (!dispatcher.deserializeAndDispatch()) {
+                    m_logger.log(LogLevel::Error, "Failed to deserialize/dispatch STM");
+                }
+            }
+            m_logger.log(LogLevel::Warn, "Cannot deserialize/dispatch STM while disconnected");
+            Task::delay(500);
+        }
+    }
 
   private:
+    ILogger& m_logger;
+};
+
+class UnicastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+  public:
+    UnicastMessageSenderTask(const char* taskName, UBaseType_t priority) :
+        AbstractTask(taskName, priority),
+        m_logger(LoggerContainer::getLogger()),
+        m_networkManager(NetworkContainer::getNetworkManager()) {}
+
+    ~UnicastMessageSenderTask() override = default;
+
+  private:
+    ILogger& m_logger;
+    INetworkManager& m_networkManager;
     void task() override {
         char message[50] = "Hello Server!";
         uint16_t id = 0;
-        auto& client = NetworkContainer::getNetworkOutputStream();
+        auto& stream = NetworkContainer::getNetworkOutputStream();
+        NetworkSerializer serializer(stream, m_networkManager);
+        MessageSender messageSender(MessageHandlerContainer::getUnicastOutputQueue(), serializer,
+                                    BspContainer::getBSP(), m_logger);
+
         while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
                NetworkStatus::Connected) {
             Task::delay(500);
         }
         while (true) {
-
-            if (client.setDestination("10.0.0.163")) {
-                client.send((uint8_t*)message, sizeof(message));
-                id++;
-                client.close();
-            } else {
-                LoggerContainer::getLogger().log(LogLevel::Warn, "Failed to set destination");
+            if (!messageSender.processAndSerialize()) {
+                m_logger.log(LogLevel::Error, "Fail to process/serialize unicast");
             }
-            Task::delay(100);
         }
     }
 };
 
-class TCPMessageReceiverTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+class UnicastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
   public:
-    TCPMessageReceiverTask(const char* taskName, UBaseType_t priority) :
-        AbstractTask(taskName, priority) {}
+    UnicastMessageDispatcher(const char* taskName, UBaseType_t priority) :
+        AbstractTask(taskName, priority),
+        m_logger(LoggerContainer::getLogger()),
+        m_networkManager(NetworkContainer::getNetworkManager()) {}
 
-    ~TCPMessageReceiverTask() override = default;
+    ~UnicastMessageDispatcher() override = default;
 
   private:
+    ILogger& m_logger;
+    INetworkManager& m_networkManager;
     void task() override {
-        char message[50];
-        auto& server = NetworkContainer::getNetworkInputStream();
+        auto& stream = NetworkContainer::getNetworkInputStream();
+
+        NetworkDeserializer deserializer(stream, m_networkManager);
+        NetworkAPIHandler networkApiHandler = MessageHandlerContainer::createNetworkApiHandler();
+        MessageDispatcher dispatcher =
+            MessageHandlerContainer::createMessageDispatcher(deserializer, networkApiHandler);
+
         while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
                NetworkStatus::Connected) {
             Task::delay(500);
         }
         while (true) {
-            if (!server.receive((uint8_t*)message, sizeof(message))) {
-                LoggerContainer::getLogger().log(LogLevel::Error, "Failed to receive");
+            if (!dispatcher.deserializeAndDispatch()) {
+                m_logger.log(LogLevel::Error, "Fail to deserialize/dispatch unicast");
             }
-            LoggerContainer::getLogger().log(LogLevel::Info, "Received: %s", message);
-            Task::delay(100);
         }
     }
 };
@@ -111,8 +150,8 @@ void app_main(void) {
     networkManager->start();
 
     static StmMessageSenderTask s_spiMessageSend("spi_send", tskIDLE_PRIORITY + 1);
-    static TCPMessageSenderTask s_tcpMessageSender("tcp_send", tskIDLE_PRIORITY + 1);
-    static TCPMessageReceiverTask s_tcpMessageReceiver("tcp_receive", tskIDLE_PRIORITY + 1);
+    static UnicastMessageSenderTask s_tcpMessageSender("tcp_send", tskIDLE_PRIORITY + 1);
+    static UnicastMessageDispatcher s_tcpMessageReceiver("tcp_receive", tskIDLE_PRIORITY + 1);
 
     s_spiMessageSend.start();
     s_tcpMessageReceiver.start();
