@@ -33,7 +33,7 @@ class INetworkManager {
      * @param [in] maxLength The maxLength of the buffer to write into
      * @return True if the IP was known and it could be written in the supplied buffer, false otherwise.
      */
-    virtual bool getIPFromRobotID(uint16_t robotID, char* buffer, size_t maxLength);
+    virtual bool getIPFromRobotID(uint32_t robotID, char* buffer, size_t maxLength) = 0;
 };
 
 #endif // HIVE_CONNECT_INETWORKMANAGER_H

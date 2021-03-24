@@ -25,7 +25,7 @@ class DummyNetworkManager : public INetworkManager {
         return false;
     }
 
-    bool getIPFromRobotID(uint16_t robotID, char *buffer, size_t maxLength) override {
+    bool getIPFromRobotID(uint32_t robotID, char *buffer, size_t maxLength) override {
         (void) robotID;
         (void) buffer;
         (void) maxLength;
