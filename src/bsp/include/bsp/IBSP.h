@@ -26,15 +26,15 @@ class IBSP {
     virtual ChipInfo getChipInfo() = 0;
 
     /**
-     * @brief Get the uuid of the system
+     * @brief Get the uuid obtained from HiveMind after greeting
      * @return The uuid value
      */
-    virtual uint16_t getUUID() = 0;
+    virtual uint16_t getHiveMindUUID() = 0;
 
     /**
-     * @brief Set the uuid of the system
+     * @brief Store the uuid obtained from HiveMind after greeting
      */
-    virtual void setUUID(uint16_t uuid) = 0;
+    virtual void setHiveMindUUID(uint16_t uuid) = 0;
 };
 
 #endif // IBSP_H

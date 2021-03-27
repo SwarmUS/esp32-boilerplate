@@ -7,7 +7,7 @@ MessageSender::MessageSender(ICircularQueue<MessageDTO>& inputQueue,
     m_inputQueue(inputQueue), m_serializer(serializer), m_bsp(bsp), m_logger(logger) {}
 
 bool MessageSender::greet() {
-    uint16_t uuid = m_bsp.getUUID();
+    uint16_t uuid = m_bsp.getHiveMindUUID();
     GreetingDTO greet(uuid);
     MessageDTO msg(uuid, uuid, greet);
     return m_serializer.serializeToStream(msg);

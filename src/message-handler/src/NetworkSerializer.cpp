@@ -2,7 +2,7 @@
 #include <pb_encode.h>
 
 NetworkSerializer::NetworkSerializer(INetworkOutputStream& stream, INetworkManager& manager) :
-    m_outputStream(stream), m_networkManager(manager) {}
+    m_outputStream(stream), m_networkManager(manager), m_hivemindHostSerializer(stream) {}
 
 bool NetworkSerializer::serializeToStream(const MessageDTO& message) {
     Message msg;
@@ -18,12 +18,5 @@ bool NetworkSerializer::serializeToStream(const MessageDTO& message) {
         return false;
     }
 
-    pb_ostream_s outputStream{NetworkSerializer::streamCallback, this, SIZE_MAX, 0, 0};
-
-    return pb_encode_ex(&outputStream, Message_fields, &msg, PB_ENCODE_DELIMITED);
-}
-
-bool NetworkSerializer::streamCallback(pb_ostream_t* stream, const pb_byte_t* buf, size_t count) {
-    auto* serializer = (NetworkSerializer*)stream->state;
-    return serializer->m_outputStream.send(buf, count);
+    return m_hivemindHostSerializer.serializeToStream(message);
 }

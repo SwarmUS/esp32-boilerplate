@@ -78,7 +78,7 @@ TEST_F(MessageSenderFixture, MessageSender_greet_validSerialization) {
     EXPECT_CALL(m_serializer, serializeToStream(testing::_))
         .Times(1)
         .WillOnce(testing::Return(true));
-    EXPECT_CALL(*m_bspMock, getUUID).Times(1).WillOnce(testing::Return(m_uuid));
+    EXPECT_CALL(*m_bspMock, getHiveMindUUID).Times(1).WillOnce(testing::Return(m_uuid));
 
     // Then
     bool ret = m_messageSender->greet();
@@ -94,7 +94,7 @@ TEST_F(MessageSenderFixture, MessageSender_greet_invalidSerialization) {
     EXPECT_CALL(m_serializer, serializeToStream(testing::_))
         .Times(1)
         .WillOnce(testing::Return(false));
-    EXPECT_CALL(*m_bspMock, getUUID).Times(1).WillOnce(testing::Return(m_uuid));
+    EXPECT_CALL(*m_bspMock, getHiveMindUUID).Times(1).WillOnce(testing::Return(m_uuid));
     // Then
     bool ret = m_messageSender->greet();
 

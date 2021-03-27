@@ -6,7 +6,6 @@
 #include "logger/LoggerContainer.h"
 #include "message-handler/MessageHandlerContainer.h"
 #include "message-handler/MessageSender.h"
-#include "message-handler/NetworkDeserializer.h"
 #include "message-handler/NetworkSerializer.h"
 
 #ifdef __cplusplus
@@ -37,7 +36,7 @@ class HiveMindMessageSender : public AbstractTask<2 * configMINIMAL_STACK_SIZE> 
 
         while (true) {
             while (true) {
-                if (BspContainer::getBSP().getUUID() == 0) {
+                if (BspContainer::getBSP().getHiveMindUUID() == 0) {
                     messageSender.greet();
                     if (!messageSender.processAndSerialize()) {
                         m_logger.log(LogLevel::Warn,
@@ -115,19 +114,16 @@ class UnicastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZ
 class UnicastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
   public:
     UnicastMessageDispatcher(const char* taskName, UBaseType_t priority) :
-        AbstractTask(taskName, priority),
-        m_logger(LoggerContainer::getLogger()),
-        m_networkManager(NetworkContainer::getNetworkManager()) {}
+        AbstractTask(taskName, priority), m_logger(LoggerContainer::getLogger()) {}
 
     ~UnicastMessageDispatcher() override = default;
 
   private:
     ILogger& m_logger;
-    INetworkManager& m_networkManager;
     void task() override {
         auto& stream = NetworkContainer::getNetworkInputStream();
 
-        NetworkDeserializer deserializer(stream, m_networkManager);
+        HiveMindHostDeserializer deserializer(stream);
         NetworkAPIHandler networkApiHandler = MessageHandlerContainer::createNetworkApiHandler();
         MessageDispatcher dispatcher =
             MessageHandlerContainer::createMessageDispatcher(deserializer, networkApiHandler);

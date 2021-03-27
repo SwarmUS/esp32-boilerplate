@@ -4,7 +4,7 @@
 #include "INetworkManager.h"
 #include "INetworkOutputStream.h"
 #include "common/IProtobufOutputStream.h"
-#include "hivemind-host/IHiveMindHostSerializer.h"
+#include "hivemind-host/HiveMindHostSerializer.h"
 
 class NetworkSerializer : public IHiveMindHostSerializer {
   public:
@@ -16,8 +16,7 @@ class NetworkSerializer : public IHiveMindHostSerializer {
   private:
     INetworkOutputStream& m_outputStream;
     INetworkManager& m_networkManager;
-
-    static bool streamCallback(pb_ostream_t* stream, const pb_byte_t* buf, size_t count);
+    HiveMindHostSerializer m_hivemindHostSerializer;
 };
 
 #endif // HIVE_CONNECT_NETWORKSERIALIZER_H

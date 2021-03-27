@@ -10,16 +10,16 @@ class BSPMock final : public IBSP {
     explicit BSPMock(const uint16_t& boardID) : m_boardID(boardID) { setActions(); }
 
     MOCK_METHOD(void, initChip, (), (override));
-    MOCK_METHOD(uint16_t, getUUID, (), (override));
-    MOCK_METHOD(void, setUUID, (uint16_t), (override));
+    MOCK_METHOD(uint16_t, getHiveMindUUID, (), (override));
+    MOCK_METHOD(void, setHiveMindUUID, (uint16_t), (override));
     MOCK_METHOD(ChipInfo, getChipInfo, (), (override));
 
     uint16_t m_boardID;
 
     void setActions() {
         // Set of default behavior
-        ON_CALL(*this, getUUID).WillByDefault(testing::Return(m_boardID));
-        ON_CALL(*this, setUUID).WillByDefault(testing::SaveArg<0>(&this->m_boardID));
+        ON_CALL(*this, getHiveMindUUID).WillByDefault(testing::Return(m_boardID));
+        ON_CALL(*this, setHiveMindUUID).WillByDefault(testing::SaveArg<0>(&this->m_boardID));
     }
 };
 

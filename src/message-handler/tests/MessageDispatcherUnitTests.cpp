@@ -53,7 +53,7 @@ TEST_F(MessageDispatcherFixture, MessageDispatcherFixture_deserializeAndDispatch
         .Times(1)
         .WillOnce(testing::DoAll(testing::SetArgReferee<0>(m_message), testing::Return(true)));
 
-    EXPECT_CALL(*m_bsp, setUUID(m_greeting->getId())).Times(1);
+    EXPECT_CALL(*m_bsp, setHiveMindUUID(m_greeting->getId())).Times(1);
 
     // Then
     bool ret = m_messageDispatcher->deserializeAndDispatch();
@@ -70,7 +70,7 @@ TEST_F(MessageDispatcherFixture,
         .Times(1)
         .WillOnce(testing::DoAll(testing::SetArgReferee<0>(m_message), testing::Return(false)));
 
-    EXPECT_CALL(*m_bsp, setUUID(testing::_)).Times(0);
+    EXPECT_CALL(*m_bsp, setHiveMindUUID(testing::_)).Times(0);
 
     // Then
     bool ret = m_messageDispatcher->deserializeAndDispatch();

@@ -7,7 +7,6 @@ set(LIB_SOURCES
     src/MessageDispatcher.cpp
     src/MessageHandlerContainer.cpp
     src/NetworkSerializer.cpp
-    src/NetworkDeserializer.cpp
         )
 
 set(LIB_HEADERS
@@ -20,7 +19,6 @@ set(LIB_HEADERS
     include/message-handler/MessageSender.h
     include/message-handler/NetworkAPIHandler.h
     include/message-handler/NetworkSerializer.h
-    include/message-handler/NetworkDeserializer.h
         )
 
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS} ${LIB_SOURCES})

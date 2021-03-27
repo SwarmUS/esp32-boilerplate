@@ -11,8 +11,8 @@ class BSP : public IBSP {
 
     void initChip() override;
     ChipInfo getChipInfo() override;
-    uint16_t getUUID() override;
-    void setUUID(uint16_t uuid) override;
+    uint16_t getHiveMindUUID() override;
+    void setHiveMindUUID(uint16_t uuid) override;
 
   private:
     void initSPI();
