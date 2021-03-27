@@ -28,7 +28,7 @@ class NetworkAPIHandlerUnitTests : public testing::Test {
 
 TEST_F(NetworkAPIHandlerUnitTests, NetworkAPIHandler_handleCall_valid) {
     // Given
-    IPDiscoveryDTO ipDiscoveryDto;
+    IPDiscoveryDTO ipDiscoveryDto(1);
     NetworkApiDTO apiCall(ipDiscoveryDto);
 
     // Then
