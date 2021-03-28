@@ -3,13 +3,15 @@ set(LIB_ALIAS "SwarmUS::HiveConnect::Network::Platform")
 
 set(LIB_HEADERS
         include/DummyNetworkManager.h
-        include/DummyNetworkOutputStream.h
+        include/NetworkOutputStream.h
         include/NetworkInputStream.h
         )
 
 set(LIB_SOURCES
     src/NetworkContainer.cpp
-    src/NetworkInputStream.cpp)
+    src/NetworkInputStream.cpp
+    src/NetworkOutputStream.cpp
+)
 
 
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS} ${LIB_SOURCES})

@@ -1,7 +1,7 @@
 #include "NetworkContainer.h"
 #include "DummyNetworkManager.h"
-#include "DummyNetworkOutputStream.h"
 #include "NetworkInputStream.h"
+#include "NetworkOutputStream.h"
 #include <ros/ros.h>
 
 INetworkManager& NetworkContainer::getNetworkManager() {
@@ -26,7 +26,7 @@ INetworkInputStream& NetworkContainer::getNetworkInputStream() {
 }
 
 INetworkOutputStream& NetworkContainer::getNetworkOutputStream() {
-    static DummyNetworkOutputStream s_outputStream;
+    static NetworkOutputStream s_outputStream(LoggerContainer::getLogger());
 
     return s_outputStream;
 }
