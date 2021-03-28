@@ -6,5 +6,8 @@
         <!-- BSP settings -->
         <param name="spi_mock_address" value="127.0.0.1" />
         <param name="spi_mock_port" value="9001" />
+
+        <!-- Network settings -->
+        <param name="tcp_listen_port" value="54321"/>
     </node>
 </launch>
