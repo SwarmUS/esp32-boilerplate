@@ -42,6 +42,4 @@ TEST_F(NetworkUnicastStreamFixture, test_DataExchange_working) {
         EXPECT_TRUE(m_inputStream->receive((uint8_t*)&letter, sizeof(letter)));
         EXPECT_EQ(letter, message[i]);
     }
-
-    ASSERT_TRUE(true);
 }
