@@ -30,7 +30,9 @@ bool NetworkOutputStream::setDestination(const char* destination) {
 }
 
 bool NetworkOutputStream::close() {
-    ::close(m_socketFd);
+    if (m_socketFd) {
+        ::close(m_socketFd);
+    }
     m_socketFd = -1;
     return true;
 }

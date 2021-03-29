@@ -7,23 +7,22 @@
 
 constexpr uint8_t gs_LOOP_RATE = 10;
 
-static void serverReceiveTask(void* context) {
-    if (context != nullptr) {
-        while (true) {
-            static_cast<NetworkInputStream*>(context)->acceptingClients();
-            Task::delay(gs_LOOP_RATE);
-        }
-    }
+void serverReceiveTask(void* context) {
+    static_cast<NetworkInputStream*>(context)->acceptingClients();
 }
 
 NetworkInputStream::NetworkInputStream(ILogger& logger, int listeningPort) :
     m_logger(logger),
-    m_serverTask("server_socket", tskIDLE_PRIORITY + 1, serverReceiveTask, this),
+    m_serverTask("server_socket", tskIDLE_PRIORITY + 1, serverReceiveTask, (void*)this),
     m_listeningPort(listeningPort),
     m_clientSocket(-1),
-    m_acceptingSocket(-1) {}
+    m_acceptingSocket(-1),
+    m_runTask(true) {}
 
-NetworkInputStream::~NetworkInputStream() { stop(); }
+NetworkInputStream::~NetworkInputStream() {
+    m_runTask = false;
+    stop();
+}
 
 bool NetworkInputStream::start() {
     if (m_listeningPort == 0) {
@@ -52,12 +51,20 @@ bool NetworkInputStream::start() {
         return false;
     }
     m_logger.log(LogLevel::Info, "Tcp server socket listening on port %d", m_listeningPort);
+
+    if (!m_serverTask.isRunning()) {
+        m_serverTask.start();
+    }
     return true;
 }
 
 bool NetworkInputStream::stop() {
-    ::close(m_acceptingSocket);
-    ::close(m_clientSocket);
+    if (m_acceptingSocket > 0) {
+        ::close(m_acceptingSocket);
+    }
+    if (m_clientSocket > 0) {
+        ::close(m_clientSocket);
+    }
     m_hasClient = false;
     m_acceptingSocket = -1;
     m_clientSocket = -1;
@@ -65,22 +72,24 @@ bool NetworkInputStream::stop() {
 }
 
 void NetworkInputStream::acceptingClients() {
-    if (m_acceptingSocket > 0) {
-        sockaddr_in clientAddr;
-        socklen_t addrLen = sizeof(clientAddr);
-        m_clientSocket = ::accept(m_acceptingSocket, (sockaddr*)&clientAddr, &addrLen);
-        if (m_clientSocket > 0) {
-            m_hasClient = true;
-            m_conditionVar.notify_one();
-        }
+    while (m_runTask) {
+        if (m_acceptingSocket > 0) {
+            sockaddr_in clientAddr;
+            socklen_t addrLen = sizeof(clientAddr);
+            m_clientSocket = ::accept(m_acceptingSocket, (sockaddr*)&clientAddr, &addrLen);
+            if (m_clientSocket > 0) {
+                m_hasClient = true;
+                m_conditionVar.notify_one();
+            }
 
-        while (m_clientSocket > 0) {
-            // Wait for client to have disconnected
-            Task::delay(10);
+            while (m_clientSocket > 0) {
+                // Wait for client to have disconnected
+                Task::delay(10);
+            }
+            m_hasClient = false;
+        } else {
+            Task::delay(1000); // Sleep if no valid server socket
         }
-        m_hasClient = false;
-    } else {
-        Task::delay(1000); // Sleep if no valid server socket
     }
 }
 

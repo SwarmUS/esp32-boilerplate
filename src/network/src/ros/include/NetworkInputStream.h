@@ -27,6 +27,7 @@ class NetworkInputStream : public INetworkInputStream {
     int m_clientSocket;
     bool m_hasClient;
     int m_listeningPort;
+    bool m_runTask;
     BaseTask<configMINIMAL_STACK_SIZE * 5> m_serverTask;
     std::condition_variable m_conditionVar;
     std::mutex m_mutex;
