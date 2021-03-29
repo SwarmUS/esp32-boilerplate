@@ -61,7 +61,7 @@ bool NetworkInputStream::stop() {
     m_hasClient = false;
     m_acceptingSocket = -1;
     m_clientSocket = -1;
-    return false;
+    return true;
 }
 
 void NetworkInputStream::acceptingClients() {

@@ -2,10 +2,11 @@ set(TEST_NAME test-network)
 
 set(TEST_SOURCES
     UnicastCommunicationUnitTests.cpp
-        )
+)
 
 set(TEST_HEADERS
     mocks/NetworkManagerMock.h
+    mocks/LoggerInterfaceMock.h
         )
 
 add_executable(${TEST_NAME} ${TEST_SOURCES} ${TEST_HEADERS})
