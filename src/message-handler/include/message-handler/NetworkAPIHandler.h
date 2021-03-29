@@ -11,7 +11,8 @@ class NetworkAPIHandler : public INetworkAPIHandler {
 
     ~NetworkAPIHandler() override = default;
 
-    std::variant<ErrorNum, NetworkApiDTO> handleApiCall(const NetworkApiDTO& apiCall) override;
+    std::variant<ErrorNum, std::optional<NetworkApiDTO>> handleApiCall(
+        const NetworkApiDTO& apiCall) override;
 
   private:
     ILogger& m_logger;

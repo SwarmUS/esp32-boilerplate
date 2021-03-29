@@ -3,6 +3,7 @@
 
 #include <hivemind-host/MessageDTO.h>
 #include <hivemind-host/NetworkApiDTO.h>
+#include <optional>
 #include <variant>
 
 enum class ErrorNum { UNKNOWN_CALL = 1 };
@@ -14,13 +15,14 @@ class INetworkAPIHandler {
     virtual ~INetworkAPIHandler() = default;
 
     /**
-     *@brief handles the call and generate an optional response to the call
+     *@brief handles the call and generate an optional response to the call or an error number
      *@param apiCall the call to handle
-     *@return The response to dispatch. If no response need to be sent, will return a NetworkAPIDTO
-     *with an std::monostate. If the handling failed, it will return an ErrorNum to diagnose the
-     *type of error that occured.
+     *@return The response to dispatch. If no response need to be sent, will return an empty
+     *optional. If the handling failed, it will return an ErrorNum to diagnose the type of error
+     *that occured.
      */
-    virtual std::variant<ErrorNum, NetworkApiDTO> handleApiCall(const NetworkApiDTO& apiCall) = 0;
+    virtual std::variant<ErrorNum, std::optional<NetworkApiDTO>> handleApiCall(
+        const NetworkApiDTO& apiCall) = 0;
 };
 
 #endif // HIVE_CONNECT_INETWORKAPIHANDLER_H
