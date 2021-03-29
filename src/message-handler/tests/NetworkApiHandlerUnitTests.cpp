@@ -38,14 +38,3 @@ TEST_F(NetworkAPIHandlerUnitTests, NetworkAPIHandler_handleCall_valid) {
     // Todo: once feature is properly implemented, add more substantial check
     EXPECT_TRUE(std::holds_alternative<std::optional<NetworkApiDTO>>(ret));
 }
-
-TEST_F(NetworkAPIHandlerUnitTests, NetworkAPIHandler_handleCall_empty) {
-    // Given
-    NetworkApiDTO apiCall;
-
-    // Then
-    auto ret = m_handler->handleApiCall(apiCall);
-
-    // Expect
-    EXPECT_TRUE(std::holds_alternative<ErrorNum>(ret));
-}
