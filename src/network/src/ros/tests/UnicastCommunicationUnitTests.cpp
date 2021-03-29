@@ -24,7 +24,7 @@ class NetworkUnicastStreamFixture : public testing::Test {
     NetworkOutputStream* m_outputStream;
 };
 
-TEST_F(NetworkUnicastStreamFixture, test_DataExchange) {
+TEST_F(NetworkUnicastStreamFixture, test_DataExchange_working) {
     // Can listen for inbound connection
     EXPECT_TRUE(m_inputStream->start());
 
