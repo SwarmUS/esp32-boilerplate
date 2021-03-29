@@ -40,6 +40,7 @@ target_include_directories(${LIB_NAME}
 target_link_libraries(${LIB_NAME}
         PUBLIC
         SwarmUS::HiveConnect::OS
+        SwarmUS::Propolis::OS::Common
         SwarmUS::HiveConnect::Logger
         SwarmUS::Propolis::C::Common
         SwarmUS::Propolis::Pheromones::Common

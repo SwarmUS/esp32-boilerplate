@@ -25,6 +25,7 @@ target_link_libraries(${LIB_NAME}
     PUBLIC
         SwarmUS::HiveConnect::BSP
         SwarmUS::HiveConnect::OS
+        SwarmUS::Propolis::OS::Common
 )
 
 if(ENABLE_TESTS)

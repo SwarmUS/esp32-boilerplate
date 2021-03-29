@@ -84,7 +84,7 @@ NetworkStatus NetworkManager::getNetworkStatus() {
     }
 }
 
-bool NetworkManager::getNetworkingID(char* buffer, size_t maxLength) {
+bool NetworkManager::getSelfIP(char* buffer, size_t maxLength) {
     if (buffer == nullptr) {
         return false;
     }

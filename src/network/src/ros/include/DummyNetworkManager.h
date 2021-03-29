@@ -19,7 +19,14 @@ class DummyNetworkManager : public INetworkManager {
      * will be an IP address and on ROS probably a topic.
      * @return The networking ID for the module
      */
-    bool getNetworkingID(char* buffer, size_t maxLength) override {
+    bool getSelfIP(char* buffer, size_t maxLength) override {
+        (void)buffer;
+        (void)maxLength;
+        return false;
+    }
+
+    bool getIPFromRobotID(uint32_t robotID, char* buffer, size_t maxLength) override {
+        (void)robotID;
         (void)buffer;
         (void)maxLength;
         return false;
