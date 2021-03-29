@@ -3,12 +3,15 @@ set(LIB_ALIAS "SwarmUS::HiveConnect::Network::Platform")
 
 set(LIB_HEADERS
         include/DummyNetworkManager.h
-        include/DummyNetworkOutputStream.h
-        include/DummyNetworkInputStream.h
+        include/NetworkOutputStream.h
+        include/NetworkInputStream.h
         )
 
 set(LIB_SOURCES
-    src/NetworkContainer.cpp)
+    src/NetworkContainer.cpp
+    src/NetworkInputStream.cpp
+    src/NetworkOutputStream.cpp
+)
 
 
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS} ${LIB_SOURCES})
@@ -21,6 +24,8 @@ target_include_directories(${LIB_NAME}
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
         ${NETWORK_CMAKE_DIR}/include
+        PRIVATE
+        ${catkin_INCLUDE_DIRS}
 )
 
 target_link_libraries(${LIB_NAME}
@@ -29,7 +34,13 @@ target_link_libraries(${LIB_NAME}
         SwarmUS::HiveConnect::Logger
         SwarmUS::Propolis::C::Common
         SwarmUS::Propolis::Pheromones::Common
+        PRIVATE
+        ${catkin_LIBRARIES}
 
         )
+
+if(ENABLE_TESTS)
+    add_subdirectory(tests)
+endif()
 
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
