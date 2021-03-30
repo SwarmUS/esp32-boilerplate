@@ -5,12 +5,14 @@ set(LIB_HEADERS
         include/DummyNetworkManager.h
         include/NetworkOutputStream.h
         include/NetworkInputStream.h
+        include/NetworkBroadcast.h
         )
 
 set(LIB_SOURCES
     src/NetworkContainer.cpp
     src/NetworkInputStream.cpp
     src/NetworkOutputStream.cpp
+    src/NetworkBroadcast.cpp
 )
 
 
