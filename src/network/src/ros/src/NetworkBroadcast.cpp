@@ -1,73 +1,43 @@
 #include "NetworkBroadcast.h"
 #include <unistd.h>
 
-static void receivingTask(void* context) {}
+void NetworkBroadcast::handleReception(const hive_connect::Broadcast& msg) {
+    if (msg.data.empty()) {
+        m_logger.log(LogLevel::Warn, "Received empty data in broadcast");
+        return;
+    }
+    CircularBuff_put(&m_circularBuffer, msg.data.data(), msg.data.size());
+}
 
-NetworkBroadcast::NetworkBroadcast(ILogger& logger, int inputPort, int outputPort) :
-    m_receivingTask("broadcast_task", tskIDLE_PRIORITY + 1, receivingTask, this),
-    m_logger(logger),
-    m_inputPort(inputPort),
-    m_outputPort(outputPort),
-    m_inputSocketFd(-1),
-    m_outputSocketFd(-1) {}
+NetworkBroadcast::NetworkBroadcast(ILogger& logger,
+                                   IBSP& bsp,
+                                   char* publishingTopic,
+                                   char* subscribingTopic) :
+    m_logger(logger), m_bsp(bsp), m_pubTopic(publishingTopic), m_subTopic(subscribingTopic) {
+    CircularBuff_init(&m_circularBuffer, m_data.data(), m_data.size());
+    ros::NodeHandle handle("~");
+    m_publisher = handle.advertise<hive_connect::Broadcast>(m_pubTopic, 1000);
+    m_subscriber = handle.subscribe(m_subTopic, 1000, &NetworkBroadcast::handleReception, this);
+}
 
 NetworkBroadcast::~NetworkBroadcast() { stop(); }
 
-bool NetworkBroadcast::createInputSocket() {
-    if ((m_inputSocketFd = ::socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        m_logger.log(LogLevel::Error, "Failed to create input socket for broadcast");
-        return false;
-    }
+bool NetworkBroadcast::start() { return true; }
 
-    sockaddr_in address;
-    address.sin_port = htons(m_inputPort);
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    socklen_t addressLength = sizeof(address);
+bool NetworkBroadcast::stop() { return true; }
 
-    if (::bind(m_inputSocketFd, (sockaddr*)&address, addressLength) < 0) {
-        m_logger.log(LogLevel::Error, "Failed to bind udp server socket");
-        return false;
-    }
-
+bool NetworkBroadcast::send(const uint8_t* data, uint16_t length) {
+    hive_connect::Broadcast msg;
+    msg.source_robot = m_bsp.getHiveMindUUID();
+    msg.data.insert(msg.data.end(), data, &data[length - 1]);
+    m_publisher.publish(msg);
     return true;
 }
 
-bool NetworkBroadcast::createOutputSocket() {
-    if ((m_inputSocketFd = ::socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        m_logger.log(LogLevel::Error, "Failed to create output socket for broadcast");
-        return false;
+bool NetworkBroadcast::receive(uint8_t* data, uint16_t length) {
+    if (CircularBuff_getLength(&m_circularBuffer) < length) {
+        // Add condition var
     }
 
-    // Required to enable broadcasting (
-    if (::setsockopt(m_inputSocketFd, SOL_SOCKET, SO_BROADCAST, nullptr, 0) != 0) {
-        m_logger.log(LogLevel::Error, "Failed to set output socket in broadcast mode");
-        return false;
-    }
-
-    return true;
+    return CircularBuff_put(&m_circularBuffer, data, length) == CircularBuff_Ret_Ok;
 }
-
-bool NetworkBroadcast::start() {
-    if (createOutputSocket() && createInputSocket()) {
-        m_logger.log(LogLevel::Info,
-                     "Succesfully created input and output sockets for broadcasting");
-        return true;
-    }
-    m_logger.log(LogLevel::Error, "Error while creating input and output sockets for broadcasting");
-    return true;
-}
-
-bool NetworkBroadcast::stop() {
-    if (m_inputSocketFd > 0) {
-        ::close(m_inputSocketFd);
-    }
-    if (m_outputSocketFd > 0) {
-        ::close(m_outputSocketFd);
-    }
-    return true;
-}
-
-bool NetworkBroadcast::send(const uint8_t* data, uint16_t length) { return false; }
-
-bool NetworkBroadcast::receive(uint8_t* data, uint16_t length) { return false; }
