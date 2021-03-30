@@ -44,6 +44,8 @@ target_link_libraries(${LIB_NAME}
 
         )
 
+add_subdirectory(src/broker)
+
 if(ENABLE_TESTS)
     add_subdirectory(tests)
 endif()
