@@ -8,6 +8,7 @@
 #include "hive_connect/Broadcast.h"
 #include "logger/ILogger.h"
 #include <array>
+#include <condition_variable>
 #include <netinet/in.h>
 #include <ros/ros.h>
 
@@ -37,6 +38,9 @@ class NetworkBroadcast : public INetworkBroadcast {
 
     ros::Publisher m_publisher;
     ros::Subscriber m_subscriber;
+
+    std::condition_variable m_conditionVariable;
+    std::mutex m_mutex;
 
     void handleReception(const hive_connect::Broadcast& msg);
 };

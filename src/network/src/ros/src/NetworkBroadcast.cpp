@@ -7,6 +7,7 @@ void NetworkBroadcast::handleReception(const hive_connect::Broadcast& msg) {
         return;
     }
     CircularBuff_put(&m_circularBuffer, msg.data.data(), msg.data.size());
+    m_conditionVariable.notify_one();
 }
 
 NetworkBroadcast::NetworkBroadcast(ILogger& logger,
@@ -40,7 +41,8 @@ bool NetworkBroadcast::send(const uint8_t* data, uint16_t length) {
 
 bool NetworkBroadcast::receive(uint8_t* data, uint16_t length) {
     if (CircularBuff_getLength(&m_circularBuffer) < length) {
-        // Add condition var
+        std::unique_lock lock(m_mutex);
+        m_conditionVariable.wait(lock);
     }
 
     return CircularBuff_put(&m_circularBuffer, data, length) == CircularBuff_Ret_Ok;
