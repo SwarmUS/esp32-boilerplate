@@ -29,6 +29,7 @@ else()
     message("Compiling locally")
     set(ENABLE_TESTS ON)
     #ROS dependencies
+    include(ros/generators.cmake)
     include(catkin/common)
 endif()
 

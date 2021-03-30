@@ -3,19 +3,25 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     std_msgs
     message_generation
+    roscpp
     )
 
-#TODO: Uncomment once messages are defined
-#add_message_files(
-#    DIRECTORY ros/msg
-#    FILES
-#    ${ROS_MESSAGES_LIST}
-#)
+find_package(catkin REQUIRED COMPONENTS
+        roscpp
+        std_msgs
+        message_generation
+        )
 
-#generate_messages(
-#        DEPENDENCIES
-#        std_msgs
-#)
+add_message_files(
+        DIRECTORY ros/msg
+        FILES
+        ${ROS_MESSAGES_LIST}
+)
+
+generate_messages(
+        DEPENDENCIES
+        std_msgs
+)
 
 #TODO: Uncomment if service_generation is needed
 # add_service_files(
@@ -26,4 +32,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 
 
-catkin_package(CATKIN_DEPENDS message_runtime std_msgs)
+catkin_package(CATKIN_DEPENDS
+        message_runtime
+        std_msgs
+        roscpp
+        )

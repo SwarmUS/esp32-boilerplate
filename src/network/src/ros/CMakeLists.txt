@@ -19,6 +19,9 @@ set(LIB_SOURCES
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS} ${LIB_SOURCES})
 add_library(${LIB_ALIAS} ALIAS ${LIB_NAME})
 
+# Make ROS messages/services available in headers
+add_dependencies(${LIB_NAME} ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})
+
 
 target_include_directories(${LIB_NAME}
         PUBLIC
