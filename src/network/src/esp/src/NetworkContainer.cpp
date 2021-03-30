@@ -1,4 +1,5 @@
 #include "NetworkContainer.h"
+#include "NetworkBroadcast.h"
 #include "NetworkManager.h"
 #include "SocketFactory.h"
 
@@ -18,4 +19,9 @@ INetworkOutputStream& NetworkContainer::getNetworkOutputStream() {
     static TCPClient s_client(LoggerContainer::getLogger());
 
     return s_client;
+}
+
+INetworkBroadcast& NetworkContainer::getNetworkBroadcast() {
+    static NetworkBroadcast s_broadcast;
+    return s_broadcast;
 }

@@ -15,7 +15,10 @@ constexpr uint32_t g_maxBroadcastReceiveSize = 2048;
 
 class NetworkBroadcast : public INetworkBroadcast {
   public:
-    NetworkBroadcast(ILogger& logger, IBSP& bsp, char* publishingTopic, char* subscribingTopic);
+    NetworkBroadcast(ILogger& logger,
+                     IBSP& bsp,
+                     const char* publishingTopicPrefix,
+                     const char* subscribingTopicPrefix);
     ~NetworkBroadcast() override;
 
     bool send(const uint8_t* data, uint16_t length) override;

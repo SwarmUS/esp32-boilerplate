@@ -11,9 +11,13 @@ void NetworkBroadcast::handleReception(const hive_connect::Broadcast& msg) {
 
 NetworkBroadcast::NetworkBroadcast(ILogger& logger,
                                    IBSP& bsp,
-                                   char* publishingTopic,
-                                   char* subscribingTopic) :
-    m_logger(logger), m_bsp(bsp), m_pubTopic(publishingTopic), m_subTopic(subscribingTopic) {
+                                   const char* publishingTopicPrefix,
+                                   const char* subscribingTopicPrefix) :
+    m_logger(logger), m_bsp(bsp) {
+
+    m_pubTopic = publishingTopicPrefix + std::to_string(m_bsp.getHiveMindUUID());
+    m_subTopic = subscribingTopicPrefix + std::to_string(m_bsp.getHiveMindUUID());
+
     CircularBuff_init(&m_circularBuffer, m_data.data(), m_data.size());
     ros::NodeHandle handle("~");
     m_publisher = handle.advertise<hive_connect::Broadcast>(m_pubTopic, 1000);

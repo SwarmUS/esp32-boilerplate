@@ -3,8 +3,8 @@
 CommunicationBroker::CommunicationBroker() {
     ROS_INFO("Communication Broker initialization");
     for (std::uint16_t& robotID : getRobotList()) {
-        std::string publishingTopic = "CommunicationBroker/" + std::to_string(robotID);
-        std::string subscribingTopic = "/" + std::to_string(robotID) + "/broadcast";
+        std::string subscribingTopic = "/Communication/broadcastOutput/" + std::to_string(robotID);
+        std::string publishingTopic = "/Communication/broadcastInput/" + std::to_string(robotID);
 
         ros::Publisher pub = m_nodeHandle.advertise<std_msgs::String>(publishingTopic, 1000);
         ros::Subscriber sub = m_nodeHandle.subscribe(

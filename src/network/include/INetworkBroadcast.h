@@ -24,13 +24,13 @@ class INetworkBroadcast : public IProtobufStream {
     bool send(const uint8_t* data, uint16_t length) override = 0;
 
     /**
-     * @brief Start the broadcasting instance
+     * @brief Start the broadcasting instance (create sockets and such)
      * @return true if successful, false otherwise
      */
     virtual bool start() = 0;
 
     /**
-     * @brief Stop the broadcasting instance
+     * @brief Stop the broadcasting instance (close sockets and such)
      * @return true if successful, false otherwise
      */
     virtual bool stop() = 0;

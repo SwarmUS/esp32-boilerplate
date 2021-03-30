@@ -17,6 +17,7 @@ set(LIB_HEADERS
         include/SocketFactory.h
         include/TCPClient.h
         include/TCPServer.h
+        include/NetworkBroadcast.h
         )
 
 include(DefaultNetworkConfig.cmake)

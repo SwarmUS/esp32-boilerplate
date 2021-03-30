@@ -2,6 +2,7 @@
 #include "NetworkContainer.h"
 #include "Task.h"
 #include "bsp/Container.h"
+#include "hivemind-host/HiveMindHostAccumulatorSerializer.h"
 #include "hivemind-host/HiveMindHostDeserializer.h"
 #include "logger/LoggerContainer.h"
 #include "message-handler/MessageHandlerContainer.h"
@@ -140,6 +141,67 @@ class UnicastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_SIZ
     }
 };
 
+class BroadcastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+  public:
+    BroadcastMessageSenderTask(const char* taskName, UBaseType_t priority) :
+        AbstractTask(taskName, priority),
+        m_logger(LoggerContainer::getLogger()),
+        m_networkManager(NetworkContainer::getNetworkManager()) {}
+
+    ~BroadcastMessageSenderTask() override = default;
+
+  private:
+    ILogger& m_logger;
+    INetworkManager& m_networkManager;
+    void task() override {
+        auto& stream = NetworkContainer::getNetworkBroadcast();
+        HiveMindHostAccumulatorSerializer serializer(stream);
+        MessageSender messageSender(MessageHandlerContainer::getBroadcastOutputQueue(), serializer,
+                                    BspContainer::getBSP(), m_logger);
+
+        while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
+               NetworkStatus::Connected) {
+            Task::delay(500);
+        }
+        // Only start after connection
+        stream.start();
+        while (true) {
+            if (!messageSender.processAndSerialize()) {
+                m_logger.log(LogLevel::Error, "Fail to process/serialize unicast");
+            }
+        }
+    }
+};
+
+class BroadcastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+  public:
+    BroadcastMessageDispatcher(const char* taskName, UBaseType_t priority) :
+        AbstractTask(taskName, priority), m_logger(LoggerContainer::getLogger()) {}
+
+    ~BroadcastMessageDispatcher() override = default;
+
+  private:
+    ILogger& m_logger;
+    void task() override {
+        auto& stream = NetworkContainer::getNetworkInputStream();
+
+        HiveMindHostDeserializer deserializer(stream);
+        NetworkAPIHandler networkApiHandler = MessageHandlerContainer::createNetworkApiHandler();
+        MessageDispatcher dispatcher =
+            MessageHandlerContainer::createMessageDispatcher(deserializer, networkApiHandler);
+
+        while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
+               NetworkStatus::Connected) {
+            Task::delay(500);
+        }
+        while (true) {
+            if (!dispatcher.deserializeAndDispatch()) {
+                m_logger.log(LogLevel::Error, "Fail to deserialize/dispatch unicast");
+            }
+        }
+    }
+};
+
 void app_main(void) {
     IBSP* bsp = &BspContainer::getBSP();
     bsp->initChip();
@@ -148,13 +210,22 @@ void app_main(void) {
 
     static HiveMindMessageSender s_spiMessageSend("hivemind_send", tskIDLE_PRIORITY + 1);
     static HiveMindDispatcher s_spiDispatch("hivemind_receive", tskIDLE_PRIORITY + 1);
+
     static UnicastMessageSenderTask s_tcpMessageSender("unicast_send", tskIDLE_PRIORITY + 1);
     static UnicastMessageDispatcher s_tcpMessageReceiver("unicast_receive", tskIDLE_PRIORITY + 1);
 
+    static BroadcastMessageSenderTask s_broadcastMessageSender("broadcast_send",
+                                                               tskIDLE_PRIORITY + 1);
+    static BroadcastMessageDispatcher s_broadcastReceiver("broadcast_send", tskIDLE_PRIORITY + 1);
+
     s_spiMessageSend.start();
     s_spiDispatch.start();
+
     s_tcpMessageReceiver.start();
     s_tcpMessageSender.start();
+
+    s_broadcastMessageSender.start();
+    s_broadcastReceiver.start();
 }
 
 #ifdef __cplusplus
