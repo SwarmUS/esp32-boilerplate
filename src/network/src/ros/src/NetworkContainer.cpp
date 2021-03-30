@@ -34,7 +34,7 @@ INetworkOutputStream& NetworkContainer::getNetworkOutputStream() {
 }
 
 INetworkBroadcast& NetworkContainer::getNetworkBroadcast() {
-    // Could be supplied by launch when integrated
+    // Could be supplied by launch file when integrated in simulation
     std::string outputPrefix("/Communication/broadcastOutput/");
     std::string inputPrefix("/Communication/broadcastOutput/");
     static NetworkBroadcast s_broadcast(LoggerContainer::getLogger(), BspContainer::getBSP(),
