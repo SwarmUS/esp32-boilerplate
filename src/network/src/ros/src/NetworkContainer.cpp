@@ -1,14 +1,16 @@
 #include "NetworkContainer.h"
-#include "DummyNetworkManager.h"
 #include "NetworkBroadcast.h"
 #include "NetworkInputStream.h"
+#include "NetworkManager.h"
 #include "NetworkOutputStream.h"
 #include "TopicDefines.h"
 #include "bsp/Container.h"
+#include "cpp-common/HashMap.h"
 #include <ros/ros.h>
 
 INetworkManager& NetworkContainer::getNetworkManager() {
-    static DummyNetworkManager s_networkManager;
+    static HashMap<uint16_t, uint16_t, gs_MAX_AGENT_IN_MAP> s_hashMap;
+    static NetworkManager s_networkManager(LoggerContainer::getLogger(), s_hashMap);
 
     return s_networkManager;
 }

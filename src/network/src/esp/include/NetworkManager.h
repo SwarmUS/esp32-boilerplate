@@ -23,10 +23,12 @@ class NetworkManager : public INetworkManager {
     bool getSelfIP(char* buffer, size_t maxLength) override;
 
     // TODO: implement this function
-    bool getIPFromRobotID(uint32_t robotID, char* buffer, size_t maxLength) override {
+    bool getIPFromAgentID(uint16_t agentID, char* buffer, size_t maxLength) const override {
         m_logger.log(LogLevel::Error, "No list initialised");
         return false;
     }
+
+    bool registerAgent(uint16_t agentID, char* ip) override { return false; }
 
     /**
      * @brief Execution loop, called internally

@@ -9,7 +9,7 @@ bool NetworkSerializer::serializeToStream(const MessageDTO& message) {
     message.serialize(msg);
 
     char destination[16];
-    if (!m_networkManager.getIPFromRobotID(message.getDestinationId(), destination,
+    if (!m_networkManager.getIPFromAgentID(message.getDestinationId(), destination,
                                            sizeof(destination))) {
         return false;
     }

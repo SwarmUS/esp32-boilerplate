@@ -27,14 +27,23 @@ class INetworkManager {
     virtual bool getSelfIP(char* buffer, size_t maxLength) = 0;
 
     /**
-     * @brief Returns the IP from a robot ID
-     * @param [in] robotID The target robot ID
+     * @brief Returns the IP from a agent ID
+     * @param [in] agentID The target agent ID
      * @param [out] buffer The buffer to store the IP
      * @param [in] maxLength The maxLength of the buffer to write into
      * @return True if the IP was known and it could be written in the supplied buffer, false
      * otherwise.
      */
-    virtual bool getIPFromRobotID(uint32_t robotID, char* buffer, size_t maxLength) = 0;
+    virtual bool getIPFromAgentID(uint16_t agentID, char* buffer, size_t maxLength) const = 0;
+
+    /**
+     * @brief Add a agent to the the list of known agents
+     * @param [in] agentID the id to the agent to register
+     * @param [in] ip The ip of the agent to register
+     * @return true if the agent was added or already present, false if the agent could not be
+     * registered
+     */
+    virtual bool registerAgent(uint16_t agentID, char* ip) = 0;
 };
 
 #endif // HIVE_CONNECT_INETWORKMANAGER_H
