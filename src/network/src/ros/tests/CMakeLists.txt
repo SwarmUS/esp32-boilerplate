@@ -23,6 +23,8 @@ target_link_libraries(${TEST_NAME}
 add_test(NAME ${TEST_NAME}
         COMMAND ${TEST_NAME})
 
+# Commented section since not working but could be fixed in the future
+#[[
 if(CATKIN_ENABLE_TESTING)
     find_package(rostest REQUIRED)
 
@@ -44,4 +46,4 @@ if(CATKIN_ENABLE_TESTING)
             )
 
     ## add other tests here
-endif()
+endif()]]

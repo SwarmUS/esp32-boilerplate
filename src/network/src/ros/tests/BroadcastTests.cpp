@@ -10,8 +10,6 @@
 class BroadCastTestFixture : public testing::Test {
   public:
     void SetUp() override {
-        m_sub = ros::NodeHandle().subscribe(std::string(BROADCAST_OUTPUT_TOPIC) + "1", 1000,
-                                            &BroadCastTestFixture::handleStuff, this);
         createRobot(m_robot1, 1);
         createRobot(m_robot2, 2);
         createRobot(m_robot3, 3);
