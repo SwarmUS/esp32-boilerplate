@@ -32,6 +32,7 @@ jobs:
          . /opt/ros/$ROS_DISTRO/setup.sh
          . ./devel/setup.sh
          cd build/HiveConnect
+         make run_tests
          ctest -V
 
     # Check format
