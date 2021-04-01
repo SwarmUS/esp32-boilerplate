@@ -18,8 +18,8 @@ class NetworkBroadcast : public INetworkBroadcast {
   public:
     NetworkBroadcast(ILogger& logger,
                      IBSP& bsp,
-                     const char* publishingTopicPrefix,
-                     const char* subscribingTopicPrefix);
+                     const char* publishingTopic,
+                     const char* subscribingTopic);
     ~NetworkBroadcast() override;
 
     bool send(const uint8_t* data, uint16_t length) override;

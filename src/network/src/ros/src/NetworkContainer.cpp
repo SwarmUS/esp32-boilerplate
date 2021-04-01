@@ -35,8 +35,10 @@ INetworkOutputStream& NetworkContainer::getNetworkOutputStream() {
 
 INetworkBroadcast& NetworkContainer::getNetworkBroadcast() {
     // Could be supplied by launch file when integrated in simulation
-    std::string outputPrefix("/Communication/broadcastOutput/");
-    std::string inputPrefix("/Communication/broadcastOutput/");
+    std::string outputPrefix("/Communication/broadcastOutput/" +
+                             std::to_string(BspContainer::getBSP().getHiveMindUUID()));
+    std::string inputPrefix("/Communication/broadcastInput/" +
+                            std::to_string(BspContainer::getBSP().getHiveMindUUID()));
     static NetworkBroadcast s_broadcast(LoggerContainer::getLogger(), BspContainer::getBSP(),
                                         outputPrefix.c_str(), inputPrefix.c_str());
     return s_broadcast;
