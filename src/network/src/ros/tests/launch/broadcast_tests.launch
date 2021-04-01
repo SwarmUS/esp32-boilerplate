@@ -1,5 +1,20 @@
 <?xml version="1.0"?>
 <launch>
+    <!-- Params for broker node. Testing with 3 robots-->
+    <rosparm>
+        Broker:
+          robots: [1, 2, 3]
+    </rosparm>
+
+    <!-- Broker node -->
+    <node  pkg="hive_connect" type="communication_broker" name="commBroker"  output="screen" >
+        <!-- Parameter name to use to find the robot list. Should match the yaml config file -->
+        <param name="configList" value="/Broker/robots"/>
+    </node>
+
+    <!-- GTest fixture node -->
     <node pkg="hive_connect" type="broadcast_test_node" name="broadcast_test_node"/>
+
+    <!-- rostest definition -->
     <test test-name="unit_test_node" pkg="hive_connect" type="broadcast_test_node"/>
 </launch>

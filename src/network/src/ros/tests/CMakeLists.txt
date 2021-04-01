@@ -38,6 +38,10 @@ if(CATKIN_ENABLE_TESTING)
             mocks/
             ${catkin_INCLUDE_DIRS}
             )
+    add_dependencies(broadcast_test_node
+            communication_broker
+            ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS}
+            )
 
     ## add other tests here
 endif()
