@@ -4,7 +4,9 @@
 #include "SocketFactory.h"
 
 INetworkManager& NetworkContainer::getNetworkManager() {
-    static NetworkManager s_networkManager(LoggerContainer::getLogger(), getNetworkInputStream());
+    static HashMap<uint16_t, uint32_t, g_MaxSwarmAgents> s_hashMap;
+    static NetworkManager s_networkManager(LoggerContainer::getLogger(), getNetworkInputStream(),
+                                           s_hashMap);
 
     return s_networkManager;
 }

@@ -87,13 +87,7 @@ NetworkStatus NetworkManager::getNetworkStatus() {
     }
 }
 
-bool NetworkManager::getSelfIP(char* buffer, size_t maxLength) {
-    if (buffer == nullptr) {
-        return false;
-    }
-    esp_ip4_addr_t ip = getIP();
-    return snprintf(buffer, maxLength, IPSTR, IP2STR(&ip)) <= maxLength;
-}
+uint32_t NetworkManager::getSelfIP() { return m_ipAddress.u_addr.ip4.addr; }
 
 void NetworkManager::execute() {
     switch (m_state) {
@@ -140,13 +134,23 @@ void NetworkManager::execute() {
     }
 }
 
-esp_ip4_addr_t NetworkManager::getIP() const { return m_ipAddress.u_addr.ip4; }
-
-bool NetworkManager::registerAgent(uint16_t agentID, const char* ip) {
-    if (ip != nullptr) {
-        m_logger.log(LogLevel::Error, "Supplied null buffer to register agent and ip");
-        return false;
+bool NetworkManager::registerAgent(uint16_t agentID, uint32_t ip) {
+    if (m_hashMap.at(agentID).has_value() &&
+        m_hashMap.upsert(std::pair<uint16_t, uint16_t>(agentID, ip))) {
+        m_logger.log(LogLevel::Info, "Updated port of agent %d with value %d", agentID, ip);
+        return true;
     }
-    std::pair<uint16_t, uint32_t> agent(agentID, ipaddr_addr(ip));
-    return m_hashMap.upsert(agent);
+    if (m_hashMap.insert(std::pair<uint16_t, uint16_t>(agentID, ip))) {
+        m_logger.log(LogLevel::Info, "Registered new agent %d with value %d", agentID, ip);
+        return true;
+    }
+    return false;
+}
+
+std::optional<uint32_t> NetworkManager::getIPFromAgentID(uint16_t agentID) const {
+    auto obj = m_hashMap.at(agentID);
+    if (obj.has_value()) {
+        return obj.value().get();
+    }
+    return {};
 }

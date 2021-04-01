@@ -23,20 +23,14 @@ class NetworkManager : public INetworkManager {
 
     void start() override;
     NetworkStatus getNetworkStatus() override;
-    bool getSelfIP(char* buffer, size_t maxLength) override;
-    bool getIPFromAgentID(uint16_t agentID, char* buffer, size_t maxLength) const override;
-    bool registerAgent(uint16_t agentID, const char* ip) override;
+    uint32_t getSelfIP() override;
+    std::optional<uint32_t> getIPFromAgentID(uint16_t agentID) const override;
+    bool registerAgent(uint16_t agentID, uint32_t ip) override;
 
     /**
      * @brief Execution loop, called internally
      */
     void execute();
-
-    /**
-     * @brief Returns the ip address of the module
-     * @return IPv4 address
-     */
-    esp_ip4_addr_t getIP() const;
 
   private:
     ILogger& m_logger;

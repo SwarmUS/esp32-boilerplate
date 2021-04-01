@@ -7,7 +7,7 @@
 class NetworkManagerFixture : public testing::Test {
   public:
     void SetUp() override {
-        m_hashMap = new HashMap<uint16_t, uint16_t, gs_MAX_AGENT_IN_MAP>();
+        m_hashMap = new HashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP>();
         m_networkManager = new NetworkManager(m_logger, *m_hashMap);
     }
     void TearDown() override {
@@ -16,22 +16,22 @@ class NetworkManagerFixture : public testing::Test {
     }
 
   protected:
-    HashMap<uint16_t, uint16_t, gs_MAX_AGENT_IN_MAP>* m_hashMap;
+    HashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP>* m_hashMap;
     LoggerInterfaceMock m_logger;
     NetworkManager* m_networkManager;
 };
 
 TEST_F(NetworkManagerFixture, register_and_get_ip_success) {
     // Given
-    std::pair<uint16_t, uint16_t> agent(1, 42);
+    std::pair<uint16_t, uint32_t> agent(1, 42);
 
     // Then
-    ASSERT_TRUE(m_networkManager->registerAgent(agent.first, std::to_string(agent.second).c_str()));
-    char buffer[16];
+    ASSERT_TRUE(m_networkManager->registerAgent(agent.first, agent.second));
 
     // Expect
-    ASSERT_TRUE(m_networkManager->getIPFromAgentID(agent.first, buffer, sizeof(buffer)));
-    ASSERT_EQ(atoi(buffer), agent.second);
+    auto val = m_networkManager->getIPFromAgentID(agent.first);
+    ASSERT_TRUE(val.has_value());
+    ASSERT_EQ(val.value(), agent.second);
 }
 
 TEST_F(NetworkManagerFixture, get_ip_fail_not_present) {
@@ -39,37 +39,12 @@ TEST_F(NetworkManagerFixture, get_ip_fail_not_present) {
     std::pair<uint16_t, uint16_t> agent(1, 42);
 
     // Expect
-    char buffer[16];
-    ASSERT_FALSE(m_networkManager->getIPFromAgentID(agent.first, buffer, sizeof(buffer)));
-}
-
-TEST_F(NetworkManagerFixture, get_ip_fail_null_buffer) {
-    // Given
-    std::pair<uint16_t, uint16_t> agent(1, 42);
-
-    // Then
-    ASSERT_TRUE(m_networkManager->registerAgent(agent.first, std::to_string(agent.second).c_str()));
-
-    // Expect
-    ASSERT_FALSE(m_networkManager->getIPFromAgentID(agent.first, nullptr, 0));
-}
-
-TEST_F(NetworkManagerFixture, register_ip_fail_null_buffer) {
-    // Given
-    std::pair<uint16_t, uint16_t> agent(1, 42);
-
-    // Expect
-    ASSERT_FALSE(m_networkManager->registerAgent(agent.first, nullptr));
+    auto val = m_networkManager->getIPFromAgentID(agent.first);
+    ASSERT_FALSE(val.has_value());
 }
 
 TEST_F(NetworkManagerFixture, get_status) {
     ASSERT_EQ(m_networkManager->getNetworkStatus(), NetworkStatus::Connected);
-}
-
-TEST_F(NetworkManagerFixture, get_self_ip_success) {
-    char buffer[64];
-    ASSERT_TRUE(m_networkManager->getSelfIP(buffer, sizeof(buffer)));
-    ASSERT_EQ(atoi(buffer), 42);
 }
 
 // Main for ros test
