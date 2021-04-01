@@ -18,8 +18,8 @@ class NetworkBroadcast : public INetworkBroadcast {
   public:
     NetworkBroadcast(ILogger& logger,
                      IBSP& bsp,
-                     const char* publishingTopic,
-                     const char* subscribingTopic);
+                     const char* publishingTopicPrefix,
+                     const char* subscribingTopicPrefix);
     ~NetworkBroadcast() override;
 
     bool send(const uint8_t* data, uint16_t length) override;
@@ -33,14 +33,15 @@ class NetworkBroadcast : public INetworkBroadcast {
     CircularBuff m_circularBuffer;
     std::array<uint8_t, g_maxBroadcastReceiveSize> m_data;
 
-    std::string m_pubTopic;
-    std::string m_subTopic;
+    std::string m_pubTopicPrefix;
+    std::string m_subTopicPrefix;
 
     ros::Publisher m_publisher;
     ros::Subscriber m_subscriber;
 
     std::condition_variable m_conditionVariable;
     std::mutex m_mutex;
+    bool m_receivedBytes;
 
     void handleReception(const hive_connect::Broadcast& msg);
 };

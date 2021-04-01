@@ -160,7 +160,8 @@ class BroadcastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_S
                                     BspContainer::getBSP(), m_logger);
 
         while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
-               NetworkStatus::Connected) {
+                   NetworkStatus::Connected &&
+               BspContainer::getBSP().getHiveMindUUID() == 0) {
             Task::delay(500);
         }
         // Only start after connection

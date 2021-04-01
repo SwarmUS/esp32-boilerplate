@@ -6,7 +6,7 @@ CommunicationBroker::CommunicationBroker() {
         std::string subscribingTopic = "/Communication/broadcastOutput/" + std::to_string(robotID);
         std::string publishingTopic = "/Communication/broadcastInput/" + std::to_string(robotID);
 
-        ros::Publisher pub = m_nodeHandle.advertise<std_msgs::String>(publishingTopic, 1000);
+        ros::Publisher pub = m_nodeHandle.advertise<hive_connect::Broadcast>(publishingTopic, 1000);
         ros::Subscriber sub = m_nodeHandle.subscribe(
             subscribingTopic, 1000, &CommunicationBroker::communicationCallback, this);
 
