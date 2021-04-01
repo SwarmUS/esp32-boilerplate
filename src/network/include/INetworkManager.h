@@ -43,7 +43,7 @@ class INetworkManager {
      * @return true if the agent was added or already present, false if the agent could not be
      * registered
      */
-    virtual bool registerAgent(uint16_t agentID, char* ip) = 0;
+    virtual bool registerAgent(uint16_t agentID, const char* ip) = 0;
 };
 
 #endif // HIVE_CONNECT_INETWORKMANAGER_H

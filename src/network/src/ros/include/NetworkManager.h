@@ -27,7 +27,7 @@ class NetworkManager : public INetworkManager {
 
     bool getIPFromAgentID(uint16_t agentID, char* buffer, size_t maxLength) const override;
 
-    bool registerAgent(uint16_t agentID, char* ip) override;
+    bool registerAgent(uint16_t agentID, const char* ip) override;
 
   private:
     ILogger& m_logger;

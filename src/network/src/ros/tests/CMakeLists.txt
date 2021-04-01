@@ -2,6 +2,7 @@ set(TEST_NAME test-network)
 
 set(TEST_SOURCES
     UnicastCommunicationUnitTests.cpp
+    NetworkManagerUnitTests.cpp
 )
 
 set(TEST_HEADERS
