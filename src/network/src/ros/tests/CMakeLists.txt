@@ -22,3 +22,22 @@ target_link_libraries(${TEST_NAME}
 
 add_test(NAME ${TEST_NAME}
         COMMAND ${TEST_NAME})
+
+if(CATKIN_ENABLE_TESTING)
+    find_package(rostest REQUIRED)
+
+    ## Broadcast Test ##
+    add_rostest_gtest(broadcast_test_node launch/broadcast_tests.launch BroadcastTests.cpp)
+    target_link_libraries(broadcast_test_node
+            SwarmUS::HiveConnect::Network::Platform
+            ${catkin_LIBRARIES}
+            gmock
+            gtest)
+    target_include_directories(broadcast_test_node
+            PRIVATE
+            mocks/
+            ${catkin_INCLUDE_DIRS}
+            )
+
+    ## add other tests here
+endif()
