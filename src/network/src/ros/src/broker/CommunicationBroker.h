@@ -5,7 +5,7 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <map>
-//Todo: add way to dynamically register and unregister robots after starting
+// Todo: add way to dynamically register and unregister robots after starting
 class CommunicationBroker {
   public:
     CommunicationBroker();
