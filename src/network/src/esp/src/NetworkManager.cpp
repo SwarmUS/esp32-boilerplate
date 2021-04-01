@@ -14,10 +14,13 @@ static void networkExecuteTask(void* context) {
     }
 }
 
-NetworkManager::NetworkManager(ILogger& logger, INetworkInputStream& server) :
+NetworkManager::NetworkManager(ILogger& logger,
+                               INetworkInputStream& server,
+                               IHashMap<uint16_t, uint32_t, g_MaxSwarmAgents>& hashMap) :
     m_logger(logger),
     m_networkExecuteTask("network_manager", tskIDLE_PRIORITY + 1, networkExecuteTask, this),
-    m_server(server) {
+    m_server(server),
+    m_hashMap(hashMap) {
 
     // Initialise to 0.0.0.0
     m_ipAddress.u_addr.ip4.addr = 0;
@@ -138,3 +141,12 @@ void NetworkManager::execute() {
 }
 
 esp_ip4_addr_t NetworkManager::getIP() const { return m_ipAddress.u_addr.ip4; }
+
+bool NetworkManager::registerAgent(uint16_t agentID, const char* ip) {
+    if (ip != nullptr) {
+        m_logger.log(LogLevel::Error, "Supplied null buffer to register agent and ip");
+        return false;
+    }
+    std::pair<uint16_t, uint32_t> agent(agentID, ipaddr_addr(ip));
+    return m_hashMap.upsert(agent);
+}

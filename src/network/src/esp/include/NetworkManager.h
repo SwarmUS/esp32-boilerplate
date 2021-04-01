@@ -4,31 +4,28 @@
 #include "INetworkManager.h"
 #include "TCPClient.h"
 #include "TCPServer.h"
+#include "cpp-common/HashMap.h"
+#include "esp_wifi.h"
 #include "logger/ILogger.h"
 #include <BaseTask.h>
 #include <Task.h>
 
-#include "esp_wifi.h"
-
+constexpr uint16_t g_MaxSwarmAgents = 16;
 /**
  * @brief The network manager class. Handles the connection to the network
  */
 class NetworkManager : public INetworkManager {
   public:
-    NetworkManager(ILogger& logger, INetworkInputStream& server);
+    NetworkManager(ILogger& logger,
+                   INetworkInputStream& server,
+                   IHashMap<uint16_t, uint32_t, g_MaxSwarmAgents>& hashMap);
     ~NetworkManager() = default;
 
     void start() override;
     NetworkStatus getNetworkStatus() override;
     bool getSelfIP(char* buffer, size_t maxLength) override;
-
-    // TODO: implement this function
-    bool getIPFromAgentID(uint16_t agentID, char* buffer, size_t maxLength) const override {
-        m_logger.log(LogLevel::Error, "No list initialised");
-        return false;
-    }
-
-    bool registerAgent(uint16_t agentID, char* ip) override { return false; }
+    bool getIPFromAgentID(uint16_t agentID, char* buffer, size_t maxLength) const override;
+    bool registerAgent(uint16_t agentID, const char* ip) override;
 
     /**
      * @brief Execution loop, called internally
@@ -46,6 +43,7 @@ class NetworkManager : public INetworkManager {
     INetworkInputStream& m_server;
     BaseTask<configMINIMAL_STACK_SIZE * 4> m_networkExecuteTask;
     esp_ip_addr_t m_ipAddress;
+    IHashMap<uint16_t, uint32_t, g_MaxSwarmAgents>& m_hashMap;
     enum class NetworkManagerState {
         INIT = 0,
         LOOKING_FOR_NETWORK,
