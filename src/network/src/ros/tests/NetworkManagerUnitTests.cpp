@@ -78,11 +78,6 @@ int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
     ros::init(argc, argv, "network_manager_rostest_node");
 
-    ros::NodeHandle nodeHandle("~");
-    int port = nodeHandle.param("tcp_listen_port", 54321);
-    std::vector<std::string> params;
-    nodeHandle.getParamNames(params);
-
     ros::AsyncSpinner spinner(1);
     spinner.start();
     int ret = RUN_ALL_TESTS();
