@@ -2,6 +2,7 @@
 #include "cpp-common/HashMap.h"
 #include "mocks/LoggerInterfaceMock.h"
 #include <gtest/gtest.h>
+#include <ros/ros.h>
 
 class NetworkManagerFixture : public testing::Test {
   public:
@@ -63,4 +64,29 @@ TEST_F(NetworkManagerFixture, register_ip_fail_null_buffer) {
 
 TEST_F(NetworkManagerFixture, get_status) {
     ASSERT_EQ(m_networkManager->getNetworkStatus(), NetworkStatus::Connected);
+}
+
+TEST_F(NetworkManagerFixture, get_self_ip_success) {
+    char buffer[64];
+    ASSERT_TRUE(m_networkManager->getSelfIP(buffer, sizeof(buffer)));
+    ASSERT_EQ(atoi(buffer), 42);
+}
+
+// Main for ros test
+
+int main(int argc, char** argv) {
+    testing::InitGoogleTest(&argc, argv);
+    ros::init(argc, argv, "network_manager_rostest_node");
+
+    ros::NodeHandle nodeHandle("~");
+    int port = nodeHandle.param("tcp_listen_port", 54321);
+    std::vector<std::string> params;
+    nodeHandle.getParamNames(params);
+
+    ros::AsyncSpinner spinner(1);
+    spinner.start();
+    int ret = RUN_ALL_TESTS();
+    spinner.stop();
+    ros::shutdown();
+    return ret;
 }

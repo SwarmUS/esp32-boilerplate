@@ -14,7 +14,9 @@ bool NetworkManager::getSelfIP(char* buffer, size_t maxLength) {
     }
     ros::NodeHandle nodeHandle("~");
     int port = nodeHandle.param("tcp_listen_port", 54321);
-    if (snprintf(buffer, maxLength, "%d", port) > 0) {
+    std::vector<std::string> params;
+    nodeHandle.getParamNames(params);
+    if (snprintf(buffer, maxLength, "%d", port) < 0) {
         m_logger.log(LogLevel::Error, "Failed to write un buffer supplied");
         return false;
     }
