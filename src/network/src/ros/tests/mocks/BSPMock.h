@@ -4,7 +4,7 @@
 #include "bsp/IBSP.h"
 #include <gmock/gmock.h>
 
-class BSPMock final : public IBSP {
+class BSPMock : public IBSP {
   public:
     explicit BSPMock() : m_boardID(0) { setActions(); }
     explicit BSPMock(const uint16_t& boardID) : m_boardID(boardID) { setActions(); }

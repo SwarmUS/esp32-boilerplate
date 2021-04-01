@@ -168,7 +168,7 @@ class BroadcastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_S
         stream.start();
         while (true) {
             if (!messageSender.processAndSerialize()) {
-                m_logger.log(LogLevel::Error, "Fail to process/serialize unicast");
+                m_logger.log(LogLevel::Error, "Fail to process/serialize broadcast");
             }
         }
     }
@@ -197,7 +197,7 @@ class BroadcastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_S
         }
         while (true) {
             if (!dispatcher.deserializeAndDispatch()) {
-                m_logger.log(LogLevel::Error, "Fail to deserialize/dispatch unicast");
+                m_logger.log(LogLevel::Error, "Fail to deserialize/dispatch broadcast");
             }
         }
     }

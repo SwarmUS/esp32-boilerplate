@@ -1,10 +1,11 @@
 #include "CommunicationBroker.h"
+#include "config/TopicDefines.h"
 
 CommunicationBroker::CommunicationBroker() {
     ROS_INFO("Communication Broker initialization");
     for (std::uint16_t& robotID : getRobotList()) {
-        std::string subscribingTopic = "/Communication/broadcastOutput/" + std::to_string(robotID);
-        std::string publishingTopic = "/Communication/broadcastInput/" + std::to_string(robotID);
+        std::string subscribingTopic = BROADCAST_OUTPUT_TOPIC + std::to_string(robotID);
+        std::string publishingTopic = BROADCAST_INPUT_TOPIC + std::to_string(robotID);
 
         ros::Publisher pub = m_nodeHandle.advertise<hive_connect::Broadcast>(publishingTopic, 1000);
         ros::Subscriber sub = m_nodeHandle.subscribe(
@@ -28,7 +29,7 @@ std::vector<uint16_t> CommunicationBroker::getRobotList() {
     }
 
     if (configRobotList.getType() != XmlRpc::XmlRpcValue::TypeArray) {
-        ROS_ERROR("List not an array");
+        ROS_ERROR("No robot found in broker config");
         return {};
     }
 
@@ -41,9 +42,10 @@ std::vector<uint16_t> CommunicationBroker::getRobotList() {
 }
 
 void CommunicationBroker::communicationCallback(const hive_connect::Broadcast& msg) {
-    for (auto& pair : m_publishersMap) {
-        if (pair.first != msg.source_robot) {
-            pair.second.publish(msg);
+    for (auto& [id, publisher] : m_publishersMap) {
+        if (id != msg.source_robot) {
+            ROS_INFO("Forwarding message from agent %d to agent %d", msg.source_robot, id);
+            publisher.publish(msg);
         }
     }
 }

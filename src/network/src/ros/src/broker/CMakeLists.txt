@@ -2,6 +2,7 @@ set(BROKER_EXECUTABLE_NAME "communication_broker")
 
 set(BROKER_HEADERS
     CommunicationBroker.h
+    config/TopicDefines.h
         )
 
 set(BROKER_SOURCES

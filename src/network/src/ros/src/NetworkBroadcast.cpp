@@ -27,11 +27,16 @@ NetworkBroadcast::NetworkBroadcast(ILogger& logger,
 NetworkBroadcast::~NetworkBroadcast() { stop(); }
 
 bool NetworkBroadcast::start() {
+    if (m_bsp.getHiveMindUUID() == 0) {
+        m_logger.log(LogLevel::Error, "Trying to start broadcaster without valid uuid");
+        return false;
+    }
     ros::NodeHandle handle;
     m_publisher = handle.advertise<hive_connect::Broadcast>(
         m_pubTopicPrefix + std::to_string(m_bsp.getHiveMindUUID()), 1000);
     m_subscriber = handle.subscribe(m_subTopicPrefix + std::to_string(m_bsp.getHiveMindUUID()),
                                     1000, &NetworkBroadcast::handleReception, this);
+    return true;
 }
 
 bool NetworkBroadcast::stop() { return true; }

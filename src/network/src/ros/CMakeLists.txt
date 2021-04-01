@@ -31,6 +31,7 @@ target_include_directories(${LIB_NAME}
         ${NETWORK_CMAKE_DIR}/include
         PRIVATE
         ${catkin_INCLUDE_DIRS}
+        src/broker/config
 )
 
 target_link_libraries(${LIB_NAME}

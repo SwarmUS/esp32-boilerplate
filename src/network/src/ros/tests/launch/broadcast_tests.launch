@@ -10,8 +10,8 @@
     </node>
 
     <!-- GTest fixture node -->
-    <node pkg="hive_connect" type="broadcast_test_node" name="broadcast_test_node"/>
+    <node pkg="hive_connect" type="broadcast_test_node" name="broadcast_test_node" output="screen" />
 
     <!-- rostest definition -->
-    <test test-name="unit_test_node" pkg="hive_connect" type="broadcast_test_node"/>
+    <test test-name="unit_test_node" pkg="hive_connect" type="broadcast_test_node" time-limit="5.0"/>
 </launch>
