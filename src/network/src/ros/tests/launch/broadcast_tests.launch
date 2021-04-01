@@ -1,10 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <!-- Params for broker node. Testing with 3 robots-->
-    <rosparm>
-        Broker:
-          robots: [1, 2, 3]
-    </rosparm>
+    <rosparam command="load" file="$(find hive_connect)/src/network/src/ros/tests/launch/broker_config.yaml" />
 
     <!-- Broker node -->
     <node  pkg="hive_connect" type="communication_broker" name="commBroker"  output="screen" >
