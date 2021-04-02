@@ -7,7 +7,7 @@ TCPClient::TCPClient(ILogger& logger) : m_logger(logger) { m_socketFd = NO_SOCKE
 
 TCPClient::~TCPClient() { close(); }
 
-bool TCPClient::setDestination(const char* address) {
+bool TCPClient::setDestination(uint32_t address) {
     if (m_socketFd != NO_SOCKET) {
         m_logger.log(LogLevel::Error, "Trying to override socket for TCP client");
     } else if ((m_socketFd = SocketFactory::createTCPClient(

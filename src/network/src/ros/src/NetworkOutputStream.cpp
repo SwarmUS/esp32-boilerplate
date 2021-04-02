@@ -9,7 +9,7 @@ NetworkOutputStream::NetworkOutputStream(ILogger& logger) : m_logger(logger), m_
 
 NetworkOutputStream::~NetworkOutputStream() { close(); }
 
-bool NetworkOutputStream::setDestination(const char* destination) {
+bool NetworkOutputStream::setDestination(uint32_t port) {
     sockaddr_in address = {0};
 
     if ((m_socketFd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_IP)) < 0) {
@@ -18,7 +18,7 @@ bool NetworkOutputStream::setDestination(const char* destination) {
     }
 
     address.sin_addr.s_addr = inet_addr("127.0.0.1");
-    address.sin_port = htons(atoi(destination));
+    address.sin_port = htons(port);
     address.sin_family = AF_INET;
 
     if (::connect(m_socketFd, (sockaddr*)&address, sizeof(address)) != 0) {
