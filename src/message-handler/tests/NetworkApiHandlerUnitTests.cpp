@@ -37,9 +37,10 @@ TEST_F(NetworkAPIHandlerUnitTests, NetworkAPIHandler_handleCall_valid) {
     MessageDTO message(69, 0, apiCall);
 
     // Then
+    EXPECT_CALL(*m_networkManager, registerAgent(69, 1)).WillOnce(testing::Return(true));
     auto ret = m_handler->handleApiCall(message, apiCall);
 
     // Expect
-    // Todo: once feature is properly implemented, add more substantial check
     EXPECT_TRUE(std::holds_alternative<std::optional<NetworkApiDTO>>(ret));
+    EXPECT_FALSE(reinterpret_cast<const std::optional<NetworkApiDTO>&>(ret).has_value());
 }
