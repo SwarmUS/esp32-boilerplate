@@ -1,7 +1,10 @@
 #include "NetworkContainer.h"
 #include "DummyNetworkManager.h"
+#include "NetworkBroadcast.h"
 #include "NetworkInputStream.h"
 #include "NetworkOutputStream.h"
+#include "TopicDefines.h"
+#include "bsp/Container.h"
 #include <ros/ros.h>
 
 INetworkManager& NetworkContainer::getNetworkManager() {
@@ -29,4 +32,13 @@ INetworkOutputStream& NetworkContainer::getNetworkOutputStream() {
     static NetworkOutputStream s_outputStream(LoggerContainer::getLogger());
 
     return s_outputStream;
+}
+
+INetworkBroadcast& NetworkContainer::getNetworkBroadcast() {
+    // Could be supplied by launch file when integrated in simulation
+    std::string outputPrefix(BROADCAST_OUTPUT_TOPIC);
+    std::string inputPrefix(BROADCAST_INPUT_TOPIC);
+    static NetworkBroadcast s_broadcast(LoggerContainer::getLogger(), BspContainer::getBSP(),
+                                        outputPrefix.c_str(), inputPrefix.c_str());
+    return s_broadcast;
 }

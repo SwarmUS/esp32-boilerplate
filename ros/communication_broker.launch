@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- Place holder launch file for the communication broker node -->
+
+<launch>
+    <rosparam command="load" file="$(find hive_connect)/ros/broker_config.yaml" />
+    <node name="commBroker" pkg="hive_connect" type="communication_broker"  output="screen" >
+
+        <!-- Parameter name to use to find the robot list. Should match the yaml config file -->
+        <param name="configList" value="/Broker/robots"/>
+    </node>
+</launch>
