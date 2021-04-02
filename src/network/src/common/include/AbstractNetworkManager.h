@@ -37,7 +37,7 @@ class AbstractNetworkManager {
      * @return True the IP/port if the agent was known or an empty optional otherwise
      * otherwise.
      */
-    virtual std::optional<uint32_t> getIPFromAgentID(uint16_t agentID) const;
+    std::optional<uint32_t> getIPFromAgentID(uint16_t agentID) const;
 
     /**
      * @brief Add a agent to the the list of known agents
@@ -46,7 +46,7 @@ class AbstractNetworkManager {
      * @return true if the agent was added or already present, false if the agent could not be
      * registered
      */
-    virtual bool registerAgent(uint16_t agentID, uint32_t ip);
+    bool registerAgent(uint16_t agentID, uint32_t ip);
 
   protected:
     ILogger& m_logger;
