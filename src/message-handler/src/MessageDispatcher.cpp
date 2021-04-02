@@ -38,7 +38,7 @@ bool MessageDispatcher::deserializeAndDispatch() {
 
 bool MessageDispatcher::dispatchNetworkAPI(const MessageDTO& message,
                                            const NetworkApiDTO& apiCall) {
-    auto reply = m_requestHandler.handleApiCall(apiCall);
+    auto reply = m_requestHandler.handleApiCall(message, apiCall);
     if (std::holds_alternative<ErrorNum>(reply)) {
         // An empty optional means an error occured
         m_logger.log(LogLevel::Error, "Failed to handle NetworkApi call");

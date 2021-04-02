@@ -208,7 +208,7 @@ class BroadcastIPTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
     BroadcastIPTask(const char* taskName,
                     UBaseType_t priority,
                     IBSP& bsp,
-                    IAbstractNetworkManager& networkManager,
+                    AbstractNetworkManager& networkManager,
                     ILogger& logger) :
         AbstractTask(taskName, priority),
         m_bsp(bsp),
@@ -218,7 +218,7 @@ class BroadcastIPTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
 
   private:
     IBSP& m_bsp;
-    IAbstractNetworkManager& m_networkManager;
+    AbstractNetworkManager& m_networkManager;
     ILogger& m_logger;
     void task() override {
         while (true) {
