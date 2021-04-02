@@ -1,16 +1,8 @@
 <?xml version="1.0"?>
 <launch>
     <node pkg="hive_connect" type="network_manager_rostest_node" name="network_manager_rostest_node">
-        <rosparam>
-            tcp_listen_port: 42
-        </rosparam>
         <param name="tcp_listen_port" value="42"/>
     </node>
-    <test test-name="unit_test_node" pkg="hive_connect" type="network_manager_rostest_node">
-        <rosparam>
-            tcp_listen_port: 42
-        </rosparam>
-        <param name="tcp_listen_port" value="42"/>
-    </test>
+    <test test-name="unit_test_node" pkg="hive_connect" type="network_manager_rostest_node" time-limit="10.0"/>
 
 </launch>
