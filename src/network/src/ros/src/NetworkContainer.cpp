@@ -1,15 +1,20 @@
 #include "NetworkContainer.h"
-#include "DummyNetworkManager.h"
 #include "NetworkBroadcast.h"
 #include "NetworkInputStream.h"
+#include "NetworkManager.h"
 #include "NetworkOutputStream.h"
 #include "TopicDefines.h"
 #include "bsp/Container.h"
+#include "cpp-common/HashMap.h"
 #include <ros/ros.h>
 
-INetworkManager& NetworkContainer::getNetworkManager() {
-    static DummyNetworkManager s_networkManager;
+static constexpr uint16_t gs_MAX_AGENT_IN_MAP = 64;
 
+INetworkManager& NetworkContainer::getNetworkManager() {
+    static HashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP> s_hashMap;
+    static NetworkManager s_networkManager(LoggerContainer::getLogger(), s_hashMap);
+    // To remove:
+    s_networkManager.getIPFromAgentID(2);
     return s_networkManager;
 }
 

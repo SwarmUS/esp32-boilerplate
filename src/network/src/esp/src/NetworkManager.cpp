@@ -14,8 +14,11 @@ static void networkExecuteTask(void* context) {
     }
 }
 
-NetworkManager::NetworkManager(ILogger& logger, INetworkInputStream& server) :
-    m_logger(logger),
+NetworkManager::NetworkManager(ILogger& logger,
+                               INetworkInputStream& server,
+                               IHashMap<uint16_t, uint32_t>& hashMap) :
+    AbstractNetworkManager(logger, hashMap),
+
     m_networkExecuteTask("network_manager", tskIDLE_PRIORITY + 1, networkExecuteTask, this),
     m_server(server) {
 
@@ -69,7 +72,7 @@ void NetworkManager::start() {
     m_networkExecuteTask.start();
 }
 
-NetworkStatus NetworkManager::getNetworkStatus() {
+NetworkStatus NetworkManager::getNetworkStatus() const {
     switch (m_state) {
     case NetworkManagerState::LOOKING_FOR_NETWORK:
         return NetworkStatus::Connecting;
@@ -84,13 +87,7 @@ NetworkStatus NetworkManager::getNetworkStatus() {
     }
 }
 
-bool NetworkManager::getSelfIP(char* buffer, size_t maxLength) {
-    if (buffer == nullptr) {
-        return false;
-    }
-    esp_ip4_addr_t ip = getIP();
-    return snprintf(buffer, maxLength, IPSTR, IP2STR(&ip)) <= maxLength;
-}
+uint32_t NetworkManager::getSelfIP() const { return m_ipAddress.u_addr.ip4.addr; }
 
 void NetworkManager::execute() {
     switch (m_state) {
@@ -136,5 +133,3 @@ void NetworkManager::execute() {
         break;
     }
 }
-
-esp_ip4_addr_t NetworkManager::getIP() const { return m_ipAddress.u_addr.ip4; }

@@ -2,7 +2,7 @@ set(LIB_NAME "swarmus-hiveconnect-network-ros")
 set(LIB_ALIAS "SwarmUS::HiveConnect::Network::Platform")
 
 set(LIB_HEADERS
-        include/DummyNetworkManager.h
+        include/NetworkManager.h
         include/NetworkOutputStream.h
         include/NetworkInputStream.h
         include/NetworkBroadcast.h
@@ -13,6 +13,7 @@ set(LIB_SOURCES
     src/NetworkInputStream.cpp
     src/NetworkOutputStream.cpp
     src/NetworkBroadcast.cpp
+    src/NetworkManager.cpp
 )
 
 
@@ -39,7 +40,9 @@ target_link_libraries(${LIB_NAME}
         SwarmUS::HiveConnect::OS
         SwarmUS::HiveConnect::Logger
         SwarmUS::Propolis::C::Common
+        SwarmUS::Propolis::Cpp::Common
         SwarmUS::Propolis::Pheromones::Common
+        SwarmUS::HiveConnect::Network::Common
         PRIVATE
         ${catkin_LIBRARIES}
 

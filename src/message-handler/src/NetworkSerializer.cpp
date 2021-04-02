@@ -8,13 +8,12 @@ bool NetworkSerializer::serializeToStream(const MessageDTO& message) {
     Message msg;
     message.serialize(msg);
 
-    char destination[16];
-    if (!m_networkManager.getIPFromRobotID(message.getDestinationId(), destination,
-                                           sizeof(destination))) {
+    auto ip = m_networkManager.getIPFromAgentID(message.getDestinationId());
+    if (!ip.has_value()) {
         return false;
     }
 
-    if (!m_outputStream.setDestination(destination)) {
+    if (!m_outputStream.setDestination(ip.value())) {
         return false;
     }
 

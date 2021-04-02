@@ -10,11 +10,11 @@ class INetworkOutputStream : public IProtobufOutputStream {
     /**
      * @brief Set the destination to which the stream need to be sent
      *
-     * @param [in] destination Target of the message as string. Can IP address or ROS topic
+     * @param [in] destination Target of the message, is either an an IP or port
      *
      * @return true if target reachable, false if not
      */
-    virtual bool setDestination(const char* destination) = 0;
+    virtual bool setDestination(uint32_t destination) = 0;
 
     /**
      *@brief Closes the stream

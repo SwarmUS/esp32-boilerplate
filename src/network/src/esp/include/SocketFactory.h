@@ -10,7 +10,7 @@ namespace SocketFactory {
 
 int createTCPServerSocket(uint16_t port);
 
-int createTCPClient(const char* address, uint16_t port);
+int createTCPClient(uint32_t address, uint16_t port);
 
 } // namespace SocketFactory
 

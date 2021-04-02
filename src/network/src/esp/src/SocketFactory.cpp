@@ -29,7 +29,7 @@ int SocketFactory::createTCPServerSocket(uint16_t port) {
     return socket;
 }
 
-int SocketFactory::createTCPClient(const char* address, uint16_t port) {
+int SocketFactory::createTCPClient(uint32_t address, uint16_t port) {
     sockaddr_in destination = {0};
 
     int socket = lwip_socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
@@ -38,7 +38,7 @@ int SocketFactory::createTCPClient(const char* address, uint16_t port) {
         return -1;
     }
 
-    destination.sin_addr.s_addr = inet_addr(address);
+    destination.sin_addr.s_addr = htonl(address);
     destination.sin_family = AF_INET;
     destination.sin_port = htons(port);
 

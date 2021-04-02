@@ -18,18 +18,31 @@ target_link_libraries(${TEST_NAME}
         gmock
 
         SwarmUS::HiveConnect::Network::Platform
+        SwarmUS::HiveConnect::Network::Common
         )
 
 add_test(NAME ${TEST_NAME}
         COMMAND ${TEST_NAME})
 
-# Commented section since not working but could be fixed in the future
-#[[
+
 if(CATKIN_ENABLE_TESTING)
+    ## Network Manager Test ##
     find_package(rostest REQUIRED)
+    add_rostest_gtest(network_manager_rostest_node launch/network_manager_tests.launch NetworkManagerUnitTests.cpp)
+    target_link_libraries(network_manager_rostest_node
+            SwarmUS::HiveConnect::Network::Common
+            SwarmUS::HiveConnect::Network::Platform
+            ${catkin_LIBRARIES}
+            gmock
+            gtest)
+    target_include_directories(network_manager_rostest_node
+            PRIVATE
+            mocks/
+            ${catkin_INCLUDE_DIRS}
+            )
 
     ## Broadcast Test ##
-    add_rostest_gtest(broadcast_test_node launch/broadcast_tests.launch BroadcastTests.cpp)
+    #[[add_rostest_gtest(broadcast_test_node launch/broadcast_tests.launch BroadcastTests.cpp)
     target_link_libraries(broadcast_test_node
             SwarmUS::HiveConnect::Network::Platform
             ${catkin_LIBRARIES}
@@ -43,7 +56,8 @@ if(CATKIN_ENABLE_TESTING)
     add_dependencies(broadcast_test_node
             communication_broker
             ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS}
-            )
+            )]]
 
     ## add other tests here
-endif()]]
+
+endif()

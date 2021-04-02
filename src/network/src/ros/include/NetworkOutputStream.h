@@ -11,7 +11,7 @@ class NetworkOutputStream : public INetworkOutputStream {
 
     bool send(const uint8_t* data, uint16_t length) override;
 
-    bool setDestination(const char* destination) override;
+    bool setDestination(uint32_t destination) override;
 
     bool close() override;
 

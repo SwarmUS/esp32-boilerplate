@@ -7,7 +7,6 @@
 class NetworkUnicastStreamFixture : public testing::Test {
   public:
     void SetUp() override {
-        m_networkManagerMock = new NetworkManagerMock();
         m_inputStream = new NetworkInputStream(m_logger, 9000);
         m_outputStream = new NetworkOutputStream(m_logger);
     }
@@ -19,7 +18,6 @@ class NetworkUnicastStreamFixture : public testing::Test {
 
   protected:
     LoggerInterfaceMock m_logger;
-    NetworkManagerMock* m_networkManagerMock;
     NetworkInputStream* m_inputStream;
     NetworkOutputStream* m_outputStream;
 };
@@ -29,8 +27,8 @@ TEST_F(NetworkUnicastStreamFixture, test_DataExchange_working) {
     EXPECT_TRUE(m_inputStream->start());
 
     // Can connect to server
-    EXPECT_FALSE(m_outputStream->setDestination("1200")); // testing invalid port
-    EXPECT_TRUE(m_outputStream->setDestination("9000")); // Connecting to valid port
+    EXPECT_FALSE(m_outputStream->setDestination(1200)); // testing invalid port
+    EXPECT_TRUE(m_outputStream->setDestination(9000)); // Connecting to valid port
 
     // Can send message
     char message[] = "This is a test message";
