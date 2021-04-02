@@ -1,21 +1,21 @@
 #ifndef HIVE_CONNECT_NETWORKSERIALIZER_H
 #define HIVE_CONNECT_NETWORKSERIALIZER_H
 
-#include "../../../network/src/common/include/AbstractNetworkManager.h"
+#include "INetworkManager.h"
 #include "INetworkOutputStream.h"
 #include "common/IProtobufOutputStream.h"
 #include "hivemind-host/HiveMindHostSerializer.h"
 
 class NetworkSerializer : public IHiveMindHostSerializer {
   public:
-    NetworkSerializer(INetworkOutputStream& stream, AbstractNetworkManager& networkManager);
+    NetworkSerializer(INetworkOutputStream& stream, INetworkManager& networkManager);
     virtual ~NetworkSerializer() = default;
 
     bool serializeToStream(const MessageDTO& message) override;
 
   private:
     INetworkOutputStream& m_outputStream;
-    AbstractNetworkManager& m_networkManager;
+    INetworkManager& m_networkManager;
     HiveMindHostSerializer m_hivemindHostSerializer;
 };
 

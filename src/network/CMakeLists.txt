@@ -9,6 +9,7 @@ set(LIB_HEADERS
     include/INetworkOutputStream.h
     include/INetworkInputStream.h
     include/INetworkBroadcast.h
+    include/INetworkManager.h
     include/NetworkContainer.h
 )
 
