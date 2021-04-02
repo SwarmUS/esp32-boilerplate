@@ -23,8 +23,6 @@ class NetworkManager : public IAbstractNetworkManager {
     void start() override;
     NetworkStatus getNetworkStatus() override;
     uint32_t getSelfIP() override;
-    std::optional<uint32_t> getIPFromAgentID(uint16_t agentID) const override;
-    bool registerAgent(uint16_t agentID, uint32_t ip) override;
 
     /**
      * @brief Execution loop, called internally
