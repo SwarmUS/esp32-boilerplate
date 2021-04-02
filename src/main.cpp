@@ -93,7 +93,7 @@ class UnicastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZ
 
   private:
     ILogger& m_logger;
-    INetworkManager& m_networkManager;
+    IAbstractNetworkManager& m_networkManager;
     void task() override {
         auto& stream = NetworkContainer::getNetworkOutputStream();
         NetworkSerializer serializer(stream, m_networkManager);
@@ -152,7 +152,7 @@ class BroadcastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_S
 
   private:
     ILogger& m_logger;
-    INetworkManager& m_networkManager;
+    IAbstractNetworkManager& m_networkManager;
     void task() override {
         auto& stream = NetworkContainer::getNetworkBroadcast();
         HiveMindHostAccumulatorSerializer serializer(stream);
@@ -206,7 +206,7 @@ class BroadcastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_S
 void app_main(void) {
     IBSP* bsp = &BspContainer::getBSP();
     bsp->initChip();
-    INetworkManager* networkManager = &NetworkContainer::getNetworkManager();
+    IAbstractNetworkManager* networkManager = &NetworkContainer::getNetworkManager();
     networkManager->start();
 
     static HiveMindMessageSender s_spiMessageSend("hivemind_send", tskIDLE_PRIORITY + 1);

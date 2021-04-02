@@ -16,11 +16,11 @@ static void networkExecuteTask(void* context) {
 
 NetworkManager::NetworkManager(ILogger& logger,
                                INetworkInputStream& server,
-                               IHashMap<uint16_t, uint32_t, g_MaxSwarmAgents>& hashMap) :
-    m_logger(logger),
+                               IHashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP>& hashMap) :
+    IAbstractNetworkManager(logger, hashMap),
+
     m_networkExecuteTask("network_manager", tskIDLE_PRIORITY + 1, networkExecuteTask, this),
-    m_server(server),
-    m_hashMap(hashMap) {
+    m_server(server) {
 
     // Initialise to 0.0.0.0
     m_ipAddress.u_addr.ip4.addr = 0;

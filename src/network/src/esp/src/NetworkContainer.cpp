@@ -3,8 +3,8 @@
 #include "NetworkManager.h"
 #include "SocketFactory.h"
 
-INetworkManager& NetworkContainer::getNetworkManager() {
-    static HashMap<uint16_t, uint32_t, g_MaxSwarmAgents> s_hashMap;
+IAbstractNetworkManager& NetworkContainer::getNetworkManager() {
+    static HashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP> s_hashMap;
     static NetworkManager s_networkManager(LoggerContainer::getLogger(), getNetworkInputStream(),
                                            s_hashMap);
 

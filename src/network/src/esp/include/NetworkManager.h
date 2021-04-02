@@ -1,7 +1,7 @@
 #ifndef HIVE_CONNECT_NETWORKMANAGER_H
 #define HIVE_CONNECT_NETWORKMANAGER_H
 
-#include "INetworkManager.h"
+#include "IAbstractNetworkManager.h"
 #include "TCPClient.h"
 #include "TCPServer.h"
 #include "cpp-common/HashMap.h"
@@ -10,15 +10,14 @@
 #include <BaseTask.h>
 #include <Task.h>
 
-constexpr uint16_t g_MaxSwarmAgents = 16;
 /**
  * @brief The network manager class. Handles the connection to the network
  */
-class NetworkManager : public INetworkManager {
+class NetworkManager : public IAbstractNetworkManager {
   public:
     NetworkManager(ILogger& logger,
                    INetworkInputStream& server,
-                   IHashMap<uint16_t, uint32_t, g_MaxSwarmAgents>& hashMap);
+                   IHashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP>& hashMap);
     ~NetworkManager() = default;
 
     void start() override;
@@ -33,11 +32,9 @@ class NetworkManager : public INetworkManager {
     void execute();
 
   private:
-    ILogger& m_logger;
     INetworkInputStream& m_server;
     BaseTask<configMINIMAL_STACK_SIZE * 4> m_networkExecuteTask;
     esp_ip_addr_t m_ipAddress;
-    IHashMap<uint16_t, uint32_t, g_MaxSwarmAgents>& m_hashMap;
     enum class NetworkManagerState {
         INIT = 0,
         LOOKING_FOR_NETWORK,

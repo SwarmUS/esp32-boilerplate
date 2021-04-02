@@ -6,7 +6,7 @@ get_filename_component(NETWORK_CMAKE_DIR ${CMAKE_CURRENT_LIST_FILE} DIRECTORY)
 add_subdirectory(src)
 
 set(LIB_HEADERS
-    include/INetworkManager.h
+    include/IAbstractNetworkManager.h
     include/INetworkOutputStream.h
     include/INetworkInputStream.h
     include/INetworkBroadcast.h
@@ -29,6 +29,7 @@ target_link_libraries(${LIB_NAME}
         SwarmUS::HiveConnect::Network::Platform
         protobuf-nanopb-static
         SwarmUS::Propolis::Pheromones::Common
+        SwarmUS::HiveConnect::Logger
         )
 
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)

@@ -1,16 +1,14 @@
 #ifndef HIVE_CONNECT_NETWORKMANAGER_H
 #define HIVE_CONNECT_NETWORKMANAGER_H
 
-#include "INetworkManager.h"
+#include "IAbstractNetworkManager.h"
 #include "cpp-common/IHashMap.h"
 #include "logger/ILogger.h"
 
-static constexpr uint16_t gs_MAX_AGENT_IN_MAP = 48;
-
-class NetworkManager : public INetworkManager {
+class NetworkManager : public IAbstractNetworkManager {
   public:
     NetworkManager(ILogger& logger, IHashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP>& hashMap);
-    ~NetworkManager() = default;
+    ~NetworkManager() override = default;
     void start() override {}
 
     /**
@@ -24,13 +22,7 @@ class NetworkManager : public INetworkManager {
      */
     uint32_t getSelfIP() override;
 
-    std::optional<uint32_t> getIPFromAgentID(uint16_t agentID) const override;
-
-    bool registerAgent(uint16_t agentID, uint32_t port) override;
-
   private:
-    ILogger& m_logger;
-    IHashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP>& m_hashMap;
 };
 
 #endif // HIVE_CONNECT_NETWORKMANAGER_H

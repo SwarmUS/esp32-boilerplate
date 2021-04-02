@@ -8,7 +8,7 @@
 #include "cpp-common/HashMap.h"
 #include <ros/ros.h>
 
-INetworkManager& NetworkContainer::getNetworkManager() {
+IAbstractNetworkManager& NetworkContainer::getNetworkManager() {
     static HashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP> s_hashMap;
     static NetworkManager s_networkManager(LoggerContainer::getLogger(), s_hashMap);
 

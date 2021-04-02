@@ -1,10 +1,10 @@
 #ifndef HIVE_CONNECT_NETWORKMANAGERMOCK_H
 #define HIVE_CONNECT_NETWORKMANAGERMOCK_H
 
-#include "INetworkManager.h"
+#include "IAbstractNetworkManager.h"
 #include <gmock/gmock.h>
 
-class NetworkManagerMock : public INetworkManager {
+class NetworkManagerMock : public IAbstractNetworkManager {
 
   public:
     NetworkManagerMock() = default;
