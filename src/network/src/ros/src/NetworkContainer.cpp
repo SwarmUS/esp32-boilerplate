@@ -7,6 +7,7 @@
 #include "bsp/Container.h"
 #include "cpp-common/HashMap.h"
 #include <ros/ros.h>
+static constexpr uint16_t gs_MAX_AGENT_IN_MAP = 64;
 
 IAbstractNetworkManager& NetworkContainer::getNetworkManager() {
     static HashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP> s_hashMap;

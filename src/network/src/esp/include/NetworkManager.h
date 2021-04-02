@@ -17,7 +17,7 @@ class NetworkManager : public IAbstractNetworkManager {
   public:
     NetworkManager(ILogger& logger,
                    INetworkInputStream& server,
-                   IHashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP>& hashMap);
+                   IHashMap<uint16_t, uint32_t>& hashMap);
     ~NetworkManager() = default;
 
     void start() override;

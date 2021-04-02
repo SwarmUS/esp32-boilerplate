@@ -7,7 +7,7 @@
 class NetworkManagerFixture : public testing::Test {
   public:
     void SetUp() override {
-        m_hashMap = new HashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP>();
+        m_hashMap = new HashMap<uint16_t, uint32_t, 10>();
         m_networkManager = new NetworkManager(m_logger, *m_hashMap);
     }
     void TearDown() override {
@@ -16,7 +16,7 @@ class NetworkManagerFixture : public testing::Test {
     }
 
   protected:
-    HashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP>* m_hashMap;
+    HashMap<uint16_t, uint32_t, 10>* m_hashMap;
     LoggerInterfaceMock m_logger;
     NetworkManager* m_networkManager;
 };

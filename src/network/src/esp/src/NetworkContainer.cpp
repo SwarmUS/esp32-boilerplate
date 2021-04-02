@@ -3,6 +3,7 @@
 #include "NetworkManager.h"
 #include "SocketFactory.h"
 
+constexpr uint16_t gs_MAX_AGENT_IN_MAP = 32;
 IAbstractNetworkManager& NetworkContainer::getNetworkManager() {
     static HashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP> s_hashMap;
     static NetworkManager s_networkManager(LoggerContainer::getLogger(), getNetworkInputStream(),

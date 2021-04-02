@@ -13,7 +13,7 @@ function(propolis_fetch_populate)
         ${PROJECT_NAME}_propolis
 
         GIT_REPOSITORY https://github.com/SwarmUS/Propolis
-        GIT_TAG        8eb284a
+        GIT_TAG        d3455e194cf243f74c1a406d65b5012b1b936049 # Todo: change to master after merge
         GIT_PROGRESS   TRUE
     )
 

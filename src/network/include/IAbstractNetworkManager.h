@@ -3,17 +3,14 @@
 
 #include "cpp-common/IHashMap.h"
 #include "logger/ILogger.h"
-#include <functional>
 #include <optional>
 #include <string>
 
 enum class NetworkStatus { NotConnected = 0, Connecting, Connected };
-static constexpr uint16_t gs_MAX_AGENT_IN_MAP = 48;
 
 class IAbstractNetworkManager {
   public:
-    IAbstractNetworkManager(ILogger& logger,
-                            IHashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP>& hashMap) :
+    IAbstractNetworkManager(ILogger& logger, IHashMap<uint16_t, uint32_t>& hashMap) :
         m_logger(logger), m_hashMap(hashMap) {}
     virtual ~IAbstractNetworkManager() = default;
 
@@ -70,7 +67,7 @@ class IAbstractNetworkManager {
 
   protected:
     ILogger& m_logger;
-    IHashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP>& m_hashMap;
+    IHashMap<uint16_t, uint32_t>& m_hashMap;
 };
 
 #endif // HIVE_CONNECT_IABSTRACTNETWORKMANAGER_H
