@@ -160,9 +160,9 @@ class BroadcastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_S
                                     BspContainer::getBSP(), m_logger);
 
         while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
-                   NetworkStatus::Connected &&
+                   NetworkStatus::Connected ||
                BspContainer::getBSP().getHiveMindUUID() == 0) {
-            Task::delay(500);
+            Task::delay(100);
         }
         // Only start after connection
         stream.start();
@@ -208,21 +208,33 @@ class BroadcastIPTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
     BroadcastIPTask(const char* taskName,
                     UBaseType_t priority,
                     IBSP& bsp,
-                    INetworkManager& networkManager) :
-        AbstractTask(taskName, priority), m_bsp(bsp), m_networkManager(networkManager) {}
+                    IAbstractNetworkManager& networkManager,
+                    ILogger& logger) :
+        AbstractTask(taskName, priority),
+        m_bsp(bsp),
+        m_networkManager(networkManager),
+        m_logger(logger) {}
     ~BroadcastIPTask() override = default;
 
   private:
     IBSP& m_bsp;
-    INetworkManager& m_networkManager;
+    IAbstractNetworkManager& m_networkManager;
+    ILogger& m_logger;
     void task() override {
-        while (m_bsp.getHiveMindUUID() == 0 &&
-               m_networkManager.getNetworkStatus() != NetworkStatus::Connected) {
-            Task::delay(500);
-            while (m_networkManager.getNetworkStatus() == NetworkStatus::Connected) {
-                auto& broadcastQueue = MessageHandlerContainer::getBroadcastOutputQueue();
-                IPDiscoveryDTO ipDiscoveryDto(m_networkManager.getSelfIP());
+        while (true) {
+            // Wait for device to be connected and having a valid id
+            if (m_bsp.getHiveMindUUID() == 0 ||
+                m_networkManager.getNetworkStatus() != NetworkStatus::Connected) {
+                Task::delay(500);
+                continue;
             }
+            Task::delay(5000);
+            auto& broadcastQueue = MessageHandlerContainer::getBroadcastOutputQueue();
+            IPDiscoveryDTO ipDiscoveryDto(m_networkManager.getSelfIP());
+            MessageDTO message(m_bsp.getHiveMindUUID(), 0, ipDiscoveryDto);
+            broadcastQueue.push(message);
+            // Only send message every five seconds
+            Task::delay(5000);
         }
     }
 };
@@ -242,6 +254,9 @@ void app_main(void) {
     static BroadcastMessageSenderTask s_broadcastMessageSender("broadcast_send",
                                                                tskIDLE_PRIORITY + 1);
     static BroadcastMessageDispatcher s_broadcastReceiver("broadcast_send", tskIDLE_PRIORITY + 1);
+    static BroadcastIPTask s_broadcastIpTask(
+        "broad_casting_ip", configMINIMAL_STACK_SIZE, BspContainer::getBSP(),
+        NetworkContainer::getNetworkManager(), LoggerContainer::getLogger());
 
     s_spiMessageSend.start();
     s_spiDispatch.start();
@@ -251,6 +266,7 @@ void app_main(void) {
 
     s_broadcastMessageSender.start();
     s_broadcastReceiver.start();
+    s_broadcastIpTask.start();
 }
 
 #ifdef __cplusplus

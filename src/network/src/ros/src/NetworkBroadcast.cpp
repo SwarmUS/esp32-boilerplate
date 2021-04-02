@@ -36,6 +36,8 @@ bool NetworkBroadcast::start() {
         m_pubTopicPrefix + std::to_string(m_bsp.getHiveMindUUID()), 1000);
     m_subscriber = handle.subscribe(m_subTopicPrefix + std::to_string(m_bsp.getHiveMindUUID()),
                                     1000, &NetworkBroadcast::handleReception, this);
+    m_logger.log(LogLevel::Info, "Broadcast interface started for agent %d",
+                 m_bsp.getHiveMindUUID());
     return true;
 }
 
