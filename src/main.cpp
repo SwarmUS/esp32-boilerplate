@@ -203,6 +203,30 @@ class BroadcastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_S
     }
 };
 
+class BroadcastIPTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+  public:
+    BroadcastIPTask(const char* taskName,
+                    UBaseType_t priority,
+                    IBSP& bsp,
+                    INetworkManager& networkManager) :
+        AbstractTask(taskName, priority), m_bsp(bsp), m_networkManager(networkManager) {}
+    ~BroadcastIPTask() override = default;
+
+  private:
+    IBSP& m_bsp;
+    INetworkManager& m_networkManager;
+    void task() override {
+        while (m_bsp.getHiveMindUUID() == 0 &&
+               m_networkManager.getNetworkStatus() != NetworkStatus::Connected) {
+            Task::delay(500);
+            while (m_networkManager.getNetworkStatus() == NetworkStatus::Connected) {
+                auto& broadcastQueue = MessageHandlerContainer::getBroadcastOutputQueue();
+                IPDiscoveryDTO ipDiscoveryDto(m_networkManager.getSelfIP());
+            }
+        }
+    }
+};
+
 void app_main(void) {
     IBSP* bsp = &BspContainer::getBSP();
     bsp->initChip();
