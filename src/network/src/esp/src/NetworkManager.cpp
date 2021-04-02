@@ -17,7 +17,7 @@ static void networkExecuteTask(void* context) {
 NetworkManager::NetworkManager(ILogger& logger,
                                INetworkInputStream& server,
                                IHashMap<uint16_t, uint32_t>& hashMap) :
-    IAbstractNetworkManager(logger, hashMap),
+    AbstractNetworkManager(logger, hashMap),
 
     m_networkExecuteTask("network_manager", tskIDLE_PRIORITY + 1, networkExecuteTask, this),
     m_server(server) {

@@ -1,7 +1,7 @@
 #ifndef HIVE_CONNECT_NETWORKMANAGER_H
 #define HIVE_CONNECT_NETWORKMANAGER_H
 
-#include "IAbstractNetworkManager.h"
+#include "../../common/include/AbstractNetworkManager.h"
 #include "TCPClient.h"
 #include "TCPServer.h"
 #include "cpp-common/HashMap.h"
@@ -13,7 +13,7 @@
 /**
  * @brief The network manager class. Handles the connection to the network
  */
-class NetworkManager : public IAbstractNetworkManager {
+class NetworkManager : public AbstractNetworkManager {
   public:
     NetworkManager(ILogger& logger,
                    INetworkInputStream& server,

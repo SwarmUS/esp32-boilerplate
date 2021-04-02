@@ -1,5 +1,5 @@
-#ifndef HIVE_CONNECT_IABSTRACTNETWORKMANAGER_H
-#define HIVE_CONNECT_IABSTRACTNETWORKMANAGER_H
+#ifndef HIVE_CONNECT_ABSTRACTNETWORKMANAGER_H
+#define HIVE_CONNECT_ABSTRACTNETWORKMANAGER_H
 
 #include "cpp-common/IHashMap.h"
 #include "logger/ILogger.h"
@@ -8,11 +8,11 @@
 
 enum class NetworkStatus { NotConnected = 0, Connecting, Connected };
 
-class IAbstractNetworkManager {
+class AbstractNetworkManager {
   public:
-    IAbstractNetworkManager(ILogger& logger, IHashMap<uint16_t, uint32_t>& hashMap) :
+    AbstractNetworkManager(ILogger& logger, IHashMap<uint16_t, uint32_t>& hashMap) :
         m_logger(logger), m_hashMap(hashMap) {}
-    virtual ~IAbstractNetworkManager() = default;
+    virtual ~AbstractNetworkManager() = default;
 
     /**
      * @brief Starts the network manager and attempts connection
@@ -37,13 +37,7 @@ class IAbstractNetworkManager {
      * @return True the IP/port if the agent was known or an empty optional otherwise
      * otherwise.
      */
-    virtual std::optional<uint32_t> getIPFromAgentID(uint16_t agentID) const {
-        auto agent = m_hashMap.at(agentID);
-        if (agent.has_value()) {
-            return agent.value().get();
-        }
-        return {};
-    }
+    virtual std::optional<uint32_t> getIPFromAgentID(uint16_t agentID) const;
 
     /**
      * @brief Add a agent to the the list of known agents
@@ -52,22 +46,11 @@ class IAbstractNetworkManager {
      * @return true if the agent was added or already present, false if the agent could not be
      * registered
      */
-    virtual bool registerAgent(uint16_t agentID, uint32_t ip) {
-        if (m_hashMap.at(agentID).has_value() &&
-            m_hashMap.upsert(std::pair<uint16_t, uint16_t>(agentID, ip))) {
-            m_logger.log(LogLevel::Info, "Updated port of agent %d with value %d", agentID, ip);
-            return true;
-        }
-        if (m_hashMap.insert(std::pair<uint16_t, uint16_t>(agentID, ip))) {
-            m_logger.log(LogLevel::Info, "Registered new agent %d with value %d", agentID, ip);
-            return true;
-        }
-        return false;
-    };
+    virtual bool registerAgent(uint16_t agentID, uint32_t ip);
 
   protected:
     ILogger& m_logger;
     IHashMap<uint16_t, uint32_t>& m_hashMap;
 };
 
-#endif // HIVE_CONNECT_IABSTRACTNETWORKMANAGER_H
+#endif // HIVE_CONNECT_ABSTRACTNETWORKMANAGER_H

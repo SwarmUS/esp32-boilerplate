@@ -1,7 +1,7 @@
 #ifndef __NETWORKCONTAINER_H__
 #define __NETWORKCONTAINER_H__
 
-#include "IAbstractNetworkManager.h"
+#include "../src/common/include/AbstractNetworkManager.h"
 #include "INetworkBroadcast.h"
 #include "INetworkInputStream.h"
 #include "INetworkOutputStream.h"
@@ -12,7 +12,7 @@ namespace NetworkContainer {
 /**
  * @return The network manager instance
  */
-IAbstractNetworkManager& getNetworkManager();
+AbstractNetworkManager& getNetworkManager();
 
 /**
  * @return The Network input stream instance

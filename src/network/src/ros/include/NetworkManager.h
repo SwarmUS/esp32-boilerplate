@@ -1,11 +1,11 @@
 #ifndef HIVE_CONNECT_NETWORKMANAGER_H
 #define HIVE_CONNECT_NETWORKMANAGER_H
 
-#include "IAbstractNetworkManager.h"
+#include "../../common/include/AbstractNetworkManager.h"
 #include "cpp-common/IHashMap.h"
 #include "logger/ILogger.h"
 
-class NetworkManager : public IAbstractNetworkManager {
+class NetworkManager : public AbstractNetworkManager {
   public:
     NetworkManager(ILogger& logger, IHashMap<uint16_t, uint32_t>& hashMap);
     ~NetworkManager() override = default;

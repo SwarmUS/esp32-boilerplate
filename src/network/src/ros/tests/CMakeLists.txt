@@ -18,6 +18,7 @@ target_link_libraries(${TEST_NAME}
         gmock
 
         SwarmUS::HiveConnect::Network::Platform
+        SwarmUS::HiveConnect::Network::Common
         )
 
 add_test(NAME ${TEST_NAME}
@@ -29,6 +30,7 @@ if(CATKIN_ENABLE_TESTING)
     find_package(rostest REQUIRED)
     add_rostest_gtest(network_manager_rostest_node launch/network_manager_tests.launch NetworkManagerUnitTests.cpp)
     target_link_libraries(network_manager_rostest_node
+            SwarmUS::HiveConnect::Network::Common
             SwarmUS::HiveConnect::Network::Platform
             ${catkin_LIBRARIES}
             gmock

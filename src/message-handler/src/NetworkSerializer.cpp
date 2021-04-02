@@ -2,7 +2,7 @@
 #include <pb_encode.h>
 
 NetworkSerializer::NetworkSerializer(INetworkOutputStream& stream,
-                                     IAbstractNetworkManager& manager) :
+                                     AbstractNetworkManager& manager) :
     m_outputStream(stream), m_networkManager(manager), m_hivemindHostSerializer(stream) {}
 
 bool NetworkSerializer::serializeToStream(const MessageDTO& message) {
