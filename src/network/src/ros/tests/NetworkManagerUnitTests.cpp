@@ -47,8 +47,6 @@ TEST_F(NetworkManagerFixture, get_status) {
     ASSERT_EQ(m_networkManager->getNetworkStatus(), NetworkStatus::Connected);
 }
 
-TEST_F(NetworkManagerFixture, get_self_ip) { ASSERT_EQ(m_networkManager->getSelfIP(), 42); }
-
 // Main for ros test
 
 int main(int argc, char** argv) {
