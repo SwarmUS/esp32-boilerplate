@@ -46,7 +46,7 @@ bool NetworkBroadcast::stop() { return true; }
 bool NetworkBroadcast::send(const uint8_t* data, uint16_t length) {
     hive_connect::Broadcast msg;
     msg.source_robot = m_bsp.getHiveMindUUID();
-    msg.data.insert(msg.data.end(), data, &data[length - 1]);
+    msg.data.insert(msg.data.end(), data, &data[length]);
     m_logger.log(LogLevel::Info, "Agent %d broadcasting message", m_bsp.getHiveMindUUID());
     m_publisher.publish(msg);
     return true;
