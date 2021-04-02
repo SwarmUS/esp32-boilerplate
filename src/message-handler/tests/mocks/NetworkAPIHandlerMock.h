@@ -9,7 +9,7 @@ class NetworkAPIHandlerMock : public INetworkAPIHandler {
     ~NetworkAPIHandlerMock() override = default;
     MOCK_METHOD((std::variant<ErrorNum, std::optional<NetworkApiDTO>>),
                 handleApiCall,
-                (const NetworkApiDTO& apiCall),
+                (const MessageDTO& message, const NetworkApiDTO& apiCall),
                 (override));
 };
 

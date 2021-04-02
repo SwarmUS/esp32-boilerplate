@@ -184,7 +184,7 @@ class BroadcastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_S
   private:
     ILogger& m_logger;
     void task() override {
-        auto& stream = NetworkContainer::getNetworkInputStream();
+        auto& stream = NetworkContainer::getNetworkBroadcast();
 
         HiveMindHostDeserializer deserializer(stream);
         NetworkAPIHandler networkApiHandler = MessageHandlerContainer::createNetworkApiHandler();
@@ -208,7 +208,7 @@ class BroadcastIPTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
     BroadcastIPTask(const char* taskName,
                     UBaseType_t priority,
                     IBSP& bsp,
-                    AbstractNetworkManager& networkManager,
+                    INetworkManager& networkManager,
                     ILogger& logger) :
         AbstractTask(taskName, priority),
         m_bsp(bsp),
@@ -218,7 +218,7 @@ class BroadcastIPTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
 
   private:
     IBSP& m_bsp;
-    AbstractNetworkManager& m_networkManager;
+    INetworkManager& m_networkManager;
     ILogger& m_logger;
     void task() override {
         while (true) {

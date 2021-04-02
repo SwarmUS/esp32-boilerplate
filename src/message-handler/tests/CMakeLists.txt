@@ -13,6 +13,7 @@ set(TEST_HEADERS
         mocks/HiveMindHostSerializerInterfaceMock.h
         mocks/LoggerInterfaceMock.h
         mocks/NetworkAPIHandlerMock.h
+        mocks/NetworkManagerMock.h
 
         DTOMatchers.h
         )

@@ -87,7 +87,7 @@ TEST_F(MessageDispatcherFixture, MessageDispatcherFixture_deserializeAndDispatch
         .Times(1)
         .WillOnce(testing::DoAll(testing::SetArgReferee<0>(m_message), testing::Return(true)));
 
-    EXPECT_CALL(m_handler, handleApiCall(testing::_))
+    EXPECT_CALL(m_handler, handleApiCall(testing::_, testing::_))
         .With(testing::AllOf(NetworkApiDTOMatcher(apiCall)))
         .WillOnce(testing::Return(
             std::optional<NetworkApiDTO>({}))); // Behavior could change in the future.

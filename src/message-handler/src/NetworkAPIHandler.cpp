@@ -1,8 +1,6 @@
 #include "NetworkAPIHandler.h"
 
-NetworkAPIHandler::NetworkAPIHandler(IBSP& bsp,
-                                     ILogger& logger,
-                                     AbstractNetworkManager& networkManager) :
+NetworkAPIHandler::NetworkAPIHandler(IBSP& bsp, ILogger& logger, INetworkManager& networkManager) :
     m_bsp(bsp), m_logger(logger), m_networkManager(networkManager) {}
 
 std::variant<ErrorNum, std::optional<NetworkApiDTO>> NetworkAPIHandler::handleApiCall(

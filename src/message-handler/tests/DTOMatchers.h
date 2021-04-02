@@ -6,7 +6,7 @@
 
 // Simple matcher to check that DTO matches inside function call. If required
 MATCHER_P(NetworkApiDTOMatcher, expected, "Equality matcher for NetworkApiDTO)") {
-    auto value = std::get<0>(arg).getApiCall();
+    auto value = std::get<1>(arg).getApiCall();
     auto ref = expected.getApiCall();
 
     // Check if both contains std::monostate

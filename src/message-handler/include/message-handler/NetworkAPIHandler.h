@@ -1,14 +1,14 @@
 #ifndef HIVE_CONNECT_NETWORKAPIHANDLER_H
 #define HIVE_CONNECT_NETWORKAPIHANDLER_H
 
-#include "AbstractNetworkManager.h"
 #include "INetworkAPIHandler.h"
+#include "INetworkManager.h"
 #include "bsp/IBSP.h"
 #include "logger/ILogger.h"
 
 class NetworkAPIHandler : public INetworkAPIHandler {
   public:
-    NetworkAPIHandler(IBSP& bsp, ILogger& logger, AbstractNetworkManager& networkManager);
+    NetworkAPIHandler(IBSP& bsp, ILogger& logger, INetworkManager& networkManager);
 
     ~NetworkAPIHandler() override = default;
 
@@ -18,7 +18,7 @@ class NetworkAPIHandler : public INetworkAPIHandler {
   private:
     ILogger& m_logger;
     IBSP& m_bsp;
-    AbstractNetworkManager& m_networkManager;
+    INetworkManager& m_networkManager;
 };
 
 #endif // HIVE_CONNECT_NETWORKAPIHANDLER_H

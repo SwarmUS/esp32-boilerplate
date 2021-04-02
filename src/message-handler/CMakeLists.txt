@@ -7,7 +7,7 @@ set(LIB_SOURCES
     src/MessageDispatcher.cpp
     src/MessageHandlerContainer.cpp
     src/NetworkSerializer.cpp
-        )
+)
 
 set(LIB_HEADERS
     include/message-handler/IMessageDispatcher.h
@@ -19,7 +19,7 @@ set(LIB_HEADERS
     include/message-handler/MessageSender.h
     include/message-handler/NetworkAPIHandler.h
     include/message-handler/NetworkSerializer.h
-        )
+)
 
 add_library(${LIB_NAME} STATIC ${LIB_HEADERS} ${LIB_SOURCES})
 add_library(${LIB_ALIAS} ALIAS ${LIB_NAME})
@@ -39,11 +39,11 @@ target_link_libraries(${LIB_NAME}
         SwarmUS::Propolis::OS::Common
         SwarmUS::Propolis::Cpp::Common
         SwarmUS::Propolis::Pheromones::HiveMind::Host
+        SwarmUS::HiveConnect::Network
 
         PRIVATE
         SwarmUS::HiveConnect::BSP
         SwarmUS::HiveConnect::OS
-        SwarmUS::HiveConnect::Network
         )
 
 if(ENABLE_TESTS)
