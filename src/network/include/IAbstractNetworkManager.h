@@ -1,8 +1,9 @@
 #ifndef HIVE_CONNECT_IABSTRACTNETWORKMANAGER_H
 #define HIVE_CONNECT_IABSTRACTNETWORKMANAGER_H
 
-#include "cpp-common/HashMap.h"
+#include "cpp-common/IHashMap.h"
 #include "logger/ILogger.h"
+#include <functional>
 #include <optional>
 #include <string>
 
@@ -40,9 +41,9 @@ class IAbstractNetworkManager {
      * otherwise.
      */
     virtual std::optional<uint32_t> getIPFromAgentID(uint16_t agentID) const {
-        uint32_t ip;
-        if (m_hashMap.get(agentID, ip)) {
-            return ip;
+        auto agent = m_hashMap.at(agentID);
+        if (agent.has_value()) {
+            return agent.value().get();
         }
         return {};
     }
@@ -55,8 +56,7 @@ class IAbstractNetworkManager {
      * registered
      */
     virtual bool registerAgent(uint16_t agentID, uint32_t ip) {
-        uint32_t val;
-        if (m_hashMap.get(agentID, val) &&
+        if (m_hashMap.at(agentID).has_value() &&
             m_hashMap.upsert(std::pair<uint16_t, uint16_t>(agentID, ip))) {
             m_logger.log(LogLevel::Info, "Updated port of agent %d with value %d", agentID, ip);
             return true;
