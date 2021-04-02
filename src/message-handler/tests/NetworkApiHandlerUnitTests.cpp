@@ -26,6 +26,7 @@ class NetworkAPIHandlerUnitTests : public testing::Test {
         delete m_logger;
         delete m_bsp;
         delete m_handler;
+        delete m_networkManager;
     }
 };
 
