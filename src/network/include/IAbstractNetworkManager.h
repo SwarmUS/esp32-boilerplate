@@ -25,14 +25,14 @@ class IAbstractNetworkManager {
     /**
      * @brief Gets the status of the network
      */
-    virtual NetworkStatus getNetworkStatus() = 0;
+    virtual NetworkStatus getNetworkStatus() const = 0;
 
     /**
      * @brief Returns ID of the module in the network as a char array. In the wifi network, this
      * will be a tcp port
      * @return True if operation successful, false otherwise
      */
-    virtual uint32_t getSelfIP() = 0;
+    virtual uint32_t getSelfIP() const = 0;
 
     /**
      * @brief Returns the IP from a agent ID

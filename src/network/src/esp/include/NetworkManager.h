@@ -21,8 +21,8 @@ class NetworkManager : public IAbstractNetworkManager {
     ~NetworkManager() = default;
 
     void start() override;
-    NetworkStatus getNetworkStatus() override;
-    uint32_t getSelfIP() override;
+    NetworkStatus getNetworkStatus() const override;
+    uint32_t getSelfIP() const override;
 
     /**
      * @brief Execution loop, called internally

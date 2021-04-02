@@ -72,7 +72,7 @@ void NetworkManager::start() {
     m_networkExecuteTask.start();
 }
 
-NetworkStatus NetworkManager::getNetworkStatus() {
+NetworkStatus NetworkManager::getNetworkStatus() const {
     switch (m_state) {
     case NetworkManagerState::LOOKING_FOR_NETWORK:
         return NetworkStatus::Connecting;
@@ -87,7 +87,7 @@ NetworkStatus NetworkManager::getNetworkStatus() {
     }
 }
 
-uint32_t NetworkManager::getSelfIP() { return m_ipAddress.u_addr.ip4.addr; }
+uint32_t NetworkManager::getSelfIP() const { return m_ipAddress.u_addr.ip4.addr; }
 
 void NetworkManager::execute() {
     switch (m_state) {
