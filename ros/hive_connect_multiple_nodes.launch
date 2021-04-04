@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- Generic launch file for a hiveconnect node -->
+<launch>
+    <node name="hive_connect1" pkg="hive_connect" type="hive_connect">
+
+        <!-- BSP settings -->
+        <param name="spi_mock_address" value="127.0.0.1" />
+        <param name="spi_mock_port" value="9001" />
+
+        <!-- Network settings -->
+        <param name="tcp_listen_port" value="54321"/>
+    </node>
+
+    <node name="hive_connect2" pkg="hive_connect" type="hive_connect" output="screen">
+
+        <!-- BSP settings -->
+        <param name="spi_mock_address" value="127.0.0.1" />
+        <param name="spi_mock_port" value="9002" />
+
+        <!-- Network settings -->
+        <param name="tcp_listen_port" value="54322"/>
+    </node>
+</launch>

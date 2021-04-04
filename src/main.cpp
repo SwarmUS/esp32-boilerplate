@@ -160,12 +160,15 @@ class BroadcastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_S
                                     BspContainer::getBSP(), m_logger);
 
         while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
-                   NetworkStatus::Connected &&
+                   NetworkStatus::Connected ||
                BspContainer::getBSP().getHiveMindUUID() == 0) {
-            Task::delay(500);
+            Task::delay(100);
         }
         // Only start after connection
-        stream.start();
+        while (!stream.start()) {
+            m_logger.log(LogLevel::Warn, "Failed to start broadcast");
+            Task::delay(100);
+        }
         while (true) {
             if (!messageSender.processAndSerialize()) {
                 m_logger.log(LogLevel::Error, "Fail to process/serialize broadcast");
@@ -184,7 +187,7 @@ class BroadcastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_S
   private:
     ILogger& m_logger;
     void task() override {
-        auto& stream = NetworkContainer::getNetworkInputStream();
+        auto& stream = NetworkContainer::getNetworkBroadcast();
 
         HiveMindHostDeserializer deserializer(stream);
         NetworkAPIHandler networkApiHandler = MessageHandlerContainer::createNetworkApiHandler();
@@ -199,6 +202,47 @@ class BroadcastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_S
             if (!dispatcher.deserializeAndDispatch()) {
                 m_logger.log(LogLevel::Error, "Fail to deserialize/dispatch broadcast");
             }
+        }
+    }
+};
+
+class BroadcastIPTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+  public:
+    BroadcastIPTask(const char* taskName,
+                    UBaseType_t priority,
+                    IBSP& bsp,
+                    INetworkManager& networkManager,
+                    ILogger& logger) :
+        AbstractTask(taskName, priority),
+        m_bsp(bsp),
+        m_networkManager(networkManager),
+        m_logger(logger) {}
+    ~BroadcastIPTask() override = default;
+
+  private:
+    IBSP& m_bsp;
+    INetworkManager& m_networkManager;
+    ILogger& m_logger;
+    void task() override {
+        MessageDTO message;
+        message.setDestinationId(0);
+        while (true) {
+
+            // Wait for device to be connected and having a valid id
+            while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
+                       NetworkStatus::Connected ||
+                   BspContainer::getBSP().getHiveMindUUID() == 0) {
+                Task::delay(100);
+            }
+            if (message.getSourceId() != BspContainer::getBSP().getHiveMindUUID()) {
+                message.setSourceId(BspContainer::getBSP().getHiveMindUUID());
+            }
+            auto& broadcastQueue = MessageHandlerContainer::getBroadcastOutputQueue();
+            IPDiscoveryDTO ipDiscoveryDto(m_networkManager.getSelfIP());
+            MessageDTO message(m_bsp.getHiveMindUUID(), 0, ipDiscoveryDto);
+            broadcastQueue.push(message);
+            // Only send message every five seconds
+            Task::delay(5000);
         }
     }
 };
@@ -218,6 +262,9 @@ void app_main(void) {
     static BroadcastMessageSenderTask s_broadcastMessageSender("broadcast_send",
                                                                tskIDLE_PRIORITY + 1);
     static BroadcastMessageDispatcher s_broadcastReceiver("broadcast_send", tskIDLE_PRIORITY + 1);
+    static BroadcastIPTask s_broadcastIpTask(
+        "broad_casting_ip", configMINIMAL_STACK_SIZE, BspContainer::getBSP(),
+        NetworkContainer::getNetworkManager(), LoggerContainer::getLogger());
 
     s_spiMessageSend.start();
     s_spiDispatch.start();
@@ -227,6 +274,7 @@ void app_main(void) {
 
     s_broadcastMessageSender.start();
     s_broadcastReceiver.start();
+    s_broadcastIpTask.start();
 }
 
 #ifdef __cplusplus

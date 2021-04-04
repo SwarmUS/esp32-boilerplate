@@ -1,4 +1,5 @@
 #include "MessageHandlerContainer.h"
+#include "NetworkContainer.h"
 #include "bsp/Container.h"
 #include "cpp-common/CircularQueue.h"
 #include "cpp-common/CircularQueueStack.h"
@@ -8,7 +9,8 @@
 constexpr uint16_t gc_queueMaxSize = 8;
 
 NetworkAPIHandler MessageHandlerContainer::createNetworkApiHandler() {
-    return NetworkAPIHandler(BspContainer::getBSP(), LoggerContainer::getLogger());
+    return NetworkAPIHandler(BspContainer::getBSP(), LoggerContainer::getLogger(),
+                             NetworkContainer::getNetworkManager());
 }
 
 MessageDispatcher MessageHandlerContainer::createMessageDispatcher(
