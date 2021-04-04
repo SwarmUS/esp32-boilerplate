@@ -224,14 +224,19 @@ class BroadcastIPTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
     INetworkManager& m_networkManager;
     ILogger& m_logger;
     void task() override {
+        MessageDTO message;
+        message.setDestinationId(0);
         while (true) {
+
             // Wait for device to be connected and having a valid id
-            if (m_bsp.getHiveMindUUID() == 0 ||
-                m_networkManager.getNetworkStatus() != NetworkStatus::Connected) {
-                Task::delay(500);
-                continue;
+            while (NetworkContainer::getNetworkManager().getNetworkStatus() !=
+                       NetworkStatus::Connected ||
+                   BspContainer::getBSP().getHiveMindUUID() == 0) {
+                Task::delay(100);
             }
-            Task::delay(5000);
+            if (message.getSourceId() != BspContainer::getBSP().getHiveMindUUID()) {
+                message.setSourceId(BspContainer::getBSP().getHiveMindUUID());
+            }
             auto& broadcastQueue = MessageHandlerContainer::getBroadcastOutputQueue();
             IPDiscoveryDTO ipDiscoveryDto(m_networkManager.getSelfIP());
             MessageDTO message(m_bsp.getHiveMindUUID(), 0, ipDiscoveryDto);

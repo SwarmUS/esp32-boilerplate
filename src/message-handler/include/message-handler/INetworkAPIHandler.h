@@ -23,7 +23,7 @@ class INetworkAPIHandler {
      *that occured.
      */
     virtual std::variant<ErrorNum, std::optional<NetworkApiDTO>> handleApiCall(
-        const MessageDTO& message, const NetworkApiDTO& apiCall) = 0;
+        uint16_t sourceID, const NetworkApiDTO& apiCall) = 0;
 };
 
 #endif // HIVE_CONNECT_INETWORKAPIHANDLER_H
