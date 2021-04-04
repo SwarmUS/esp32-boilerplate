@@ -165,7 +165,10 @@ class BroadcastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_S
             Task::delay(100);
         }
         // Only start after connection
-        stream.start();
+        while (!stream.start()) {
+            m_logger.log(LogLevel::Warn, "Failed to start broadcast");
+            Task::delay(100);
+        }
         while (true) {
             if (!messageSender.processAndSerialize()) {
                 m_logger.log(LogLevel::Error, "Fail to process/serialize broadcast");
