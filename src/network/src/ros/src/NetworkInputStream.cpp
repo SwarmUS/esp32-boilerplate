@@ -98,20 +98,7 @@ bool NetworkInputStream::receive(uint8_t* data, uint16_t length) {
     if (m_clientSocket < 0) {
         m_conditionVar.wait(lock, [&] { return m_hasClient; });
     }
-    ssize_t receivedBytes = ::recv(m_clientSocket, data, length, MSG_WAITALL);
-    m_logger.log(LogLevel::Info, "Network TCP server received %d bytes", length);
-
-    // Check for disconnection
-    /*char peekingBuffer[1];
-    if (receivedBytes <= 0 ||
-        ::recv(m_clientSocket, peekingBuffer, sizeof(peekingBuffer), MSG_PEEK) <= 0) {
-        m_logger.log(LogLevel::Info, "Client terminated connection");
-        ::close(m_clientSocket);
-        m_hasClient = false;
-        m_clientSocket = -1;
-    }*/
-
-    return receivedBytes == length;
+    return ::recv(m_clientSocket, data, length, MSG_WAITALL) == length;
 }
 
 bool NetworkInputStream::isReady() { return m_clientSocket > 0; }
