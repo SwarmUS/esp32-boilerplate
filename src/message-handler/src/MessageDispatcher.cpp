@@ -65,7 +65,7 @@ bool MessageDispatcher::dispatchNetworkAPI(const MessageDTO& message,
 
 bool MessageDispatcher::forwardMessage(const MessageDTO& message) {
     m_logger.log(LogLevel::Info, "Forwarded message from agent %d to agent %d",
-                 message.getSourceId(), message.getSourceId());
+                 message.getSourceId(), message.getDestinationId());
     if (message.getDestinationId() == m_bsp.getHiveMindUUID()) {
         m_logger.log(LogLevel::Info, "Forwarded message to HiveMind");
         return m_hivemindOutputQueue.push(message);
