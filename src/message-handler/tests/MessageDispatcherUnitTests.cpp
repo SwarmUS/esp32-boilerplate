@@ -6,6 +6,7 @@
 #include "mocks/HiveMindHostDeserializerInterfaceMock.h"
 #include "mocks/LoggerInterfaceMock.h"
 #include "mocks/NetworkAPIHandlerMock.h"
+#include "mocks/NetworkManagerMock.h"
 
 class MessageDispatcherFixture : public testing::Test {
   protected:
@@ -16,6 +17,7 @@ class MessageDispatcherFixture : public testing::Test {
     CircularQueueInterfaceMock<MessageDTO> m_unicastQueue;
     HiveMindHostDeserializerInterfaceMock m_deserializer;
     NetworkAPIHandlerMock m_handler;
+    NetworkManagerMock m_manager;
     BSPMock* m_bsp;
     LoggerInterfaceMock m_logger;
     MessageDTO m_message;
@@ -35,7 +37,7 @@ class MessageDispatcherFixture : public testing::Test {
 
         m_messageDispatcher =
             new MessageDispatcher(m_hivemindQueue, m_unicastQueue, m_broadcastQueue, m_deserializer,
-                                  m_handler, *m_bsp, m_logger);
+                                  m_handler, *m_bsp, m_logger, m_manager);
     }
 
     void TearDown() override {
