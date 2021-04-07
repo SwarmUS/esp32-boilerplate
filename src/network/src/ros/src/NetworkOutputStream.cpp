@@ -41,6 +41,6 @@ bool NetworkOutputStream::send(const uint8_t* data, uint16_t length) {
     if (m_socketFd < 0) {
         return false;
     }
-
+    m_logger.log(LogLevel::Info, "Network TCP client sending %d bytes", length);
     return ::send(m_socketFd, data, length, 0) == length;
 }

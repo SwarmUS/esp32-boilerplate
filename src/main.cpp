@@ -139,6 +139,7 @@ class UnicastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_SIZ
             if (!dispatcher.deserializeAndDispatch()) {
                 m_logger.log(LogLevel::Error, "Fail to deserialize/dispatch unicast");
             }
+            m_logger.log(LogLevel::Info, "Received message from unicast");
             Task::delay(50);
         }
     }
