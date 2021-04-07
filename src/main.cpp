@@ -107,6 +107,7 @@ class UnicastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZ
         while (true) {
             if (!messageSender.processAndSerialize()) {
                 m_logger.log(LogLevel::Error, "Fail to process/serialize unicast");
+                Task::delay(50);
             }
         }
     }

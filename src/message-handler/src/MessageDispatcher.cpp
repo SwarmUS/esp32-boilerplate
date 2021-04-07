@@ -77,7 +77,7 @@ bool MessageDispatcher::forwardMessage(const MessageDTO& message) {
     }
     // Maybe add check that ip table contains the robot ID in the future.
     if (m_manager.getIPFromAgentID(message.getDestinationId()).has_value()) {
-        m_logger.log(LogLevel::Info, "Forwarded message to broadcast");
+        m_logger.log(LogLevel::Info, "Forwarded message to unicast");
         return m_unicastOutputQueue.push(message);
     }
     m_logger.log(LogLevel::Error, "Failed to forward message");
