@@ -1,5 +1,5 @@
 #include "NetworkManager.h"
-#include "cpp-common/HashMap.h"
+#include "cpp-common/HashMapStack.h"
 #include "mocks/LoggerInterfaceMock.h"
 #include <gtest/gtest.h>
 #include <ros/ros.h>
@@ -7,7 +7,7 @@
 class NetworkManagerFixture : public testing::Test {
   public:
     void SetUp() override {
-        m_hashMap = new HashMap<uint16_t, uint32_t, 10>();
+        m_hashMap = new HashMapStack<uint16_t, uint32_t, 10>();
         m_networkManager = new NetworkManager(m_logger, *m_hashMap);
     }
     void TearDown() override {
@@ -16,7 +16,7 @@ class NetworkManagerFixture : public testing::Test {
     }
 
   protected:
-    HashMap<uint16_t, uint32_t, 10>* m_hashMap;
+    HashMapStack<uint16_t, uint32_t, 10>* m_hashMap;
     LoggerInterfaceMock m_logger;
     NetworkManager* m_networkManager;
 };

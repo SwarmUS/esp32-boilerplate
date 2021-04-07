@@ -1,7 +1,7 @@
 #ifndef __ISPISTM_H__
 #define __ISPISTM_H__
 
-#include "common/IProtobufStream.h"
+#include "pheromones/IProtobufStream.h"
 #include <cstdint>
 
 #define CRC32_SIZE (sizeof(uint32_t))

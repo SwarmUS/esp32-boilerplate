@@ -29,7 +29,7 @@ target_link_libraries(${LIB_NAME}
         SwarmUS::HiveConnect::Network::Common
         SwarmUS::HiveConnect::Network::Platform
         protobuf-nanopb-static
-        SwarmUS::Propolis::Pheromones::Common
+        SwarmUS::Propolis::Pheromones
         SwarmUS::HiveConnect::Logger
         )
 

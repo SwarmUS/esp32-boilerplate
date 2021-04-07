@@ -2,10 +2,11 @@
 #include "NetworkBroadcast.h"
 #include "NetworkManager.h"
 #include "SocketFactory.h"
+#include "cpp-common/HashMapStack.h"
 
 constexpr uint16_t gs_MAX_AGENT_IN_MAP = 32;
 INetworkManager& NetworkContainer::getNetworkManager() {
-    static HashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP> s_hashMap;
+    static HashMapStack<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP> s_hashMap;
     static NetworkManager s_networkManager(LoggerContainer::getLogger(), getNetworkInputStream(),
                                            s_hashMap);
 

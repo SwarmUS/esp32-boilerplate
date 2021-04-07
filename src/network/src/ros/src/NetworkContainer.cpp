@@ -5,13 +5,13 @@
 #include "NetworkOutputStream.h"
 #include "TopicDefines.h"
 #include "bsp/Container.h"
-#include "cpp-common/HashMap.h"
+#include "cpp-common/HashMapStack.h"
 #include <ros/ros.h>
 
 static constexpr uint16_t gs_MAX_AGENT_IN_MAP = 64;
 
 INetworkManager& NetworkContainer::getNetworkManager() {
-    static HashMap<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP> s_hashMap;
+    static HashMapStack<uint16_t, uint32_t, gs_MAX_AGENT_IN_MAP> s_hashMap;
     static NetworkManager s_networkManager(LoggerContainer::getLogger(), s_hashMap);
     // To remove:
     s_networkManager.getIPFromAgentID(2);

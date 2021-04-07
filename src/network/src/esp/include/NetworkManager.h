@@ -4,7 +4,6 @@
 #include "../../common/include/AbstractNetworkManager.h"
 #include "TCPClient.h"
 #include "TCPServer.h"
-#include "cpp-common/HashMap.h"
 #include "esp_wifi.h"
 #include "logger/ILogger.h"
 #include <BaseTask.h>

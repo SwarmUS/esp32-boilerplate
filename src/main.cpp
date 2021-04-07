@@ -2,12 +2,12 @@
 #include "NetworkContainer.h"
 #include "Task.h"
 #include "bsp/Container.h"
-#include "hivemind-host/HiveMindHostAccumulatorSerializer.h"
-#include "hivemind-host/HiveMindHostDeserializer.h"
 #include "logger/LoggerContainer.h"
 #include "message-handler/MessageHandlerContainer.h"
 #include "message-handler/MessageSender.h"
 #include "message-handler/NetworkSerializer.h"
+#include "pheromones/HiveMindHostAccumulatorSerializer.h"
+#include "pheromones/HiveMindHostDeserializer.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -38,7 +38,7 @@ target_link_libraries(${LIB_NAME}
         PRIVATE
         ${catkin_LIBRARIES}
         SwarmUS::HiveConnect::Logger
-        SwarmUS::Propolis::Pheromones::Common
+        SwarmUS::Propolis::Pheromones
 )
 
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)

@@ -1,7 +1,7 @@
 #ifndef HIVE_CONNECT_INETWORKOUTPUTSTREAM_H
 #define HIVE_CONNECT_INETWORKOUTPUTSTREAM_H
 
-#include <common/IProtobufOutputStream.h>
+#include <pheromones/IProtobufOutputStream.h>
 
 class INetworkOutputStream : public IProtobufOutputStream {
   public:

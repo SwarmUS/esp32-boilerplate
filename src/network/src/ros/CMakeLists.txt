@@ -41,7 +41,7 @@ target_link_libraries(${LIB_NAME}
         SwarmUS::HiveConnect::Logger
         SwarmUS::Propolis::C::Common
         SwarmUS::Propolis::Cpp::Common
-        SwarmUS::Propolis::Pheromones::Common
+        SwarmUS::Propolis::Pheromones
         SwarmUS::HiveConnect::Network::Common
         PRIVATE
         ${catkin_LIBRARIES}

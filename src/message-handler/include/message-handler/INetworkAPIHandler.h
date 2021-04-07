@@ -1,9 +1,9 @@
 #ifndef HIVE_CONNECT_INETWORKAPIHANDLER_H
 #define HIVE_CONNECT_INETWORKAPIHANDLER_H
 
-#include <hivemind-host/MessageDTO.h>
-#include <hivemind-host/NetworkApiDTO.h>
 #include <optional>
+#include <pheromones/MessageDTO.h>
+#include <pheromones/NetworkApiDTO.h>
 #include <variant>
 
 enum class ErrorNum { UNKNOWN_CALL = 1 };

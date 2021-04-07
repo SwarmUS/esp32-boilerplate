@@ -5,9 +5,9 @@
 #include "INetworkAPIHandler.h"
 #include "bsp/IBSP.h"
 #include "cpp-common/ICircularQueue.h"
-#include "hivemind-host/IHiveMindHostDeserializer.h"
-#include "hivemind-host/MessageDTO.h"
 #include "logger/ILogger.h"
+#include "pheromones/IHiveMindHostDeserializer.h"
+#include "pheromones/MessageDTO.h"
 
 class MessageDispatcher : public IMessageDispatcher {
   public:
