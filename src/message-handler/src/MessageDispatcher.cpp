@@ -29,6 +29,7 @@ bool MessageDispatcher::deserializeAndDispatch() {
         else if (const auto* apiCall = std::get_if<NetworkApiDTO>(&message.getMessage())) {
             return dispatchNetworkAPI(message, *apiCall);
         } else {
+            m_logger.log(LogLevel::Info, "Forwarding message to agent %d", message.getDestinationId());
             return forwardMessage(message);
         }
     }
@@ -61,12 +62,16 @@ bool MessageDispatcher::dispatchNetworkAPI(const MessageDTO& message,
 
 bool MessageDispatcher::forwardMessage(const MessageDTO& message) {
     if (message.getDestinationId() == m_bsp.getHiveMindUUID()) {
+        m_logger.log(LogLevel::Info, "Forwarded message to HiveMind");
         return m_hivemindOutputQueue.push(message);
     }
 
     if (message.getDestinationId() == 0) {
+        m_logger.log(LogLevel::Info, "Forwarded message to broadcast");
         return m_broadcastOutputQueue.push(message);
     }
     // Maybe add check that ip table contains the robot ID in the future.
+    if (m_)
+    m_logger.log(LogLevel::Info, "Forwarded message to unicast");
     return m_unicastOutputQueue.push(message);
 }
