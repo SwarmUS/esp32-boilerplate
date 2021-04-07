@@ -102,14 +102,14 @@ bool NetworkInputStream::receive(uint8_t* data, uint16_t length) {
     m_logger.log(LogLevel::Info, "Network TCP server received %d bytes", length);
 
     // Check for disconnection
-    char peekingBuffer[1];
-    if (receivedBytes < 0 ||
-        ::recv(m_clientSocket, peekingBuffer, sizeof(peekingBuffer), MSG_PEEK) < 0) {
+    /*char peekingBuffer[1];
+    if (receivedBytes <= 0 ||
+        ::recv(m_clientSocket, peekingBuffer, sizeof(peekingBuffer), MSG_PEEK) <= 0) {
         m_logger.log(LogLevel::Info, "Client terminated connection");
         ::close(m_clientSocket);
         m_hasClient = false;
         m_clientSocket = -1;
-    }
+    }*/
 
     return receivedBytes == length;
 }
