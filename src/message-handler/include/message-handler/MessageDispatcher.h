@@ -3,6 +3,7 @@
 
 #include "IMessageDispatcher.h"
 #include "INetworkAPIHandler.h"
+#include "INetworkManager.h"
 #include "bsp/IBSP.h"
 #include "cpp-common/ICircularQueue.h"
 #include "logger/ILogger.h"
@@ -17,7 +18,8 @@ class MessageDispatcher : public IMessageDispatcher {
                       IHiveMindHostDeserializer& deserializer,
                       INetworkAPIHandler& handler,
                       IBSP& bsp,
-                      ILogger& logger);
+                      ILogger& logger,
+                      INetworkManager& manager);
     ~MessageDispatcher() override = default;
 
     bool deserializeAndDispatch() override;
@@ -32,6 +34,7 @@ class MessageDispatcher : public IMessageDispatcher {
 
     IBSP& m_bsp;
     ILogger& m_logger;
+    INetworkManager& m_manager;
 
     bool dispatchNetworkAPI(const MessageDTO& message, const NetworkApiDTO& apiCall);
     bool forwardMessage(const MessageDTO& message);

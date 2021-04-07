@@ -7,14 +7,16 @@ MessageDispatcher::MessageDispatcher(ICircularQueue<MessageDTO>& hivemindOutputQ
                                      IHiveMindHostDeserializer& deserializer,
                                      INetworkAPIHandler& handler,
                                      IBSP& bsp,
-                                     ILogger& logger) :
+                                     ILogger& logger,
+                                     INetworkManager& manager) :
     m_hivemindOutputQueue(hivemindOutputQ),
     m_unicastOutputQueue(unicastOutputQ),
     m_broadcastOutputQueue(broadcastOutputQ),
     m_deserializer(deserializer),
     m_requestHandler(handler),
     m_bsp(bsp),
-    m_logger(logger) {}
+    m_logger(logger),
+    m_manager(manager) {}
 
 bool MessageDispatcher::deserializeAndDispatch() {
     MessageDTO message;
@@ -29,7 +31,8 @@ bool MessageDispatcher::deserializeAndDispatch() {
         else if (const auto* apiCall = std::get_if<NetworkApiDTO>(&message.getMessage())) {
             return dispatchNetworkAPI(message, *apiCall);
         } else {
-            m_logger.log(LogLevel::Info, "Forwarding message to agent %d", message.getDestinationId());
+            m_logger.log(LogLevel::Info, "Forwarding message to agent %d",
+                         message.getDestinationId());
             return forwardMessage(message);
         }
     }
@@ -61,6 +64,8 @@ bool MessageDispatcher::dispatchNetworkAPI(const MessageDTO& message,
 }
 
 bool MessageDispatcher::forwardMessage(const MessageDTO& message) {
+    m_logger.log(LogLevel::Info, "Forwarded message from agent %d to agent %d",
+                 message.getSourceId(), message.getSourceId());
     if (message.getDestinationId() == m_bsp.getHiveMindUUID()) {
         m_logger.log(LogLevel::Info, "Forwarded message to HiveMind");
         return m_hivemindOutputQueue.push(message);
@@ -71,7 +76,10 @@ bool MessageDispatcher::forwardMessage(const MessageDTO& message) {
         return m_broadcastOutputQueue.push(message);
     }
     // Maybe add check that ip table contains the robot ID in the future.
-    if (m_)
-    m_logger.log(LogLevel::Info, "Forwarded message to unicast");
-    return m_unicastOutputQueue.push(message);
+    if (m_manager.getIPFromAgentID(message.getDestinationId()).has_value()) {
+        m_logger.log(LogLevel::Info, "Forwarded message to broadcast");
+        return m_unicastOutputQueue.push(message);
+    }
+    m_logger.log(LogLevel::Error, "Failed to forward message");
+    return false;
 }
