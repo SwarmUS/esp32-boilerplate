@@ -22,7 +22,7 @@ bool NetworkOutputStream::setDestination(uint32_t port) {
     address.sin_family = AF_INET;
 
     if (::connect(m_socketFd, (sockaddr*)&address, sizeof(address)) != 0) {
-        m_logger.log(LogLevel::Error, "Failed to connect to tcp endpoint");
+        m_logger.log(LogLevel::Error, "Failed to connect to tcp endpoint with port %d", port);
         return false;
     }
 

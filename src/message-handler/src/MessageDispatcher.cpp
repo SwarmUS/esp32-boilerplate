@@ -31,8 +31,6 @@ bool MessageDispatcher::deserializeAndDispatch() {
         else if (const auto* apiCall = std::get_if<NetworkApiDTO>(&message.getMessage())) {
             return dispatchNetworkAPI(message, *apiCall);
         } else {
-            m_logger.log(LogLevel::Info, "Forwarding message to agent %d",
-                         message.getDestinationId());
             return forwardMessage(message);
         }
     }

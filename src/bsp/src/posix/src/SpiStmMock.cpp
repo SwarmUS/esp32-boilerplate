@@ -23,7 +23,6 @@ bool SpiStmMock::send(const uint8_t* buffer, uint16_t length) {
     if (m_socket < 0) {
         return false;
     }
-    m_logger.log(LogLevel::Info, "ESP - SPI TCP client sending %d bytes", length);
     if (::send(m_socket, buffer, length, 0) != length) {
         close();
         m_logger.log(LogLevel::Error, "Connection failed while sending data to HiveMind");
@@ -41,7 +40,6 @@ bool SpiStmMock::receive(uint8_t* data, uint16_t length) {
     if (m_socket < 0) {
         return false;
     }
-    m_logger.log(LogLevel::Info, "ESP - SPI TCP client receiving %d bytes", length);
     auto ret = ::recv(m_socket, data, length, MSG_WAITALL);
 
     if (ret <= 0) {
