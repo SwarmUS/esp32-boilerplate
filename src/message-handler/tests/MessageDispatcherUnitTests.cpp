@@ -147,7 +147,6 @@ TEST_F(MessageDispatcherFixture,
         .Times(1)
         .WillOnce(testing::DoAll(testing::SetArgReferee<0>(m_message), testing::Return(true)));
     EXPECT_CALL(*m_bsp, getHiveMindUUID);
-    EXPECT_CALL(m_unicastQueue, push(testing::_)).Times(0).WillOnce(testing::Return(true));
     EXPECT_CALL(m_manager, getIPFromAgentID(m_remoteUUID)).WillOnce(testing::Return(std::nullopt));
 
     // Then

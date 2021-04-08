@@ -36,9 +36,7 @@ bool NetworkInputStream::start() {
     }
     int opt = 1;
     // Forcefully attaching socket
-    if (setsockopt(m_acceptingSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
-                   &opt, sizeof(opt)))
-    {
+    if (setsockopt(m_acceptingSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
         m_logger.log(LogLevel::Error, "TCP server setting option failed.");
     }
 
@@ -76,6 +74,14 @@ bool NetworkInputStream::stop() {
     m_acceptingSocket = -1;
     m_clientSocket = -1;
     return true;
+}
+
+void NetworkInputStream::closeCurrentClient() {
+    if (m_clientSocket > 0) {
+        ::close(m_clientSocket);
+    }
+    m_hasClient = false;
+    m_clientSocket = -1;
 }
 
 void NetworkInputStream::acceptingClients() {

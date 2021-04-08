@@ -3,8 +3,8 @@
 
 #include "INetworkManager.h"
 #include "INetworkOutputStream.h"
-#include "pheromones//IProtobufOutputStream.h"
 #include "pheromones/HiveMindHostSerializer.h"
+#include "pheromones/IProtobufOutputStream.h"
 
 class NetworkSerializer : public IHiveMindHostSerializer {
   public:
