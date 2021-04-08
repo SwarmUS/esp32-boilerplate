@@ -11,7 +11,9 @@ NetworkOutputStream::~NetworkOutputStream() { close(); }
 
 bool NetworkOutputStream::setDestination(uint32_t port) {
     sockaddr_in address = {0};
-
+    if (m_socketFd >= 0) {
+        close();
+    }
     if ((m_socketFd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_IP)) < 0) {
         m_logger.log(LogLevel::Error, "Failed to create tcp client socket");
         return false;

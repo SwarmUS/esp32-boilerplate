@@ -34,6 +34,13 @@ bool NetworkInputStream::start() {
         m_logger.log(LogLevel::Error, "Failed to create tcp server socket");
         return false;
     }
+    int opt = 1;
+    // Forcefully attaching socket
+    if (setsockopt(m_acceptingSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
+                   &opt, sizeof(opt)))
+    {
+        m_logger.log(LogLevel::Error, "TCP server setting option failed.");
+    }
 
     sockaddr_in address;
     address.sin_family = AF_INET;
