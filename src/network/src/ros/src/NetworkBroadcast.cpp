@@ -6,7 +6,6 @@ void NetworkBroadcast::handleReception(const hive_connect::Broadcast& msg) {
         m_logger.log(LogLevel::Warn, "Received empty data in broadcast");
         return;
     }
-    // m_logger.log(LogLevel::Info, "Received broadcast message from agent %d", msg.source_robot);
     CircularBuff_put(&m_circularBuffer, msg.data.data(), msg.data.size());
     m_receivedBytes = true;
     m_conditionVariable.notify_one();
@@ -47,7 +46,6 @@ bool NetworkBroadcast::send(const uint8_t* data, uint16_t length) {
     hive_connect::Broadcast msg;
     msg.source_robot = m_bsp.getHiveMindUUID();
     msg.data.insert(msg.data.end(), data, &data[length]);
-    // m_logger.log(LogLevel::Info, "Agent %d broadcasting message", m_bsp.getHiveMindUUID());
     m_publisher.publish(msg);
     return true;
 }
