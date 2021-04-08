@@ -5,6 +5,7 @@
 #include "logger/LoggerContainer.h"
 #include "message-handler/MessageHandlerContainer.h"
 #include "message-handler/MessageSender.h"
+#include "message-handler/NetworkDeserializer.h"
 #include "message-handler/NetworkSerializer.h"
 #include "pheromones/HiveMindHostAccumulatorSerializer.h"
 #include "pheromones/HiveMindHostDeserializer.h"
@@ -126,7 +127,7 @@ class UnicastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_SIZ
     void task() override {
         auto& stream = NetworkContainer::getNetworkInputStream();
 
-        HiveMindHostDeserializer deserializer(stream);
+        NetworkDeserializer deserializer(stream);
         NetworkAPIHandler networkApiHandler = MessageHandlerContainer::createNetworkApiHandler();
         MessageDispatcher dispatcher =
             MessageHandlerContainer::createMessageDispatcher(deserializer, networkApiHandler);
