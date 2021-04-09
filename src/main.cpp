@@ -247,11 +247,30 @@ class BroadcastIPTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
     }
 };
 
+class TestStmCommunicationTask : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
+  public:
+    TestStmCommunicationTask(const char* taskName, UBaseType_t priority) :
+        AbstractTask(taskName, priority), m_spi(BspContainer::getSpiStm()) {}
+
+    ~TestStmCommunicationTask() override = default;
+
+  private:
+    ISpiStm& m_spi;
+
+    void task() override {
+        char message[] = "Message sent by esp";
+        while (true) {
+            m_spi.send((uint8_t*)message, sizeof(message));
+            Task::delay(2000);
+        }
+    }
+};
+
 void app_main(void) {
     IBSP* bsp = &BspContainer::getBSP();
     bsp->initChip();
     INetworkManager* networkManager = &NetworkContainer::getNetworkManager();
-    networkManager->start();
+    // networkManager->start();
 
     static HiveMindMessageSender s_spiMessageSend("hivemind_send", tskIDLE_PRIORITY + 1);
     static HiveMindDispatcher s_spiDispatch("hivemind_receive", tskIDLE_PRIORITY + 1);
@@ -266,15 +285,18 @@ void app_main(void) {
         "broad_casting_ip", configMINIMAL_STACK_SIZE, BspContainer::getBSP(),
         NetworkContainer::getNetworkManager(), LoggerContainer::getLogger());
 
-    s_spiMessageSend.start();
-    s_spiDispatch.start();
+    static TestStmCommunicationTask s_testComm("test", tskIDLE_PRIORITY + 1);
+    s_testComm.start();
 
-    s_tcpMessageReceiver.start();
-    s_tcpMessageSender.start();
+    // s_spiMessageSend.start();
+    // s_spiDispatch.start();
 
-    s_broadcastMessageSender.start();
-    s_broadcastReceiver.start();
-    s_broadcastIpTask.start();
+    /* s_tcpMessageReceiver.start();
+     s_tcpMessageSender.start();
+
+     s_broadcastMessageSender.start();
+     s_broadcastReceiver.start();
+     s_broadcastIpTask.start();*/
 }
 
 #ifdef __cplusplus

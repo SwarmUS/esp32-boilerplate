@@ -30,38 +30,56 @@ SpiStm::SpiStm(ILogger& logger) :
     m_outboundHeader = {0};
     m_isBusy = false;
 
+    CircularBuff_init(&m_circularBuf, m_data.data(), m_data.size());
+
     setCallback(SpiStm::transactionCallback, this);
 
     m_driverTask.start();
 }
 
-bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
+bool SpiStm::receive(uint8_t* data, uint16_t length) {
+    if (data == nullptr || length > STM_SPI_MAX_MESSAGE_LENGTH) {
+        m_logger.log(LogLevel::Warn, "Invalid parameters for SpiStm::Receive");
+        return false;
+    }
+    m_receivingTaskHandle = xTaskGetCurrentTaskHandle();
+    while (CircularBuff_getLength(&m_circularBuf) < length) {
+        ulTaskNotifyTake(pdTRUE, 500);
+        // TODO: check for disconnection
+    }
+    m_receivingTaskHandle = nullptr;
 
-    if (isBusy()) {
-        return false; // Not available
-    } else if (length >= STM_SPI_MAX_MESSAGE_LENGTH) { // Message too long
+    return CircularBuff_get(&m_circularBuf, data, length) == length;
+}
+
+bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
+    if (length >= STM_SPI_MAX_MESSAGE_LENGTH) { // Message too long
         m_logger.log(LogLevel::Error,
                      "StmEsp: Message length of %d is larger than maximum allowed of %d", length,
                      STM_SPI_MAX_MESSAGE_LENGTH);
         return false;
-    } else {
-        m_logger.log(LogLevel::Debug, "Sending message of length %d", length);
-        // Memcpy necessary to have buffer word-alligned for transfer
-        std::memcpy(m_outboundMessage.m_data.data(), buffer, length);
-        // Padding with 0 up to a word-alligned boundary
-        for (uint8_t i = 0; i < (length % 4); i++) {
-            m_outboundMessage.m_data[length] = 0;
-            length++;
-        }
-        // Appending CRC32
-        *(uint32_t*)(m_outboundMessage.m_data.data() + length) =
-            calculateCRC32_software(buffer, length);
-        length += CRC32_SIZE;
-        m_outboundMessage.m_sizeBytes = length;
-        m_isBusy = true;
-        notifyMaster();
-        return true;
     }
+    m_sendingTaskHandle = xTaskGetCurrentTaskHandle();
+    m_logger.log(LogLevel::Debug, "Sending message of length %d", length);
+    // Memcpy necessary to have buffer word-alligned for transfer
+    std::memcpy(m_outboundMessage.m_data.data(), buffer, length);
+    // Padding with 0 up to a word-alligned boundary
+    for (uint8_t i = 0; i < (length % 4); i++) {
+        m_outboundMessage.m_data[length] = 0;
+        length++;
+    }
+    // Appending CRC32
+    *(uint32_t*)(m_outboundMessage.m_data.data() + length) =
+        calculateCRC32_software(buffer, length);
+    length += CRC32_SIZE;
+    m_outboundMessage.m_sizeBytes = length;
+    while (isBusy()) {
+        ulTaskNotifyTake(pdTRUE, 500);
+        // TODO: check for disconnection
+    }
+    m_isBusy = true;
+    notifyMaster();
+    return true;
 }
 
 bool SpiStm::isBusy() const { return m_isBusy; }
@@ -116,11 +134,16 @@ void SpiStm::execute() {
                                     m_inboundMessage.m_sizeBytes - CRC32_SIZE) !=
             *(uint32_t*)&m_inboundMessage.m_data[m_inboundMessage.m_sizeBytes - CRC32_SIZE]) {
             m_outboundHeader.systemState.stmSystemState.failedCrc = 1;
+        } else if (CircularBuff_put(&m_circularBuf, m_inboundMessage.m_data.data(),
+                                    m_inboundMessage.m_sizeBytes - CRC32_SIZE) ==
+                       CircularBuff_Ret_Ok &&
+                   m_receivingTaskHandle != nullptr) {
+            xTaskNotifyGive(m_receivingTaskHandle);
+            m_receivingTaskHandle = nullptr;
         } else {
-            // TODO: Replace with proper reception handle
-            m_logger.log(LogLevel::Info, "Stm says: %s", m_inboundMessage.m_data.data());
-            m_inboundMessage.m_sizeBytes = 0;
+            m_logger.log(LogLevel::Error, "Failed to add byte in spi circular buffer");
         }
+        m_inboundMessage.m_sizeBytes = 0;
         m_rxState = receiveState::RECEIVING_HEADER;
         rxLengthBytes = StmHeader::sizeBytes;
         break;
