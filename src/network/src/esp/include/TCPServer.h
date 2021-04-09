@@ -19,6 +19,7 @@ class TCPServer : public INetworkInputStream {
     bool start() override;
     bool stop() override;
     bool isReady() override;
+    void closeCurrentClient() override;
 
     void acceptingClients();
 

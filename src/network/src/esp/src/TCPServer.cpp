@@ -67,6 +67,13 @@ bool TCPServer::receive(uint8_t* data, uint16_t length) {
 
 bool TCPServer::isReady() { return m_acceptingSocket != NO_SOCKET; }
 
+void TCPServer::closeCurrentClient() {
+    if (m_clientSocket < 0) {
+        close(m_clientSocket);
+    }
+    m_clientSocket = -1;
+}
+
 void TCPServer::acceptingClients() {
     // Only receive with a valid server socket
     if (m_acceptingSocket != NO_SOCKET) {
