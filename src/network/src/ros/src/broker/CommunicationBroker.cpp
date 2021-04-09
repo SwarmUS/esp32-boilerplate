@@ -23,7 +23,7 @@ std::vector<uint16_t> CommunicationBroker::getRobotList() {
     XmlRpc::XmlRpcValue configRobotList;
     std::string robotListParamName =
         nh.param(std::string("configList"), std::string("/Broker/robots"));
-    if (!nh.getParam("/Broker/robots", configRobotList)) {
+    if (!nh.getParam(robotListParamName, configRobotList)) {
         ROS_ERROR("No list was found");
         return {};
     }
