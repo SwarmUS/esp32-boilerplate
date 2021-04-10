@@ -2,12 +2,13 @@
 #include "NetworkContainer.h"
 #include "Task.h"
 #include "bsp/Container.h"
-#include "hivemind-host/HiveMindHostAccumulatorSerializer.h"
-#include "hivemind-host/HiveMindHostDeserializer.h"
 #include "logger/LoggerContainer.h"
 #include "message-handler/MessageHandlerContainer.h"
 #include "message-handler/MessageSender.h"
+#include "message-handler/NetworkDeserializer.h"
 #include "message-handler/NetworkSerializer.h"
+#include "pheromones/HiveMindHostAccumulatorSerializer.h"
+#include "pheromones/HiveMindHostDeserializer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,7 +44,7 @@ class HiveMindMessageSender : public AbstractTask<2 * configMINIMAL_STACK_SIZE> 
                         m_logger.log(LogLevel::Warn,
                                      "Fail to process/serialize spi while greeting");
                     }
-                    Task::delay(100);
+                    Task::delay(50);
                 }
 
                 if (!messageSender.processAndSerialize()) {
@@ -71,6 +72,7 @@ class HiveMindDispatcher : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
                 if (!dispatcher.deserializeAndDispatch()) {
                     m_logger.log(LogLevel::Error, "Failed to deserialize/dispatch STM");
                 }
+                Task::delay(50);
             } else {
                 m_logger.log(LogLevel::Warn, "Cannot deserialize/dispatch STM while disconnected");
                 Task::delay(500);
@@ -108,6 +110,7 @@ class UnicastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZ
             if (!messageSender.processAndSerialize()) {
                 m_logger.log(LogLevel::Error, "Fail to process/serialize unicast");
             }
+            Task::delay(50);
         }
     }
 };
@@ -124,7 +127,7 @@ class UnicastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_SIZ
     void task() override {
         auto& stream = NetworkContainer::getNetworkInputStream();
 
-        HiveMindHostDeserializer deserializer(stream);
+        NetworkDeserializer deserializer(stream);
         NetworkAPIHandler networkApiHandler = MessageHandlerContainer::createNetworkApiHandler();
         MessageDispatcher dispatcher =
             MessageHandlerContainer::createMessageDispatcher(deserializer, networkApiHandler);
@@ -137,6 +140,7 @@ class UnicastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_SIZ
             if (!dispatcher.deserializeAndDispatch()) {
                 m_logger.log(LogLevel::Error, "Fail to deserialize/dispatch unicast");
             }
+            Task::delay(50);
         }
     }
 };
@@ -173,6 +177,7 @@ class BroadcastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_S
             if (!messageSender.processAndSerialize()) {
                 m_logger.log(LogLevel::Error, "Fail to process/serialize broadcast");
             }
+            Task::delay(50);
         }
     }
 };
@@ -202,6 +207,7 @@ class BroadcastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_S
             if (!dispatcher.deserializeAndDispatch()) {
                 m_logger.log(LogLevel::Error, "Fail to deserialize/dispatch broadcast");
             }
+            Task::delay(50);
         }
     }
 };

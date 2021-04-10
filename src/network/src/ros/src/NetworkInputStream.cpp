@@ -34,6 +34,11 @@ bool NetworkInputStream::start() {
         m_logger.log(LogLevel::Error, "Failed to create tcp server socket");
         return false;
     }
+    int opt = 1;
+    // Forcefully attaching socket
+    if (setsockopt(m_acceptingSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
+        m_logger.log(LogLevel::Error, "TCP server setting option failed.");
+    }
 
     sockaddr_in address;
     address.sin_family = AF_INET;
@@ -71,6 +76,14 @@ bool NetworkInputStream::stop() {
     return true;
 }
 
+void NetworkInputStream::closeCurrentClient() {
+    if (m_clientSocket > 0) {
+        ::close(m_clientSocket);
+    }
+    m_hasClient = false;
+    m_clientSocket = -1;
+}
+
 void NetworkInputStream::acceptingClients() {
     while (m_runTask) {
         if (m_acceptingSocket > 0) {
@@ -98,19 +111,7 @@ bool NetworkInputStream::receive(uint8_t* data, uint16_t length) {
     if (m_clientSocket < 0) {
         m_conditionVar.wait(lock, [&] { return m_hasClient; });
     }
-    ssize_t receivedBytes = ::recv(m_clientSocket, data, length, MSG_WAITALL);
-
-    // Check for disconnection
-    char peekingBuffer[1];
-    if (receivedBytes < 0 ||
-        ::recv(m_clientSocket, peekingBuffer, sizeof(peekingBuffer), MSG_PEEK) < 0) {
-        m_logger.log(LogLevel::Info, "Client terminated connection");
-        ::close(m_clientSocket);
-        m_hasClient = false;
-        m_clientSocket = -1;
-    }
-
-    return receivedBytes == length;
+    return ::recv(m_clientSocket, data, length, MSG_WAITALL) == length;
 }
 
 bool NetworkInputStream::isReady() { return m_clientSocket > 0; }

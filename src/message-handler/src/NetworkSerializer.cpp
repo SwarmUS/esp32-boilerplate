@@ -17,5 +17,7 @@ bool NetworkSerializer::serializeToStream(const MessageDTO& message) {
         return false;
     }
 
-    return m_hivemindHostSerializer.serializeToStream(message);
+    bool ret = m_hivemindHostSerializer.serializeToStream(message);
+    m_outputStream.close();
+    return ret;
 }

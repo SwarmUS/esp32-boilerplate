@@ -18,6 +18,7 @@ class NetworkInputStream : public INetworkInputStream {
 
     bool start() override;
     bool stop() override;
+    void closeCurrentClient() override;
 
     void acceptingClients();
 

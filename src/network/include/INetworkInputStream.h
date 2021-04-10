@@ -1,7 +1,7 @@
 #ifndef HIVE_CONNECT_INETWORKINPUTSTREAM_H
 #define HIVE_CONNECT_INETWORKINPUTSTREAM_H
 
-#include <common/IProtobufInputStream.h>
+#include <pheromones/IProtobufInputStream.h>
 
 class INetworkInputStream : public IProtobufInputStream {
   public:
@@ -28,6 +28,11 @@ class INetworkInputStream : public IProtobufInputStream {
      * @return true if successfully stopped
      */
     virtual bool stop() = 0;
+
+    /**
+     * @brief Close the currently set client. To be called only when deserialization has concluded.
+     */
+    virtual void closeCurrentClient() = 0;
 };
 
 #endif // HIVE_CONNECT_INETWORKINPUTSTREAM_H

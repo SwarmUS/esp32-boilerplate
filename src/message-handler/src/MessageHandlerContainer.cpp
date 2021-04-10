@@ -17,7 +17,8 @@ MessageDispatcher MessageHandlerContainer::createMessageDispatcher(
     IHiveMindHostDeserializer& deserializer, INetworkAPIHandler& networkApiHandler) {
     return MessageDispatcher(getHivemindOutputQueue(), getUnicastOutputQueue(),
                              getBroadcastOutputQueue(), deserializer, networkApiHandler,
-                             BspContainer::getBSP(), LoggerContainer::getLogger());
+                             BspContainer::getBSP(), LoggerContainer::getLogger(),
+                             NetworkContainer::getNetworkManager());
 }
 
 ThreadSafeQueue<MessageDTO>& MessageHandlerContainer::getHivemindOutputQueue() {
