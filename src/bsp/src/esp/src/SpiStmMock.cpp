@@ -66,6 +66,8 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
     m_logger.log(LogLevel::Debug, "Sending message of length %d", length);
     // Memcpy necessary to have buffer word-alligned for transfer
     std::memcpy(m_outboundMessage.m_data.data(), buffer, length);
+    // Set payload size in header
+    m_outboundHeader.payloadSize = length;
     // Padding with 0 up to a word-alligned boundary
     for (uint8_t i = 0; i < (length % 4); i++) {
         m_outboundMessage.m_data[length] = 0;
@@ -212,6 +214,7 @@ void SpiStm::updateOutboundHeader() {
     // TODO: get actual system state
     m_outboundHeader.txSizeWord = BYTES_TO_WORDS(m_outboundMessage.m_sizeBytes);
     m_outboundHeader.rxSizeWord = BYTES_TO_WORDS(m_inboundMessage.m_sizeBytes);
+    m_outboundHeader.padding = 0;
     m_outboundHeader.crc8 = calculateCRC8_software(&m_outboundHeader, 3);
     if (m_outboundHeader.txSizeWord == 0) {
         m_isBusy = false;
