@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-class HiveMindMessageSender : public AbstractTask<2 * configMINIMAL_STACK_SIZE> {
+class HiveMindMessageSender : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
   public:
     HiveMindMessageSender(const char* taskName, UBaseType_t priority) :
         AbstractTask(taskName, priority), m_logger(LoggerContainer::getLogger()) {}
@@ -82,7 +82,7 @@ class HiveMindDispatcher : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
     ILogger& m_logger;
 };
 
-class UnicastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+class UnicastMessageSenderTask : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
   public:
     UnicastMessageSenderTask(const char* taskName, UBaseType_t priority) :
         AbstractTask(taskName, priority),
@@ -112,7 +112,7 @@ class UnicastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZ
     }
 };
 
-class UnicastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+class UnicastMessageDispatcher : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
   public:
     UnicastMessageDispatcher(const char* taskName, UBaseType_t priority) :
         AbstractTask(taskName, priority), m_logger(LoggerContainer::getLogger()) {}
@@ -141,7 +141,7 @@ class UnicastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_SIZ
     }
 };
 
-class BroadcastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+class BroadcastMessageSenderTask : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
   public:
     BroadcastMessageSenderTask(const char* taskName, UBaseType_t priority) :
         AbstractTask(taskName, priority),
@@ -177,7 +177,7 @@ class BroadcastMessageSenderTask : public AbstractTask<3 * configMINIMAL_STACK_S
     }
 };
 
-class BroadcastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+class BroadcastMessageDispatcher : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
   public:
     BroadcastMessageDispatcher(const char* taskName, UBaseType_t priority) :
         AbstractTask(taskName, priority), m_logger(LoggerContainer::getLogger()) {}
@@ -206,7 +206,7 @@ class BroadcastMessageDispatcher : public AbstractTask<3 * configMINIMAL_STACK_S
     }
 };
 
-class BroadcastIPTask : public AbstractTask<3 * configMINIMAL_STACK_SIZE> {
+class BroadcastIPTask : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
   public:
     BroadcastIPTask(const char* taskName,
                     UBaseType_t priority,
@@ -261,7 +261,29 @@ class TestStmCommunicationTask : public AbstractTask<10 * configMINIMAL_STACK_SI
         char message[] = "Message sent by esp";
         while (true) {
             m_spi.send((uint8_t*)message, sizeof(message));
-            Task::delay(2000);
+            Task::delay(100);
+        }
+    }
+};
+
+class TestStmCommunicationTaskReceive : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
+  public:
+    TestStmCommunicationTaskReceive(const char* taskName, UBaseType_t priority) :
+        AbstractTask(taskName, priority), m_spi(BspContainer::getSpiStm()) {}
+
+    ~TestStmCommunicationTaskReceive() override = default;
+
+  private:
+    ISpiStm& m_spi;
+
+    void task() override {
+        char messageReceived[50];
+        while (true) {
+            Task::delay(75);
+            if (m_spi.receive((uint8_t*)messageReceived, 20)) {
+                LoggerContainer::getLogger().log(LogLevel::Info, "Message received: %s",
+                                                 messageReceived);
+            }
         }
     }
 };
@@ -286,10 +308,11 @@ void app_main(void) {
         NetworkContainer::getNetworkManager(), LoggerContainer::getLogger());
 
     static TestStmCommunicationTask s_testComm("test", tskIDLE_PRIORITY + 1);
-    s_testComm.start();
-
-    // s_spiMessageSend.start();
-    // s_spiDispatch.start();
+    static TestStmCommunicationTaskReceive s_recv("test_rcv", tskIDLE_PRIORITY + 1);
+    // s_testComm.start();
+    // s_recv.start();
+    s_spiMessageSend.start();
+    s_spiDispatch.start();
 
     /* s_tcpMessageReceiver.start();
      s_tcpMessageSender.start();
