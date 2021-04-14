@@ -36,6 +36,8 @@ SpiStm::SpiStm(ILogger& logger) :
     setCallback(SpiStm::transactionCallback, this);
 
     m_driverTask.start();
+    // Notifying master for first handshake
+    notifyMaster();
 }
 
 bool SpiStm::receive(uint8_t* data, uint16_t length) {
@@ -94,7 +96,12 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
 
 bool SpiStm::isBusy() const { return m_isBusy; }
 
-bool SpiStm::isConnected() const { return m_isConnected; }
+bool SpiStm::isConnected() const {
+    if (!m_isConnected) {
+        notifyMaster();
+    }
+    return m_isConnected;
+}
 
 void SpiStm::execute() {
     uint32_t txLengthBytes = 0;
@@ -120,6 +127,7 @@ void SpiStm::execute() {
         if (WORDS_TO_BYTES(m_inboundHeader->rxSizeWord) == m_outboundMessage.m_sizeBytes &&
             m_outboundMessage.m_sizeBytes != 0) {
             m_logger.log(LogLevel::Debug, "Received valid header. Can now send payload");
+            // Reset gpio trigger once header has been received
             gpio_set_level(STM_USER_0, 0);
             m_txState = transmitState::SENDING_PAYLOAD;
         } else {
@@ -210,7 +218,11 @@ void SpiStm::updateOutboundHeader() {
     }
 }
 
-void SpiStm::notifyMaster() { gpio_set_level(STM_USER_0, 1); }
+void SpiStm::notifyMaster() {
+    gpio_set_level(STM_USER_0, 0);
+    Task::delay(1);
+    gpio_set_level(STM_USER_0, 1);
+}
 
 void IRAM_ATTR SpiStm::transactionCallback(void* context, spi_slave_transaction_t* transaction) {
     auto* instance = static_cast<SpiStm*>(context);
