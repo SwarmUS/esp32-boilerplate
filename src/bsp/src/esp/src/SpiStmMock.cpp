@@ -59,7 +59,7 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
                      STM_SPI_MAX_MESSAGE_LENGTH);
         return false;
     }
-    m_sendingTaskHandle = xTaskGetCurrentTaskHandle();
+
     m_logger.log(LogLevel::Debug, "Sending message of length %d", length);
     // Memcpy necessary to have buffer word-alligned for transfer
     std::memcpy(m_outboundMessage.m_data.data(), buffer, length);
@@ -73,12 +73,20 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
         calculateCRC32_software(buffer, length);
     length += CRC32_SIZE;
     m_outboundMessage.m_sizeBytes = length;
-    while (isBusy()) {
-        ulTaskNotifyTake(pdTRUE, 500);
-        // TODO: check for disconnection
-    }
     m_isBusy = true;
     notifyMaster();
+
+    // Wait for transmission to be over
+    m_sendingTaskHandle = xTaskGetCurrentTaskHandle();
+    while (isBusy()) {
+        ulTaskNotifyTake(pdTRUE, 500);
+        if (m_hasSentPayload && m_inboundHeader->systemState.stmSystemState.failedCrc) {
+            // Crc failed, handle retries in the future
+            return false;
+        }
+        // TODO: check for disconnection
+    }
+
     return true;
 }
 
@@ -130,18 +138,23 @@ void SpiStm::execute() {
         rxLengthBytes = WORDS_TO_BYTES(m_inboundHeader->txSizeWord);
         break;
     case receiveState::VALIDATE_CRC:
+        // Check payload CRC and log an error and set flag if it fails
         if (calculateCRC32_software(m_inboundMessage.m_data.data(),
                                     m_inboundMessage.m_sizeBytes - CRC32_SIZE) !=
             *(uint32_t*)&m_inboundMessage.m_data[m_inboundMessage.m_sizeBytes - CRC32_SIZE]) {
+            m_logger.log(LogLevel::Error, "Failed payload crc on ESP");
             m_outboundHeader.systemState.stmSystemState.failedCrc = 1;
-        } else if (CircularBuff_put(&m_circularBuf, m_inboundMessage.m_data.data(),
-                                    m_inboundMessage.m_sizeBytes - CRC32_SIZE) ==
-                       CircularBuff_Ret_Ok &&
-                   m_receivingTaskHandle != nullptr) {
-            xTaskNotifyGive(m_receivingTaskHandle);
-            m_receivingTaskHandle = nullptr;
+        }
+        // If it passes the CRC check, add the data to the circular buffer
+        else if (CircularBuff_put(&m_circularBuf, m_inboundMessage.m_data.data(),
+                                  m_inboundMessage.m_sizeBytes - CRC32_SIZE) ==
+                 CircularBuff_Ret_Ok) {
+            // If a task was waiting to receive bytes, notify it
+            if (m_receivingTaskHandle != nullptr) {
+                xTaskNotifyGive(m_receivingTaskHandle);
+            }
         } else {
-            m_logger.log(LogLevel::Error, "Failed to add byte in spi circular buffer");
+            m_logger.log(LogLevel::Error, "Failed to add bytes in spi circular buffer");
         }
         m_inboundMessage.m_sizeBytes = 0;
         m_rxState = receiveState::RECEIVING_HEADER;
@@ -162,6 +175,7 @@ void SpiStm::execute() {
     case transmitState::SENDING_PAYLOAD:
         m_transaction.tx_buffer = m_outboundMessage.m_data.data();
         txLengthBytes = m_outboundMessage.m_sizeBytes;
+        m_hasSentPayload = false;
         break;
     case transmitState::ERROR:
         m_logger.log(LogLevel::Error, "Error within Spi driver STM");
@@ -218,5 +232,13 @@ void IRAM_ATTR SpiStm::transactionCallback(void* context, spi_slave_transaction_
     if (instance->m_txState == transmitState::SENDING_PAYLOAD) { // TODO: confirm reception with ack
         instance->m_txState = transmitState::SENDING_HEADER;
         instance->m_outboundMessage.m_sizeBytes = 0;
+        instance->m_hasSentPayload = true;
+        instance->m_isBusy = false;
+        // notify sending task
+        if (instance->m_sendingTaskHandle != nullptr) {
+            // Note: esp does not need the flag for yielding from ISR
+            vTaskNotifyGiveFromISR(instance->m_sendingTaskHandle, nullptr);
+            portYIELD_FROM_ISR();
+        }
     }
 }

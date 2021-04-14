@@ -55,5 +55,6 @@ class SpiStm : public ISpiStm {
     static void transactionCallback(void* context, spi_slave_transaction_t* transaction);
 
     bool m_isBusy;
+    bool m_hasSentPayload;
 };
 #endif // __SPISTM_H__
