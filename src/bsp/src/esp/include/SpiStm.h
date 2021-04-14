@@ -18,7 +18,7 @@ class SpiStm : public ISpiStm {
     bool isBusy() const override;
     void execute();
     bool receive(uint8_t* data, uint16_t length) override;
-    bool isConnected() const { return false; };
+    bool isConnected() const override;
 
   private:
     BaseTask<configMINIMAL_STACK_SIZE * 3> m_driverTask;
@@ -56,5 +56,6 @@ class SpiStm : public ISpiStm {
 
     bool m_isBusy;
     bool m_hasSentPayload;
+    bool m_isConnected;
 };
 #endif // __SPISTM_H__

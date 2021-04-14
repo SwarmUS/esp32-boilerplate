@@ -29,6 +29,7 @@ SpiStm::SpiStm(ILogger& logger) :
     m_inboundHeader = {0};
     m_outboundHeader = {0};
     m_isBusy = false;
+    m_isConnected = false;
 
     CircularBuff_init(&m_circularBuf, m_data.data(), m_data.size());
 
@@ -82,15 +83,18 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
         ulTaskNotifyTake(pdTRUE, 500);
         if (m_hasSentPayload && m_inboundHeader->systemState.stmSystemState.failedCrc) {
             // Crc failed, handle retries in the future
+            m_sendingTaskHandle = nullptr;
             return false;
         }
         // TODO: check for disconnection
     }
-
+    m_sendingTaskHandle = nullptr;
     return true;
 }
 
 bool SpiStm::isBusy() const { return m_isBusy; }
+
+bool SpiStm::isConnected() const { return m_isConnected; }
 
 void SpiStm::execute() {
     uint32_t txLengthBytes = 0;
@@ -109,9 +113,10 @@ void SpiStm::execute() {
                          m_inboundMessage.m_data[0], m_inboundMessage.m_data[1],
                          m_inboundMessage.m_data[2], m_inboundMessage.m_data[3]);
             m_rxState = receiveState::ERROR;
+            m_isConnected = false;
             break;
         }
-
+        m_isConnected = true;
         if (WORDS_TO_BYTES(m_inboundHeader->rxSizeWord) == m_outboundMessage.m_sizeBytes &&
             m_outboundMessage.m_sizeBytes != 0) {
             m_logger.log(LogLevel::Debug, "Received valid header. Can now send payload");
@@ -142,7 +147,7 @@ void SpiStm::execute() {
         if (calculateCRC32_software(m_inboundMessage.m_data.data(),
                                     m_inboundMessage.m_sizeBytes - CRC32_SIZE) !=
             *(uint32_t*)&m_inboundMessage.m_data[m_inboundMessage.m_sizeBytes - CRC32_SIZE]) {
-            m_logger.log(LogLevel::Error, "Failed payload crc on ESP");
+            m_logger.log(LogLevel::Error, "Failed payload crc on STM");
             m_outboundHeader.systemState.stmSystemState.failedCrc = 1;
         }
         // If it passes the CRC check, add the data to the circular buffer
