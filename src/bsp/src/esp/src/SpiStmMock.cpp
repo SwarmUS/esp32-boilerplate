@@ -66,8 +66,8 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
     m_logger.log(LogLevel::Debug, "Sending message of length %d", length);
     // Memcpy necessary to have buffer word-alligned for transfer
     std::memcpy(m_outboundMessage.m_data.data(), buffer, length);
-    // Set payload size in header
-    m_outboundHeader.payloadSize = length;
+    // Set payload size
+    m_outboundMessage.m_payloadSizeBytes = length;
     // Padding with 0 up to a word-alligned boundary
     for (uint8_t i = 0; i < (length % 4); i++) {
         m_outboundMessage.m_data[length] = 0;
@@ -116,7 +116,8 @@ void SpiStm::execute() {
     case receiveState::PARSING_HEADER:
         m_inboundHeader = (StmHeader::Header*)m_inboundMessage.m_data.data();
         // Validate header
-        if (m_inboundHeader->crc8 != calculateCRC8_software(m_inboundHeader, 3)) {
+        if (m_inboundHeader->crc8 !=
+            calculateCRC8_software(m_inboundHeader, StmHeader::sizeBytes - 1)) {
             m_logger.log(LogLevel::Error, "Received corrupted STM SPI header");
             m_logger.log(LogLevel::Debug, "Bytes were: | %d | %d | %d | %d |",
                          m_inboundMessage.m_data[0], m_inboundMessage.m_data[1],
@@ -141,6 +142,7 @@ void SpiStm::execute() {
         m_inboundMessage.m_sizeBytes = WORDS_TO_BYTES(m_inboundHeader->txSizeWord);
         if (m_inboundMessage.m_sizeBytes == WORDS_TO_BYTES(m_outboundHeader.rxSizeWord) &&
             m_inboundMessage.m_sizeBytes != 0) {
+            m_inboundMessage.m_payloadSizeBytes = m_inboundHeader->payloadSizeBytes;
             rxLengthBytes = WORDS_TO_BYTES(m_inboundHeader->txSizeWord);
             m_logger.log(LogLevel::Debug, "Receiving payload");
             m_rxState = receiveState::RECEIVING_PAYLOAD;
@@ -162,8 +164,7 @@ void SpiStm::execute() {
         }
         // If it passes the CRC check, add the data to the circular buffer
         else if (CircularBuff_put(&m_circularBuf, m_inboundMessage.m_data.data(),
-                                  m_inboundMessage.m_sizeBytes - CRC32_SIZE) ==
-                 CircularBuff_Ret_Ok) {
+                                  m_inboundMessage.m_payloadSizeBytes) == CircularBuff_Ret_Ok) {
             // If a task was waiting to receive bytes, notify it
             if (m_receivingTaskHandle != nullptr) {
                 xTaskNotifyGive(m_receivingTaskHandle);
@@ -172,6 +173,7 @@ void SpiStm::execute() {
             m_logger.log(LogLevel::Error, "Failed to add bytes in spi circular buffer");
         }
         m_inboundMessage.m_sizeBytes = 0;
+        m_inboundMessage.m_payloadSizeBytes = 0;
         m_rxState = receiveState::RECEIVING_HEADER;
         rxLengthBytes = StmHeader::sizeBytes;
         break;
@@ -214,8 +216,9 @@ void SpiStm::updateOutboundHeader() {
     // TODO: get actual system state
     m_outboundHeader.txSizeWord = BYTES_TO_WORDS(m_outboundMessage.m_sizeBytes);
     m_outboundHeader.rxSizeWord = BYTES_TO_WORDS(m_inboundMessage.m_sizeBytes);
+    m_outboundHeader.payloadSizeBytes = m_outboundMessage.m_payloadSizeBytes;
     m_outboundHeader.padding = 0;
-    m_outboundHeader.crc8 = calculateCRC8_software(&m_outboundHeader, 3);
+    m_outboundHeader.crc8 = calculateCRC8_software(&m_outboundHeader, StmHeader::sizeBytes - 1);
     if (m_outboundHeader.txSizeWord == 0) {
         m_isBusy = false;
     }

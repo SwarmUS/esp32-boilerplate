@@ -40,6 +40,7 @@ class SpiStm : public ISpiStm {
         // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/spi_slave.html#restrictions-and-known-issues
         WORD_ALIGNED_ATTR std::array<uint8_t, STM_SPI_MAX_MESSAGE_LENGTH> m_data;
         uint32_t m_sizeBytes;
+        uint16_t m_payloadSizeBytes;
     } m_inboundMessage, m_outboundMessage;
 
     std::array<uint8_t, STM_SPI_MAX_MESSAGE_LENGTH> m_data;
