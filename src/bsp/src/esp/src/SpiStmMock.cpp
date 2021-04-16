@@ -177,7 +177,7 @@ void SpiStm::execute() {
         rxLengthBytes = StmHeader::sizeBytes;
         break;
     case receiveState::ERROR:
-        m_logger.log(LogLevel::Error, "Error within Spi driver STM");
+        m_logger.log(LogLevel::Error, "Error within Spi driver STM - RX");
         m_rxState = receiveState::RECEIVING_HEADER;
         break;
     }
@@ -194,7 +194,7 @@ void SpiStm::execute() {
         m_hasSentPayload = false;
         break;
     case transmitState::ERROR:
-        m_logger.log(LogLevel::Error, "Error within Spi driver STM");
+        m_logger.log(LogLevel::Error, "Error within Spi driver STM - TX");
         break;
     }
 
