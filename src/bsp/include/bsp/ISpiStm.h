@@ -4,8 +4,8 @@
 #include "common/IProtobufStream.h"
 #include <cstdint>
 
-#define CRC32_SIZE (sizeof(uint32_t))
-#define STM_SPI_MAX_MESSAGE_LENGTH (2048u - CRC32_SIZE)
+constexpr uint8_t CRC32_SIZE = (sizeof(uint32_t));
+constexpr uint16_t STM_SPI_MAX_MESSAGE_LENGTH = (2048u - CRC32_SIZE);
 
 class ISpiStm : public IProtobufStream {
   public:

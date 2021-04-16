@@ -69,15 +69,14 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
     // Set payload size
     m_outboundMessage.m_payloadSizeBytes = length;
     // Padding with 0 up to a word-alligned boundary
-    for (uint8_t i = 0; i < (length % 4); i++) {
-        m_outboundMessage.m_data[length] = 0;
+    while (length % 4 != 0) {
+        m_outboundMessage.m_data[(uint16_t)(length)] = 0;
         length++;
     }
     // Appending CRC32
-    *(uint32_t*)(m_outboundMessage.m_data.data() + length) =
-        calculateCRC32_software(buffer, length);
-    length += CRC32_SIZE;
-    m_outboundMessage.m_sizeBytes = length;
+    *(uint32_t*)&m_outboundMessage.m_data[length] =
+        calculateCRC32_software(m_outboundMessage.m_data.data(), length);
+    m_outboundMessage.m_sizeBytes = (uint16_t)(length + CRC32_SIZE);
     m_isBusy = true;
     notifyMaster();
 
@@ -157,7 +156,7 @@ void SpiStm::execute() {
     case receiveState::VALIDATE_CRC:
         // Check payload CRC and log an error and set flag if it fails
         if (calculateCRC32_software(m_inboundMessage.m_data.data(),
-                                    m_inboundMessage.m_sizeBytes - CRC32_SIZE) !=
+                                    (uint16_t)(m_inboundMessage.m_sizeBytes - CRC32_SIZE)) !=
             *(uint32_t*)&m_inboundMessage.m_data[m_inboundMessage.m_sizeBytes - CRC32_SIZE]) {
             m_logger.log(LogLevel::Error, "Failed payload crc on STM");
             m_outboundHeader.systemState.stmSystemState.failedCrc = 1;
@@ -217,7 +216,6 @@ void SpiStm::updateOutboundHeader() {
     m_outboundHeader.txSizeWord = BYTES_TO_WORDS(m_outboundMessage.m_sizeBytes);
     m_outboundHeader.rxSizeWord = BYTES_TO_WORDS(m_inboundMessage.m_sizeBytes);
     m_outboundHeader.payloadSizeBytes = m_outboundMessage.m_payloadSizeBytes;
-    m_outboundHeader.padding = 0;
     m_outboundHeader.crc8 = calculateCRC8_software(&m_outboundHeader, StmHeader::sizeBytes - 1);
     if (m_outboundHeader.txSizeWord == 0) {
         m_isBusy = false;
@@ -255,6 +253,7 @@ void IRAM_ATTR SpiStm::transactionCallback(void* context, spi_slave_transaction_
     if (instance->m_txState == transmitState::SENDING_PAYLOAD) { // TODO: confirm reception with ack
         instance->m_txState = transmitState::SENDING_HEADER;
         instance->m_outboundMessage.m_sizeBytes = 0;
+        instance->m_outboundMessage.m_payloadSizeBytes = 0;
         instance->m_hasSentPayload = true;
         instance->m_isBusy = false;
         // notify sending task
