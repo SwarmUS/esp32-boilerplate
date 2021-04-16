@@ -28,16 +28,14 @@ SpiStm::SpiStm(ILogger& logger) :
     m_outboundMessage = {0};
     m_inboundHeader = {0};
     m_outboundHeader = {0};
-    m_isBusy = false;
     m_isConnected = false;
+    m_crcOK = false;
 
     CircularBuff_init(&m_circularBuf, m_data.data(), m_data.size());
 
     setCallback(SpiStm::transactionCallback, this);
 
     m_driverTask.start();
-    // Notifying master for first handshake
-    notifyMaster();
 }
 
 bool SpiStm::receive(uint8_t* data, uint16_t length) {
@@ -77,25 +75,18 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
     *(uint32_t*)&m_outboundMessage.m_data[length] =
         calculateCRC32_software(m_outboundMessage.m_data.data(), length);
     m_outboundMessage.m_sizeBytes = (uint16_t)(length + CRC32_SIZE);
-    m_isBusy = true;
-    notifyMaster();
 
-    // Wait for transmission to be over
+    // Wait for transmission to be over. Will be notified when ACK received or upon error
     m_sendingTaskHandle = xTaskGetCurrentTaskHandle();
-    while (isBusy()) {
-        ulTaskNotifyTake(pdTRUE, 500);
-        if (m_hasSentPayload && m_inboundHeader->systemState.stmSystemState.failedCrc) {
-            // Crc failed, handle retries in the future
-            m_sendingTaskHandle = nullptr;
-            return false;
-        }
-        // TODO: check for disconnection
+    ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+    if (m_txState == transmitState::ERROR) {
+        m_logger.log(LogLevel::Error, "Error occurred...");
+        return false;
+    } else {
+        m_logger.log(LogLevel::Info, "Payload sent!");
     }
-    m_sendingTaskHandle = nullptr;
-    return true;
+    return m_crcOK;
 }
-
-bool SpiStm::isBusy() const { return m_isBusy; }
 
 bool SpiStm::isConnected() const {
     if (!m_isConnected) {
@@ -149,6 +140,13 @@ void SpiStm::execute() {
             rxLengthBytes = StmHeader::sizeBytes;
             m_rxState = receiveState::RECEIVING_HEADER;
         }
+        // Payload has been sent. Check crc and notify sending task
+        if (m_hasSentPayload) {
+            m_crcOK = !m_inboundHeader->systemState.stmSystemState.failedCrc;
+            if (m_sendingTaskHandle != nullptr) {
+                xTaskNotifyGive(m_sendingTaskHandle);
+            }
+        }
         break;
     case receiveState::RECEIVING_PAYLOAD:
         rxLengthBytes = WORDS_TO_BYTES(m_inboundHeader->txSizeWord);
@@ -194,6 +192,10 @@ void SpiStm::execute() {
         m_hasSentPayload = false;
         break;
     case transmitState::ERROR:
+        // Notify sending task that error occurred
+        if (m_sendingTaskHandle != nullptr) {
+            xTaskNotifyGive(m_sendingTaskHandle);
+        }
         m_logger.log(LogLevel::Error, "Error within Spi driver STM - TX");
         break;
     }
@@ -204,6 +206,9 @@ void SpiStm::execute() {
     m_transaction.rx_buffer = m_inboundMessage.m_data.data();
 
     if (m_txState != transmitState::ERROR && m_rxState != receiveState::ERROR) {
+        if (m_outboundHeader.payloadSizeBytes != 0) {
+            notifyMaster();
+        }
         // This call is blocking, so the rate of the of the loop is inferred byt the rate of the
         // loop of the master driver in HiveMind. The loop needs no delay and shouldn't
         // have one as it will only increase latency, which could lead to instability.
@@ -217,9 +222,6 @@ void SpiStm::updateOutboundHeader() {
     m_outboundHeader.rxSizeWord = BYTES_TO_WORDS(m_inboundMessage.m_sizeBytes);
     m_outboundHeader.payloadSizeBytes = m_outboundMessage.m_payloadSizeBytes;
     m_outboundHeader.crc8 = calculateCRC8_software(&m_outboundHeader, StmHeader::sizeBytes - 1);
-    if (m_outboundHeader.txSizeWord == 0) {
-        m_isBusy = false;
-    }
 }
 
 void SpiStm::notifyMaster() {
@@ -255,12 +257,5 @@ void IRAM_ATTR SpiStm::transactionCallback(void* context, spi_slave_transaction_
         instance->m_outboundMessage.m_sizeBytes = 0;
         instance->m_outboundMessage.m_payloadSizeBytes = 0;
         instance->m_hasSentPayload = true;
-        instance->m_isBusy = false;
-        // notify sending task
-        if (instance->m_sendingTaskHandle != nullptr) {
-            // Note: esp does not need the flag for yielding from ISR
-            vTaskNotifyGiveFromISR(instance->m_sendingTaskHandle, nullptr);
-            portYIELD_FROM_ISR();
-        }
     }
 }

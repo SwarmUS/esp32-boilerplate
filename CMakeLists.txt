@@ -44,6 +44,7 @@ target_link_libraries(${EXECUTABLE_NAME}
         SwarmUS::HiveConnect::Logger
         SwarmUS::HiveConnect::Network
         SwarmUS::HiveConnect::MessageHandler
+        SwarmUS::Propolis::Pheromones::HiveMind::Host
 )
 
 

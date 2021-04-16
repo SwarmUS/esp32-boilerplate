@@ -15,7 +15,6 @@ class SpiStm : public ISpiStm {
     SpiStm(ILogger& logger);
 
     bool send(const uint8_t* buffer, uint16_t length) override;
-    bool isBusy() const override;
     void execute();
     bool receive(uint8_t* data, uint16_t length) override;
     bool isConnected() const override;
@@ -55,8 +54,8 @@ class SpiStm : public ISpiStm {
     static void notifyMaster();
     static void transactionCallback(void* context, spi_slave_transaction_t* transaction);
 
-    bool m_isBusy;
-    bool m_hasSentPayload;
     bool m_isConnected;
+    volatile bool m_hasSentPayload;
+    bool m_crcOK;
 };
 #endif // __SPISTM_H__

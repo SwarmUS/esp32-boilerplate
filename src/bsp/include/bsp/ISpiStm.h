@@ -28,12 +28,6 @@ class ISpiStm : public IProtobufStream {
     virtual bool receive(uint8_t* data, uint16_t length) = 0;
 
     /**
-     * @brief Checks if driver is already busy transmitting data.
-     * @return True if in use. False otherwise
-     */
-    virtual bool isBusy() const = 0;
-
-    /**
      * @brief Check if driver is connected
      * @return true if connection has been established, false otherwise
      */

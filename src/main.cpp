@@ -25,30 +25,34 @@ class HiveMindMessageSender : public AbstractTask<10 * configMINIMAL_STACK_SIZE>
 
     void task() override {
         auto& spi = BspContainer::getSpiStm();
-        while (!spi.isConnected()) {
-            Task::delay(500);
-        }
-        HiveMindHostSerializer serializer(spi);
+        HiveMindHostAccumulatorSerializer serializer(spi);
         MessageSender messageSender(MessageHandlerContainer::getHivemindOutputQueue(), serializer,
                                     BspContainer::getBSP(), m_logger);
         while (!spi.isConnected()) {
             Task::delay(100);
         }
-
+        bool hasGreeted = false;
         while (true) {
-            while (true) {
-                if (BspContainer::getBSP().getHiveMindUUID() == 0) {
+            // Greet HiveMind to obtain uuid
+            if (BspContainer::getBSP().getHiveMindUUID() == 0) {
+                if (!hasGreeted) {
+                    hasGreeted = true;
                     messageSender.greet();
-                    if (!messageSender.processAndSerialize()) {
-                        m_logger.log(LogLevel::Warn,
-                                     "Fail to process/serialize spi while greeting");
-                    }
-                    Task::delay(100);
                 }
-
                 if (!messageSender.processAndSerialize()) {
-                    m_logger.log(LogLevel::Warn, "Fail to process/serialize spi");
+                    m_logger.log(LogLevel::Error, "Fail to process/serialize spi while greeting");
                 }
+                Task::delay(1000);
+            }
+            // Standard loop
+            if (!messageSender.processAndSerialize()) {
+                m_logger.log(LogLevel::Warn, "Fail to process/serialize spi");
+            }
+            // Handle disconnections
+            if (!spi.isConnected()) {
+                m_logger.log(LogLevel::Error, "Lost connection to HiveMind");
+                BspContainer::getBSP().setHiveMindUUID(0);
+                hasGreeted = false;
             }
         }
     }
@@ -258,7 +262,7 @@ class TestStmCommunicationTask : public AbstractTask<10 * configMINIMAL_STACK_SI
     ISpiStm& m_spi;
 
     void task() override {
-        char message[] = "Message sent by esp";
+        char message[] = "Sent by esp!";
         while (true) {
             m_spi.send((uint8_t*)message, sizeof(message));
             Task::delay(100);
@@ -280,10 +284,14 @@ class TestStmCommunicationTaskReceive : public AbstractTask<10 * configMINIMAL_S
         char messageReceived[50];
         while (true) {
             Task::delay(75);
-            if (m_spi.receive((uint8_t*)messageReceived, 20)) {
-                LoggerContainer::getLogger().log(LogLevel::Info, "Message received: %s",
-                                                 messageReceived);
-            }
+            int i = -1;
+            do {
+                i++;
+                m_spi.receive((uint8_t*)&messageReceived[i], 1);
+            } while (messageReceived[i] != 0);
+
+            LoggerContainer::getLogger().log(LogLevel::Info, "Message received: %s",
+                                             messageReceived);
         }
     }
 };
