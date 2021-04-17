@@ -1,8 +1,8 @@
 #include "message-handler/MessageSender.h"
 #include "mocks/BSPMock.h"
-#include "mocks/CircularQueueInterfaceMock.h"
 #include "mocks/HiveMindHostSerializerInterfaceMock.h"
 #include "mocks/LoggerInterfaceMock.h"
+#include "mocks/NotificationQueueInterfaceMock.h"
 
 class MessageSenderFixture : public testing::Test {
   protected:
@@ -10,7 +10,7 @@ class MessageSenderFixture : public testing::Test {
 
     BSPMock* m_bspMock;
 
-    CircularQueueInterfaceMock<MessageDTO> m_inputQueue;
+    NotificationQueueInterfaceMock<MessageDTO> m_inputQueue;
     HiveMindHostSerializerInterfaceMock m_serializer;
     LoggerInterfaceMock m_logger;
     MessageDTO m_message;
@@ -29,6 +29,7 @@ class MessageSenderFixture : public testing::Test {
 
 TEST_F(MessageSenderFixture, MessageSender_processAndSerialize_validMessage) {
     // Given
+    EXPECT_CALL(m_inputQueue, isEmpty()).Times(1).WillOnce(testing::Return(false));
     EXPECT_CALL(m_inputQueue, peek).Times(1).WillOnce(testing::Return(m_message));
     EXPECT_CALL(m_inputQueue, pop).Times(1);
     EXPECT_CALL(m_serializer, serializeToStream(testing::_))
@@ -45,6 +46,7 @@ TEST_F(MessageSenderFixture, MessageSender_processAndSerialize_validMessage) {
 TEST_F(MessageSenderFixture, MessageSender_processAndSerialize_emptyMessage) {
     // Given
     const std::optional<std::reference_wrapper<const MessageDTO>> emptyMessage = {};
+    EXPECT_CALL(m_inputQueue, isEmpty()).Times(1).WillOnce(testing::Return(false));
     EXPECT_CALL(m_inputQueue, peek).Times(1).WillOnce(testing::Return(emptyMessage));
     EXPECT_CALL(m_inputQueue, pop).Times(0);
     EXPECT_CALL(m_serializer, serializeToStream(testing::_)).Times(0);
@@ -58,6 +60,7 @@ TEST_F(MessageSenderFixture, MessageSender_processAndSerialize_emptyMessage) {
 
 TEST_F(MessageSenderFixture, MessageSender_processAndSerialize_invalidDeserialization) {
     // Given
+    EXPECT_CALL(m_inputQueue, isEmpty()).Times(1).WillOnce(testing::Return(false));
     EXPECT_CALL(m_inputQueue, peek).Times(1).WillOnce(testing::Return(m_message));
     EXPECT_CALL(m_inputQueue, pop).Times(1);
     EXPECT_CALL(m_serializer, serializeToStream(testing::_))

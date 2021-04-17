@@ -2,19 +2,19 @@
 #include "DTOMatchers.h"
 #include "message-handler/MessageDispatcher.h"
 #include "mocks/BSPMock.h"
-#include "mocks/CircularQueueInterfaceMock.h"
 #include "mocks/HiveMindHostDeserializerInterfaceMock.h"
 #include "mocks/LoggerInterfaceMock.h"
 #include "mocks/NetworkAPIHandlerMock.h"
 #include "mocks/NetworkManagerMock.h"
+#include "mocks/NotificationQueueInterfaceMock.h"
 
 class MessageDispatcherFixture : public testing::Test {
   protected:
     MessageDispatcher* m_messageDispatcher;
 
-    CircularQueueInterfaceMock<MessageDTO> m_hivemindQueue;
-    CircularQueueInterfaceMock<MessageDTO> m_broadcastQueue;
-    CircularQueueInterfaceMock<MessageDTO> m_unicastQueue;
+    NotificationQueueInterfaceMock<MessageDTO> m_hivemindQueue;
+    NotificationQueueInterfaceMock<MessageDTO> m_broadcastQueue;
+    NotificationQueueInterfaceMock<MessageDTO> m_unicastQueue;
     HiveMindHostDeserializerInterfaceMock m_deserializer;
     NetworkAPIHandlerMock m_handler;
     NetworkManagerMock m_manager;
