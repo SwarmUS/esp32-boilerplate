@@ -155,3 +155,23 @@ TEST_F(MessageDispatcherFixture,
     // Expect
     EXPECT_FALSE(ret);
 }
+
+TEST_F(MessageDispatcherFixture,
+       MessageDispatcherFixture_deserializeAndDispatch_HandlingInboundBroadcast) {
+    // Given
+    UserCallRequestDTO uRequest(UserCallTargetDTO::BUZZ, UserCallTargetDTO::HOST, *m_fRequest);
+    RequestDTO request(1, uRequest);
+    m_message = MessageDTO(m_uuid, 0, request);
+
+    EXPECT_CALL(m_deserializer, deserializeFromStream(testing::_))
+        .Times(1)
+        .WillOnce(testing::DoAll(testing::SetArgReferee<0>(m_message), testing::Return(true)));
+    EXPECT_CALL(*m_bsp, getHiveMindUUID);
+    EXPECT_CALL(m_hivemindQueue, push(testing::_)).WillOnce(testing::Return(true));
+
+    // Then
+    bool ret = m_messageDispatcher->deserializeAndDispatch();
+
+    // Expect
+    EXPECT_TRUE(ret);
+}
