@@ -3,7 +3,7 @@
 
 #include "MessageDispatcher.h"
 #include "NetworkAPIHandler.h"
-#include "ThreadSafeQueue.h"
+#include "NotificationQueue.h"
 
 namespace MessageHandlerContainer {
 
@@ -23,19 +23,19 @@ MessageDispatcher createMessageDispatcher(IHiveMindHostDeserializer& deserialize
  * @brief get the Hivemind output queue
  * @return a reference to the Hivemind output queue
  */
-ThreadSafeQueue<MessageDTO>& getHivemindOutputQueue();
+NotificationQueue<MessageDTO>& getHivemindOutputQueue();
 
 /**
  * @brief get the network unicast output queue
  * @return a reference to the Hivemind output queue
  */
-ThreadSafeQueue<MessageDTO>& getUnicastOutputQueue();
+NotificationQueue<MessageDTO>& getUnicastOutputQueue();
 
 /**
  * @brief get the network broadcast output queue
  * @return a reference to the Hivemind output queue
  */
-ThreadSafeQueue<MessageDTO>& getBroadcastOutputQueue();
+NotificationQueue<MessageDTO>& getBroadcastOutputQueue();
 } // namespace MessageHandlerContainer
 
 #endif // HIVE_CONNECT_MESSAGEHANDLERCONTAINER_H
