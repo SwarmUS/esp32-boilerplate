@@ -9,7 +9,7 @@ set(TEST_SOURCES
 
 set(TEST_HEADERS
         mocks/BSPMock.h
-        mocks/CircularQueueInterfaceMock.h
+        mocks/NotificationQueueInterfaceMock.h
         mocks/HiveMindHostDeserializerInterfaceMock.h
         mocks/HiveMindHostSerializerInterfaceMock.h
         mocks/LoggerInterfaceMock.h

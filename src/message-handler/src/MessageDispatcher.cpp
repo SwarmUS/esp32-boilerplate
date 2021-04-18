@@ -62,15 +62,24 @@ bool MessageDispatcher::dispatchNetworkAPI(const MessageDTO& message,
 }
 
 bool MessageDispatcher::forwardMessage(const MessageDTO& message) {
+    // Message specifically for HiveMind
     if (message.getDestinationId() == m_bsp.getHiveMindUUID()) {
         m_logger.log(LogLevel::Info, "Forwarded message to HiveMind");
         return m_hivemindOutputQueue.push(message);
     }
 
-    if (message.getDestinationId() == 0) {
+    // Hivemind is sending message to broadcast
+    if (message.getDestinationId() == 0 && message.getSourceId() == m_bsp.getHiveMindUUID()) {
         m_logger.log(LogLevel::Info, "Forwarded message to broadcast");
         return m_broadcastOutputQueue.push(message);
     }
+
+    // Received message from broadcast, forwarding it to HiveMind
+    if (message.getDestinationId() == 0 && message.getSourceId() != m_bsp.getHiveMindUUID()) {
+        m_logger.log(LogLevel::Info, "Forwarded message to HiveMind from broadcast");
+        return m_hivemindOutputQueue.push(message);
+    }
+
     if (m_manager.getIPFromAgentID(message.getDestinationId()).has_value()) {
         m_logger.log(LogLevel::Info, "Forwarded message to unicast");
         return m_unicastOutputQueue.push(message);
