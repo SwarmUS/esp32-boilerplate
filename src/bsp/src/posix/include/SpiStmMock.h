@@ -12,7 +12,6 @@ class SpiStmMock : public ISpiStm {
 
     bool send(const uint8_t* buffer, uint16_t length) override;
     bool receive(uint8_t* data, uint16_t length) override;
-    bool isBusy() const override;
     bool isConnected() const override;
 
     bool connect();

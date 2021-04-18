@@ -85,5 +85,3 @@ void SpiStmMock::close() {
 }
 
 bool SpiStmMock::isConnected() const { return m_socket != -1; }
-
-bool SpiStmMock::isBusy() const { return false; }
