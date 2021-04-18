@@ -26,6 +26,6 @@ INetworkOutputStream& NetworkContainer::getNetworkOutputStream() {
 }
 
 INetworkBroadcast& NetworkContainer::getNetworkBroadcast() {
-    static NetworkBroadcast s_broadcast;
+    static NetworkBroadcast s_broadcast(LoggerContainer::getLogger());
     return s_broadcast;
 }
