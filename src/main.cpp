@@ -2,12 +2,13 @@
 #include "NetworkContainer.h"
 #include "Task.h"
 #include "bsp/Container.h"
-#include "hivemind-host/HiveMindHostAccumulatorSerializer.h"
-#include "hivemind-host/HiveMindHostDeserializer.h"
 #include "logger/LoggerContainer.h"
 #include "message-handler/MessageHandlerContainer.h"
 #include "message-handler/MessageSender.h"
+#include "message-handler/NetworkDeserializer.h"
 #include "message-handler/NetworkSerializer.h"
+#include "pheromones/HiveMindHostAccumulatorSerializer.h"
+#include "pheromones/HiveMindHostDeserializer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,7 +50,6 @@ class HiveMindMessageSender : public AbstractTask<10 * configMINIMAL_STACK_SIZE>
                 m_logger.log(LogLevel::Error, "Lost connection to HiveMind");
                 BspContainer::getBSP().setHiveMindUUID(0);
             }
-            Task::delay(50);
         }
     }
 };
@@ -124,7 +124,7 @@ class UnicastMessageDispatcher : public AbstractTask<10 * configMINIMAL_STACK_SI
     void task() override {
         auto& stream = NetworkContainer::getNetworkInputStream();
 
-        HiveMindHostDeserializer deserializer(stream);
+        NetworkDeserializer deserializer(stream);
         NetworkAPIHandler networkApiHandler = MessageHandlerContainer::createNetworkApiHandler();
         MessageDispatcher dispatcher =
             MessageHandlerContainer::createMessageDispatcher(deserializer, networkApiHandler);

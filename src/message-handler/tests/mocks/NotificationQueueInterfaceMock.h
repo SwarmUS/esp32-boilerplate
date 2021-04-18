@@ -1,13 +1,13 @@
 #ifndef __CIRCULARQUEUEINTERFACEMOCK_H_
 #define __CIRCULARQUEUEINTERFACEMOCK_H_
 
-#include <cpp-common/ICircularQueue.h>
+#include "INotificationQueue.h"
 #include <gmock/gmock.h>
 
 template <typename T>
-class CircularQueueInterfaceMock final : public ICircularQueue<T> {
+class NotificationQueueInterfaceMock final : public INotificationQueue<T> {
   public:
-    ~CircularQueueInterfaceMock() = default;
+    ~NotificationQueueInterfaceMock() = default;
 
     MOCK_METHOD(std::optional<const char*>, getString, (uint16_t stringId), (const override));
 
@@ -23,13 +23,15 @@ class CircularQueueInterfaceMock final : public ICircularQueue<T> {
 
     MOCK_METHOD(bool, isEmpty, (), (const override));
 
-    MOCK_METHOD(uint16_t, getLength, (), (const override));
+    MOCK_METHOD(uint32_t, getLength, (), (const override));
 
-    MOCK_METHOD(uint16_t, getFreeSize, (), (const override));
+    MOCK_METHOD(uint32_t, getFreeSize, (), (const override));
 
     MOCK_METHOD(std::optional<std::reference_wrapper<T>>, getNextAllocation, (), (override));
 
     MOCK_METHOD(bool, advance, (), (override));
+
+    MOCK_METHOD(bool, wait, (uint32_t waitTime), (override));
 };
 
 #endif // __CIRCULARQUEUEINTERFACEMOCK_H_

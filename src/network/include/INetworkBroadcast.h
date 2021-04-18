@@ -1,7 +1,7 @@
 #ifndef HIVE_CONNECT_INETWORKBROADCAST_H
 #define HIVE_CONNECT_INETWORKBROADCAST_H
 
-#include "common/IProtobufStream.h"
+#include "pheromones/IProtobufStream.h"
 
 class INetworkBroadcast : public IProtobufStream {
   public:

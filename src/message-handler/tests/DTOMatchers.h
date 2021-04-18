@@ -1,7 +1,7 @@
 #ifndef HIVE_CONNECT_DTOMATCHERS_H
 #define HIVE_CONNECT_DTOMATCHERS_H
 
-#include "hivemind-host/MessageDTO.h"
+#include "pheromones/MessageDTO.h"
 #include "gmock/gmock.h"
 
 // Simple matcher to check that DTO matches inside function call. If required

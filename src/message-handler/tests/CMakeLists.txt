@@ -4,11 +4,12 @@ set(TEST_SOURCES
         MessageSenderUnitTests.cpp
         NetworkApiHandlerUnitTests.cpp
         MessageDispatcherUnitTests.cpp
+        NetworkSerializerAndDeserializerIntegrationTests.cpp
         )
 
 set(TEST_HEADERS
         mocks/BSPMock.h
-        mocks/CircularQueueInterfaceMock.h
+        mocks/NotificationQueueInterfaceMock.h
         mocks/HiveMindHostDeserializerInterfaceMock.h
         mocks/HiveMindHostSerializerInterfaceMock.h
         mocks/LoggerInterfaceMock.h
@@ -27,6 +28,7 @@ target_link_libraries(${TEST_NAME}
         gmock
 
         SwarmUS::HiveConnect::MessageHandler
+        SwarmUS::HiveConnect::Network
         )
 
 add_test(NAME ${TEST_NAME}

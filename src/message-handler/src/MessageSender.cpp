@@ -1,6 +1,6 @@
 #include "MessageSender.h"
 
-MessageSender::MessageSender(ICircularQueue<MessageDTO>& inputQueue,
+MessageSender::MessageSender(INotificationQueue<MessageDTO>& inputQueue,
                              IHiveMindHostSerializer& serializer,
                              IBSP& bsp,
                              ILogger& logger) :
@@ -14,6 +14,9 @@ bool MessageSender::greet() {
 }
 
 bool MessageSender::processAndSerialize() {
+    while (m_inputQueue.isEmpty()) {
+        m_inputQueue.wait(500);
+    }
     const std::optional<std::reference_wrapper<const MessageDTO>> message = m_inputQueue.peek();
     if (message) {
         bool ret = m_serializer.serializeToStream(message.value());

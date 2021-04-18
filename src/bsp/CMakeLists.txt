@@ -25,7 +25,7 @@ target_include_directories(${LIB_NAME}
 
 target_link_libraries(${LIB_NAME}
         PUBLIC
-        SwarmUS::Propolis::Pheromones::Common
+        SwarmUS::Propolis::Pheromones
         PRIVATE
         SwarmUS::HiveConnect::BSP::Platform
 )

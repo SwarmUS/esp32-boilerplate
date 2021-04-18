@@ -2,10 +2,12 @@
 <!-- Place holder launch file for the communication broker node -->
 
 <launch>
-    <rosparam command="load" file="$(find hive_connect)/ros/broker_config.yaml" />
+    <!--<rosparam command="load" file="$(find hive_connect)/ros/broker_config.yaml" />-->
+
+    <rosparam param="/robots">[1,2,3,4,5]</rosparam>
     <node name="commBroker" pkg="hive_connect" type="communication_broker"  output="screen" >
 
         <!-- Parameter name to use to find the robot list. Should match the yaml config file -->
-        <param name="configList" value="/Broker/robots"/>
+        <param name="configList" value="/robots"/>
     </node>
 </launch>
