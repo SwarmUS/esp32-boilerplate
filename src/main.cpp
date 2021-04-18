@@ -49,6 +49,7 @@ class HiveMindMessageSender : public AbstractTask<10 * configMINIMAL_STACK_SIZE>
                 m_logger.log(LogLevel::Error, "Lost connection to HiveMind");
                 BspContainer::getBSP().setHiveMindUUID(0);
             }
+            Task::delay(50);
         }
     }
 };
