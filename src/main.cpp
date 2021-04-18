@@ -31,28 +31,23 @@ class HiveMindMessageSender : public AbstractTask<10 * configMINIMAL_STACK_SIZE>
         while (!spi.isConnected()) {
             Task::delay(100);
         }
-        bool hasGreeted = false;
         while (true) {
             // Greet HiveMind to obtain uuid
             if (BspContainer::getBSP().getHiveMindUUID() == 0) {
-                if (!hasGreeted) {
-                    hasGreeted = true;
-                    messageSender.greet();
-                }
+                messageSender.greet();
                 if (!messageSender.processAndSerialize()) {
                     m_logger.log(LogLevel::Error, "Fail to process/serialize spi while greeting");
                 }
                 Task::delay(1000);
             }
             // Standard loop
-            if (!messageSender.processAndSerialize()) {
+            else if (!messageSender.processAndSerialize()) {
                 m_logger.log(LogLevel::Warn, "Fail to process/serialize spi");
             }
             // Handle disconnections
             if (!spi.isConnected()) {
                 m_logger.log(LogLevel::Error, "Lost connection to HiveMind");
                 BspContainer::getBSP().setHiveMindUUID(0);
-                hasGreeted = false;
             }
         }
     }
