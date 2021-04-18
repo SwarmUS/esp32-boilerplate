@@ -178,6 +178,10 @@ void SpiStm::execute() {
         break;
     case receiveState::ERROR:
         m_logger.log(LogLevel::Error, "Error within Spi driver STM - RX");
+        CircularBuff_clear(&m_circularBuf);
+        if (m_receivingTaskHandle != nullptr) {
+            xTaskNotifyGive(m_receivingTaskHandle);
+        }
         m_rxState = receiveState::RECEIVING_HEADER;
         break;
     }
