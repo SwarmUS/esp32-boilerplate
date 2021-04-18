@@ -247,51 +247,6 @@ class BroadcastIPTask : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
     }
 };
 
-class TestStmCommunicationTask : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
-  public:
-    TestStmCommunicationTask(const char* taskName, UBaseType_t priority) :
-        AbstractTask(taskName, priority), m_spi(BspContainer::getSpiStm()) {}
-
-    ~TestStmCommunicationTask() override = default;
-
-  private:
-    ISpiStm& m_spi;
-
-    void task() override {
-        char message[] = "Sent by esp!";
-        while (true) {
-            m_spi.send((uint8_t*)message, sizeof(message));
-            Task::delay(100);
-        }
-    }
-};
-
-class TestStmCommunicationTaskReceive : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
-  public:
-    TestStmCommunicationTaskReceive(const char* taskName, UBaseType_t priority) :
-        AbstractTask(taskName, priority), m_spi(BspContainer::getSpiStm()) {}
-
-    ~TestStmCommunicationTaskReceive() override = default;
-
-  private:
-    ISpiStm& m_spi;
-
-    void task() override {
-        char messageReceived[50];
-        while (true) {
-            Task::delay(75);
-            int i = -1;
-            do {
-                i++;
-                m_spi.receive((uint8_t*)&messageReceived[i], 1);
-            } while (messageReceived[i] != 0);
-
-            LoggerContainer::getLogger().log(LogLevel::Info, "Message received: %s",
-                                             messageReceived);
-        }
-    }
-};
-
 void app_main(void) {
     IBSP* bsp = &BspContainer::getBSP();
     bsp->initChip();
@@ -311,19 +266,15 @@ void app_main(void) {
         "broad_casting_ip", configMINIMAL_STACK_SIZE, BspContainer::getBSP(),
         NetworkContainer::getNetworkManager(), LoggerContainer::getLogger());
 
-    static TestStmCommunicationTask s_testComm("test", tskIDLE_PRIORITY + 1);
-    static TestStmCommunicationTaskReceive s_recv("test_rcv", tskIDLE_PRIORITY + 1);
-    // s_testComm.start();
-    // s_recv.start();
     s_spiMessageSend.start();
     s_spiDispatch.start();
 
-    /* s_tcpMessageReceiver.start();
-     s_tcpMessageSender.start();
+    s_tcpMessageReceiver.start();
+    s_tcpMessageSender.start();
 
-     s_broadcastMessageSender.start();
-     s_broadcastReceiver.start();
-     s_broadcastIpTask.start();*/
+    s_broadcastMessageSender.start();
+    s_broadcastReceiver.start();
+    s_broadcastIpTask.start();
 }
 
 #ifdef __cplusplus
