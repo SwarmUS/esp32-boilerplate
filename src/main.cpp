@@ -251,7 +251,7 @@ void app_main(void) {
     IBSP* bsp = &BspContainer::getBSP();
     bsp->initChip();
     INetworkManager* networkManager = &NetworkContainer::getNetworkManager();
-    // networkManager->start();
+    networkManager->start();
 
     static HiveMindMessageSender s_spiMessageSend("hivemind_send", tskIDLE_PRIORITY + 1);
     static HiveMindDispatcher s_spiDispatch("hivemind_receive", tskIDLE_PRIORITY + 1);
