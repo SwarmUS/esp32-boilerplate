@@ -82,9 +82,10 @@ bool SpiStm::send(const uint8_t* buffer, uint16_t length) {
     if (m_txState == transmitState::ERROR) {
         m_logger.log(LogLevel::Error, "Error occurred...");
         return false;
-    } else {
-        m_logger.log(LogLevel::Info, "Payload sent!");
     }
+    m_logger.log(LogLevel::Info, "Payload sent!");
+
+    m_sendingTaskHandle = nullptr;
     return m_crcOK;
 }
 
@@ -142,6 +143,7 @@ void SpiStm::execute() {
         }
         // Payload has been sent. Check crc and notify sending task
         if (m_hasSentPayload) {
+            m_hasSentPayload = false;
             m_crcOK = !m_inboundHeader->systemState.stmSystemState.failedCrc;
             if (m_sendingTaskHandle != nullptr) {
                 xTaskNotifyGive(m_sendingTaskHandle);
@@ -190,6 +192,7 @@ void SpiStm::execute() {
         m_transaction.tx_buffer = m_outboundMessage.m_data.data();
         txLengthBytes = m_outboundMessage.m_sizeBytes;
         m_hasSentPayload = false;
+        m_crcOK = false;
         break;
     case transmitState::ERROR:
         // Notify sending task that error occurred
