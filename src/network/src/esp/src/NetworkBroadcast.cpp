@@ -3,15 +3,19 @@
 #include "SocketFactory.h"
 #include "lwip/sockets.h"
 
-NetworkBroadcast::NetworkBroadcast(ILogger& logger) : m_logger(logger) {}
+NetworkBroadcast::NetworkBroadcast(ILogger& logger) :
+    m_logger(logger), m_socket(NO_SOCKET), m_started(false) {}
 
 NetworkBroadcast::~NetworkBroadcast() { this->stop(); }
 
 bool NetworkBroadcast::start() {
-    m_socket = SocketFactory::createUDPBroadcast(NetworkConfig::getBroadcastInputPort());
-    if (m_socket < 0) {
-        m_logger.log(LogLevel::Error, "Failed to obtain broadcast socket!");
-        return false;
+    if (!m_started) {
+        m_socket = SocketFactory::createUDPBroadcast(NetworkConfig::getBroadcastInputPort());
+        if (m_socket < 0) {
+            m_logger.log(LogLevel::Error, "Failed to obtain broadcast socket!");
+            return false;
+        }
+        m_started = true;
     }
     return true;
 }
@@ -45,8 +49,7 @@ bool NetworkBroadcast::receive(uint8_t* data, uint16_t length) {
 
     ssize_t receivedBytes = 0;
     do {
-        ssize_t received = lwip_recvfrom(m_socket, &data[receivedBytes], length - receivedBytes, 0,
-                                         (sockaddr*)&broadcast, &socklen);
+        ssize_t received = lwip_recv(m_socket, &data[receivedBytes], length - receivedBytes, 0);
         if (received == -1) {
             break;
         }
@@ -61,6 +64,7 @@ bool NetworkBroadcast::stop() {
     if (m_socket != -1) {
         lwip_close(m_socket);
     }
-    m_socket = -1;
+    m_socket = NO_SOCKET;
+    m_started = false;
     return true;
 }

@@ -54,7 +54,7 @@ int SocketFactory::createTCPClient(uint32_t address, uint16_t port) {
 int SocketFactory::createUDPBroadcast(uint16_t inputPort) {
     sockaddr_in local, broadcast;
 
-    int socket = lwip_socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+    int socket = lwip_socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
     if (socket < 0) {
         // Failed to create socket
         return -1;
