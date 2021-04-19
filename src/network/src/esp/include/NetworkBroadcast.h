@@ -20,7 +20,6 @@ class NetworkBroadcast : public INetworkBroadcast {
   private:
     ILogger& m_logger;
     int m_socket;
-
 };
 
 #endif // HIVE_CONNECT_NETWORKBROADCAST_H
