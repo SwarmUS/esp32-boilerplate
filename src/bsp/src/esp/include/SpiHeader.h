@@ -23,10 +23,11 @@ union SystemState {
     uint8_t rawValue;
 };
 
-struct Header {
+struct __attribute__((__packed__)) Header {
     SystemState systemState;
-    uint8_t txSizeWord;
-    uint8_t rxSizeWord;
+    uint16_t txSizeBytes;
+    uint16_t rxSizeBytes;
+    uint16_t payloadSizeBytes;
     uint8_t crc8;
 };
 

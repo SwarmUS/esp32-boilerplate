@@ -58,7 +58,7 @@ void BSP::initSPI() {
 
     assert(gpio_config(&gpioConfig) == ESP_OK);
     // Default to 0
-    gpio_reset_pin(STM_USER_0);
+    gpio_set_level(STM_USER_0, 0);
 
     // Enable pull-ups on SPI lines so we don't detect rogue pulses when no master is connected.
     gpio_set_pull_mode(STM_MOSI_D, GPIO_PULLUP_ONLY);
