@@ -26,6 +26,6 @@ esp_interface_t NetworkConfig::getInterface() { return ESP_IF_WIFI_STA; }
 
 uint16_t NetworkConfig::getCommunicationPort() { return (uint16_t)DEFAULT_UNICAST_PORT; }
 
-uint16_t NetworkConfig::getBroadcastInputPort() { return (uint16_t)DEFAULT_BROADCAST_INPUT_PORT;}
+uint16_t NetworkConfig::getBroadcastInputPort() { return (uint16_t)DEFAULT_BROADCAST_INPUT_PORT; }
 
-uint16_t NetworkConfig::getBroadcastOutputPort() {return (uint16_t)DEFAULT_BROADCAST_OUTPUT_PORT;}
+uint16_t NetworkConfig::getBroadcastOutputPort() { return (uint16_t)DEFAULT_BROADCAST_OUTPUT_PORT; }

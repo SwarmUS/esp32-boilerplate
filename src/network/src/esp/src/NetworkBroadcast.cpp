@@ -3,9 +3,9 @@
 #include "SocketFactory.h"
 #include "lwip/sockets.h"
 
-NetworkBroadcast::NetworkBroadcast(ILogger& logger) : m_logger(logger){}
+NetworkBroadcast::NetworkBroadcast(ILogger& logger) : m_logger(logger) {}
 
-NetworkBroadcast::~NetworkBroadcast()  { this->stop();}
+NetworkBroadcast::~NetworkBroadcast() { this->stop(); }
 
 bool NetworkBroadcast::start() {
     m_socket = SocketFactory::createUDPBroadcast(NetworkConfig::getBroadcastInputPort());
@@ -28,7 +28,8 @@ bool NetworkBroadcast::send(const uint8_t* data, uint16_t length) {
     broadcast.sin_port = htons(NetworkConfig::getBroadcastOutputPort());
     broadcast.sin_len = sizeof(broadcast);
 
-    return lwip_sendto(m_socket, data, length, 0, (sockaddr*)&broadcast, sizeof(broadcast)) == length;
+    return lwip_sendto(m_socket, data, length, 0, (sockaddr*)&broadcast, sizeof(broadcast)) ==
+           length;
 }
 
 bool NetworkBroadcast::receive(uint8_t* data, uint16_t length) {
@@ -44,7 +45,8 @@ bool NetworkBroadcast::receive(uint8_t* data, uint16_t length) {
 
     ssize_t receivedBytes = 0;
     do {
-        ssize_t received = lwip_recvfrom(m_socket, &data[receivedBytes], length-receivedBytes, 0,(sockaddr*)&broadcast,&socklen);
+        ssize_t received = lwip_recvfrom(m_socket, &data[receivedBytes], length - receivedBytes, 0,
+                                         (sockaddr*)&broadcast, &socklen);
         if (received == -1) {
             break;
         }

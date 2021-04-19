@@ -37,7 +37,6 @@ uint16_t getCommunicationPort();
  */
 uint16_t getBroadcastInputPort();
 
-
 /**
  * @brief Get the communication port used for sending broadcast communications
  * @return The port number
