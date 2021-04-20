@@ -25,7 +25,7 @@ class NetworkBroadcast : public INetworkBroadcast {
   private:
     ILogger& m_logger;
     BaseTask<2 * configMINIMAL_STACK_SIZE> m_receivingTask;
-    std::array<uint8_t, 512> m_data;
+    std::array<uint8_t, 512> m_ciruclarBuffData;
     CircularBuff m_circularBuffer;
     TaskHandle_t m_receivingTaskHandle;
     int m_socket;

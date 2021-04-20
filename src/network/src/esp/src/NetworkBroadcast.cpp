@@ -4,21 +4,15 @@
 #include "Task.h"
 #include "lwip/sockets.h"
 
-static void task(void* context) {
-    while (true) {
-        static_cast<NetworkBroadcast*>(context)->receiveDatagrams();
-        Task::delay(20);
-    }
-}
+static void task(void* context) { static_cast<NetworkBroadcast*>(context)->receiveDatagrams(); }
 
 NetworkBroadcast::NetworkBroadcast(ILogger& logger) :
     m_logger(logger),
     m_socket(NO_SOCKET),
     m_started(false),
     m_receivingTask("udp_receive", tskIDLE_PRIORITY, task, this) {
-    CircularBuff_init(&m_circularBuffer, m_data.data(), m_data.size());
+    CircularBuff_init(&m_circularBuffer, m_ciruclarBuffData.data(), m_ciruclarBuffData.size());
     m_receivingTaskHandle = nullptr;
-    m_receivingTask.start();
 }
 
 NetworkBroadcast::~NetworkBroadcast() { this->stop(); }
@@ -31,6 +25,7 @@ bool NetworkBroadcast::start() {
             return false;
         }
         m_started = true;
+        m_receivingTask.start();
     }
     return true;
 }
@@ -76,7 +71,7 @@ bool NetworkBroadcast::stop() {
 }
 
 void NetworkBroadcast::receiveDatagrams() {
-    if (m_started) {
+    while (m_started) {
 
         // Receiving from a UDP socket de-queues the whole datagram from the receiving queue,
         // regardless of the size read. Here, we receive up to a maximum of the size of m_datagram.
@@ -99,5 +94,6 @@ void NetworkBroadcast::receiveDatagrams() {
                 xTaskNotifyGive(m_receivingTaskHandle);
             }
         }
+        Task::delay(20);
     }
 }
