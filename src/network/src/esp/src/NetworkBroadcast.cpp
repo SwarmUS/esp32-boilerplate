@@ -11,7 +11,7 @@ NetworkBroadcast::NetworkBroadcast(ILogger& logger) :
     m_socket(NO_SOCKET),
     m_started(false),
     m_receivingTask("udp_receive", tskIDLE_PRIORITY, task, this) {
-    CircularBuff_init(&m_circularBuffer, m_ciruclarBuffData.data(), m_ciruclarBuffData.size());
+    CircularBuff_init(&m_circularBuffer, m_circularBuffData.data(), m_circularBuffData.size());
     m_receivingTaskHandle = nullptr;
 }
 

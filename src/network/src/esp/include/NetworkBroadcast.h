@@ -2,6 +2,7 @@
 #define HIVE_CONNECT_NETWORKBROADCAST_H
 
 #include "BaseTask.h"
+#include "DefaultNetworkConfig.h"
 #include "INetworkBroadcast.h"
 #include "c-common/circular_buff.h"
 #include "logger/ILogger.h"
