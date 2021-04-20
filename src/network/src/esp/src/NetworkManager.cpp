@@ -107,13 +107,14 @@ void NetworkManager::execute() {
     case NetworkManagerState::CONNECTED:
         m_logger.log(LogLevel::Info, "Connected to network!");
 
-        if (m_server.start()) {
-            m_logger.log(LogLevel::Info, "Tcp server started");
-            m_state = NetworkManagerState::RUNNING;
+        if (!m_server.start()) {
+            m_logger.log(LogLevel::Info, "Failed to start TCP server socket");
+        } else if (!NetworkContainer::getNetworkBroadcast().start()) {
+            m_logger.log(LogLevel::Info, "Failed to start UDP socket");
         } else {
-            m_logger.log(LogLevel::Error, "Failed to start tcp server");
+            m_logger.log(LogLevel::Error, "TCP and UDP socket started!");
         }
-
+        m_state = NetworkManagerState::RUNNING;
         break;
     case NetworkManagerState::RUNNING:
         // Idle state.

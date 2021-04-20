@@ -164,11 +164,6 @@ class BroadcastMessageSenderTask : public AbstractTask<10 * configMINIMAL_STACK_
                BspContainer::getBSP().getHiveMindUUID() == 0) {
             Task::delay(100);
         }
-        // Only start after connection
-        while (!stream.start()) {
-            m_logger.log(LogLevel::Warn, "Failed to start broadcast");
-            Task::delay(100);
-        }
         while (true) {
             if (!messageSender.processAndSerialize()) {
                 m_logger.log(LogLevel::Error, "Fail to process/serialize broadcast");

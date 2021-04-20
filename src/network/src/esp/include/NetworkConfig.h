@@ -26,10 +26,22 @@ wifi_config_t* getDefaultNetworkConfig();
 esp_interface_t getInterface();
 
 /**
- * @brief Get the communication port used for sockets in the network
+ * @brief Get the communication port used for unicast sockets in the network
  * @return The port number
  */
 uint16_t getCommunicationPort();
+
+/**
+ * @brief Get the communication port used for receiving broadcast communications
+ * @return The port number
+ */
+uint16_t getBroadcastInputPort();
+
+/**
+ * @brief Get the communication port used for sending broadcast communications
+ * @return The port number
+ */
+uint16_t getBroadcastOutputPort();
 } // namespace NetworkConfig
 
 #endif // HIVE_CONNECT_NETWORKCONFIG_H

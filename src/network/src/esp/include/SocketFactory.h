@@ -12,6 +12,8 @@ int createTCPServerSocket(uint16_t port);
 
 int createTCPClient(uint32_t address, uint16_t port);
 
+int createUDPBroadcast(uint16_t inputPort);
+
 } // namespace SocketFactory
 
 #endif // HIVE_CONNECT_SOCKETFACTORY_H
