@@ -26,12 +26,12 @@ class NetworkBroadcast : public INetworkBroadcast {
   private:
     ILogger& m_logger;
     BaseTask<2 * configMINIMAL_STACK_SIZE> m_receivingTask;
-    std::array<uint8_t, 512> m_ciruclarBuffData;
+    std::array<uint8_t, 2 * gs_MAX_DATAGRAM_SIZE> m_circularBuffData;
     CircularBuff m_circularBuffer;
     TaskHandle_t m_receivingTaskHandle;
     int m_socket;
     bool m_started;
-    std::array<uint8_t, 255> m_datagram;
+    std::array<uint8_t, gs_MAX_DATAGRAM_SIZE> m_datagram;
 };
 
 #endif // HIVE_CONNECT_NETWORKBROADCAST_H
