@@ -62,6 +62,4 @@ bool NetworkBroadcast::receive(uint8_t* data, uint16_t length) {
     return CircularBuff_get(&m_circularBuffer, data, length) == length;
 }
 
-bool NetworkBroadcast::isStarted() const {
-    return m_isStarted;
-}
+bool NetworkBroadcast::isStarted() const { return m_isStarted; }

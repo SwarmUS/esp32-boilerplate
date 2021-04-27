@@ -41,7 +41,6 @@ class NetworkBroadcast : public INetworkBroadcast {
     ros::Subscriber m_subscriber;
     bool m_isStarted;
 
-
     std::condition_variable m_conditionVariable;
     std::mutex m_mutex;
     bool m_receivedBytes;

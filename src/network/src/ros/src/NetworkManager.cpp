@@ -1,10 +1,13 @@
 #include "NetworkManager.h"
 #include <ros/ros.h>
 
-NetworkManager::NetworkManager(ILogger& logger, IHashMap<uint16_t, uint32_t>& hashMap, IBSP& bsp, INetworkBroadcast& networkBroadcast) :
+NetworkManager::NetworkManager(ILogger& logger,
+                               IHashMap<uint16_t, uint32_t>& hashMap,
+                               IBSP& bsp,
+                               INetworkBroadcast& networkBroadcast) :
     AbstractNetworkManager(logger, hashMap), m_bsp(bsp), m_networkBroadcast(networkBroadcast) {}
 
-NetworkStatus NetworkManager::getNetworkStatus() const { 
+NetworkStatus NetworkManager::getNetworkStatus() const {
     if (m_bsp.getHiveMindUUID() == 0) {
         return NetworkStatus::Connecting;
     }
@@ -13,8 +16,8 @@ NetworkStatus NetworkManager::getNetworkStatus() const {
         m_networkBroadcast.start();
     }
 
-    return m_networkBroadcast.isStarted() ? NetworkStatus::Connected : NetworkStatus::Connecting; 
-    }
+    return m_networkBroadcast.isStarted() ? NetworkStatus::Connected : NetworkStatus::Connecting;
+}
 
 uint32_t NetworkManager::getSelfIP() const {
     ros::NodeHandle nodeHandle("~");
