@@ -18,7 +18,8 @@ NetworkBroadcast::NetworkBroadcast(ILogger& logger,
     m_logger(logger),
     m_bsp(bsp),
     m_pubTopicPrefix(publishingTopicPrefix),
-    m_subTopicPrefix(subscribingTopicPrefix) {
+    m_subTopicPrefix(subscribingTopicPrefix),
+    m_isStarted(false) {
 
     CircularBuff_init(&m_circularBuffer, m_data.data(), m_data.size());
 }
@@ -37,6 +38,8 @@ bool NetworkBroadcast::start() {
                                     1000, &NetworkBroadcast::handleReception, this);
     m_logger.log(LogLevel::Info, "Broadcast interface started for agent %d",
                  m_bsp.getHiveMindUUID());
+
+    m_isStarted = true;
     return true;
 }
 
@@ -57,4 +60,8 @@ bool NetworkBroadcast::receive(uint8_t* data, uint16_t length) {
     }
 
     return CircularBuff_get(&m_circularBuffer, data, length) == length;
+}
+
+bool NetworkBroadcast::isStarted() const {
+    return m_isStarted;
 }

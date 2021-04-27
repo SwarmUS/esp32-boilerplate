@@ -26,6 +26,7 @@ class NetworkBroadcast : public INetworkBroadcast {
     bool receive(uint8_t* data, uint16_t length) override;
     bool start() override;
     bool stop() override;
+    bool isStarted() const override;
 
   private:
     ILogger& m_logger;
@@ -38,6 +39,8 @@ class NetworkBroadcast : public INetworkBroadcast {
 
     ros::Publisher m_publisher;
     ros::Subscriber m_subscriber;
+    bool m_isStarted;
+
 
     std::condition_variable m_conditionVariable;
     std::mutex m_mutex;

@@ -23,6 +23,8 @@ class NetworkBroadcast : public INetworkBroadcast {
 
     void receiveDatagrams();
 
+    bool isStarted() override;
+
   private:
     ILogger& m_logger;
     BaseTask<2 * configMINIMAL_STACK_SIZE> m_receivingTask;

@@ -34,5 +34,11 @@ class INetworkBroadcast : public IProtobufStream {
      * @return true if successful, false otherwise
      */
     virtual bool stop() = 0;
+
+    /**
+     * @brief Returns the if the service was started or not
+     * @return true if started, false otherwise
+     */
+    virtual bool isStarted() const = 0;
 };
 #endif // HIVE_CONNECT_INETWORKBROADCAST_H

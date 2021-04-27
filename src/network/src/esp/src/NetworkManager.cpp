@@ -72,7 +72,7 @@ void NetworkManager::start() {
     m_networkExecuteTask.start();
 }
 
-NetworkStatus NetworkManager::getNetworkStatus() const {
+NetworkStatus NetworkManager::getNetworkStatus() {
     switch (m_state) {
     case NetworkManagerState::LOOKING_FOR_NETWORK:
         return NetworkStatus::Connecting;
