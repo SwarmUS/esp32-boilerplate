@@ -2,8 +2,8 @@
 
 class BroadcastMock : public INetworkBroadcast {
   public:
-    BroadcastMock();
-    ~BroadcastMock();
+    BroadcastMock() = default;
+    ~BroadcastMock() override = default;
 
     MOCK_METHOD(bool, send, (const uint8_t* data, uint16_t length), (override));
     MOCK_METHOD(bool, receive, (uint8_t * data, uint16_t length), (override));
