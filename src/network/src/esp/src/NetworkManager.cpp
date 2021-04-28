@@ -42,6 +42,11 @@ bool NetworkManager::initNetworkInterface() {
 
     // Initialize default station as network interface instance. Will change in the future when
     // enabling mesh capabilities
+    if (NetworkConfig::getMode() == WIFI_MODE_AP) {
+        auto* netif = esp_netif_create_default_wifi_ap();
+        ESP_ERROR_CHECK(esp_netif_dhcps_start(netif));
+        return netif != nullptr;
+    }
     return esp_netif_create_default_wifi_sta() != nullptr;
 }
 
