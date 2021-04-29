@@ -61,6 +61,9 @@ void NetworkManager::eventHandler(void* context,
     if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_STA_START) {
         manager->m_logger.log(LogLevel::Info, "Started wifi, attempting to connect...");
         esp_wifi_connect();
+    } else if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_STA_DISCONNECTED) {
+        manager->m_logger.log(LogLevel::Warn, "Network error, attempting to reconnect");
+        manager->m_state = NetworkManagerState::DISCONNECTED;
     } else if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_AP_START) {
         manager->m_logger.log(LogLevel::Info, "Started wifi acces point!");
         esp_netif_ip_info_t ipInfo;

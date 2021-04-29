@@ -9,7 +9,7 @@
 #include "nvs_flash.h"
 #include <driver/gpio.h>
 
-BSP::BSP() { m_UUID = 1; }
+BSP::BSP() { m_UUID = 0; }
 
 void BSP::initChip() {
     // Init event loop
