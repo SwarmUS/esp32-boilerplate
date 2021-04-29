@@ -87,7 +87,7 @@ NetworkStatus NetworkManager::getNetworkStatus() const {
     }
 }
 
-uint32_t NetworkManager::getSelfIP() const { return m_ipAddress.u_addr.ip4.addr; }
+uint32_t NetworkManager::getSelfIP() const { return ntohl(m_ipAddress.u_addr.ip4.addr); }
 
 void NetworkManager::execute() {
     switch (m_state) {

@@ -242,17 +242,93 @@ class BroadcastIPTask : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
     }
 };
 
+class StressTestsCommunicationsSend : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
+  public:
+    StressTestsCommunicationsSend(const char* taskName,
+                                  UBaseType_t priority,
+                                  IBSP& bsp,
+                                  INetworkManager& networkManager,
+                                  ILogger& logger) :
+        AbstractTask(taskName, priority),
+        m_bsp(bsp),
+        m_networkManager(networkManager),
+        m_logger(logger) {}
+    ~StressTestsCommunicationsSend() override = default;
+
+  private:
+    IBSP& m_bsp;
+    INetworkManager& m_networkManager;
+    ILogger& m_logger;
+    void task() override {
+        MessageDTO message;
+        while (true) {
+            if (m_networkManager.getNetworkStatus() != NetworkStatus::Connected) {
+                Task::delay(1000);
+                continue;
+            }
+            uint8_t dest = 1;
+            if (m_bsp.getHiveMindUUID() == 1) {
+                dest = 2;
+            }
+            auto& sending = NetworkContainer::getNetworkOutputStream();
+            if (m_networkManager.getIPFromAgentID(dest).has_value()) {
+                if (sending.setDestination(m_networkManager.getIPFromAgentID(dest).value())) {
+                    char message[] = "Communications tests";
+                    sending.send((uint8_t*)message, sizeof(message));
+                    sending.close();
+                }
+            }
+            Task::delay(100);
+        }
+    }
+};
+
+class StressTestsCommunicationsReceive : public AbstractTask<10 * configMINIMAL_STACK_SIZE> {
+  public:
+    StressTestsCommunicationsReceive(const char* taskName,
+                                     UBaseType_t priority,
+                                     IBSP& bsp,
+                                     INetworkManager& networkManager,
+                                     ILogger& logger) :
+        AbstractTask(taskName, priority),
+        m_bsp(bsp),
+        m_networkManager(networkManager),
+        m_logger(logger) {}
+    ~StressTestsCommunicationsReceive() override = default;
+
+  private:
+    IBSP& m_bsp;
+    INetworkManager& m_networkManager;
+    ILogger& m_logger;
+    void task() override {
+        MessageDTO message;
+        while (true) {
+            if (m_networkManager.getNetworkStatus() != NetworkStatus::Connected) {
+                Task::delay(1000);
+                continue;
+            }
+            char message[] = "Communications tests";
+            char buffer[sizeof(message)] = "";
+            auto& receiving = NetworkContainer::getNetworkInputStream();
+            if (receiving.receive((uint8_t*)buffer, sizeof(message))) {
+                m_logger.log(LogLevel::Info, "Message received: %s", buffer);
+                receiving.closeCurrentClient();
+            }
+        }
+    }
+};
+
 void app_main(void) {
     IBSP* bsp = &BspContainer::getBSP();
     bsp->initChip();
     INetworkManager* networkManager = &NetworkContainer::getNetworkManager();
     networkManager->start();
 
-    static HiveMindMessageSender s_spiMessageSend("hivemind_send", tskIDLE_PRIORITY + 1);
+    /*static HiveMindMessageSender s_spiMessageSend("hivemind_send", tskIDLE_PRIORITY + 1);
     static HiveMindDispatcher s_spiDispatch("hivemind_receive", tskIDLE_PRIORITY + 1);
 
     static UnicastMessageSenderTask s_tcpMessageSender("unicast_send", tskIDLE_PRIORITY + 1);
-    static UnicastMessageDispatcher s_tcpMessageReceiver("unicast_receive", tskIDLE_PRIORITY + 1);
+    static UnicastMessageDispatcher s_tcpMessageReceiver("unicast_receive", tskIDLE_PRIORITY + 1);*/
 
     static BroadcastMessageSenderTask s_broadcastMessageSender("broadcast_send",
                                                                tskIDLE_PRIORITY + 1);
@@ -261,15 +337,26 @@ void app_main(void) {
         "broad_casting_ip", configMINIMAL_STACK_SIZE, BspContainer::getBSP(),
         NetworkContainer::getNetworkManager(), LoggerContainer::getLogger());
 
-    s_spiMessageSend.start();
+    static StressTestsCommunicationsSend s_testSend(
+        "test_send", tskIDLE_PRIORITY + 1, BspContainer::getBSP(),
+        NetworkContainer::getNetworkManager(), LoggerContainer::getLogger());
+
+    static StressTestsCommunicationsReceive s_testReceive(
+        "test_receive", tskIDLE_PRIORITY + 1, BspContainer::getBSP(),
+        NetworkContainer::getNetworkManager(), LoggerContainer::getLogger());
+
+    /*s_spiMessageSend.start();
     s_spiDispatch.start();
 
     s_tcpMessageReceiver.start();
-    s_tcpMessageSender.start();
+    s_tcpMessageSender.start();*/
 
     s_broadcastMessageSender.start();
     s_broadcastReceiver.start();
     s_broadcastIpTask.start();
+
+    s_testSend.start();
+    s_testReceive.start();
 }
 
 #ifdef __cplusplus
