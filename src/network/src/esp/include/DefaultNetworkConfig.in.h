@@ -9,6 +9,7 @@
  * @brief Template file used by CMake to provide default or user-provided values for the network configuration
  */
 
+constexpr bool gs_isRouter = @IS_ROUTER@;
 #define DEFAULT_SSID "@SSID@"
 #define DEFAULT_PASSWORD "@PASSWORD@"
 #define DEFAULT_AUTH_MODE @AUTH_MODE@

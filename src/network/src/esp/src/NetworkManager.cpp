@@ -23,7 +23,7 @@ NetworkManager::NetworkManager(ILogger& logger,
     m_server(server) {
 
     // Initialise to 0.0.0.0
-    m_ipAddress.u_addr.ip4.addr = 0;
+    m_ipAddress.addr = 0;
     m_state = NetworkManagerState::INIT;
 }
 
@@ -42,7 +42,13 @@ bool NetworkManager::initNetworkInterface() {
 
     // Initialize default station as network interface instance. Will change in the future when
     // enabling mesh capabilities
-    return esp_netif_create_default_wifi_sta() != nullptr;
+    if (NetworkConfig::getMode() == WIFI_MODE_AP) {
+        m_networkInterfaceHandle = esp_netif_create_default_wifi_ap();
+        ESP_ERROR_CHECK(esp_netif_dhcps_start(m_networkInterfaceHandle));
+    } else {
+        m_networkInterfaceHandle = esp_netif_create_default_wifi_sta();
+    }
+    return m_networkInterfaceHandle != nullptr;
 }
 
 void NetworkManager::eventHandler(void* context,
@@ -58,12 +64,22 @@ void NetworkManager::eventHandler(void* context,
     } else if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_STA_DISCONNECTED) {
         manager->m_logger.log(LogLevel::Warn, "Network error, attempting to reconnect");
         manager->m_state = NetworkManagerState::DISCONNECTED;
-    } else if (eventBase == IP_EVENT && eventId == IP_EVENT_STA_GOT_IP) {
+    } else if (eventBase == WIFI_EVENT && eventId == WIFI_EVENT_AP_START) {
+        manager->m_logger.log(LogLevel::Info, "Started wifi acces point!");
+        esp_netif_ip_info_t ipInfo;
+        ESP_ERROR_CHECK(esp_netif_get_ip_info(manager->m_networkInterfaceHandle, &ipInfo));
+        manager->m_ipAddress = ipInfo.ip;
+        manager->m_logger.log(LogLevel::Info, "Network manager got ip:" IPSTR,
+                              IP2STR(&manager->m_ipAddress));
+        manager->m_state = NetworkManagerState::CONNECTED;
+    }
+
+    else if (eventBase == IP_EVENT && eventId == IP_EVENT_STA_GOT_IP) {
         auto* event = (ip_event_got_ip_t*)eventData;
         manager->m_state = NetworkManagerState::CONNECTED;
         manager->m_logger.log(LogLevel::Info, "Network manager got ip:" IPSTR,
                               IP2STR(&event->ip_info.ip));
-        manager->m_ipAddress.u_addr.ip4 = event->ip_info.ip;
+        manager->m_ipAddress = event->ip_info.ip;
     }
 }
 
@@ -87,7 +103,7 @@ NetworkStatus NetworkManager::getNetworkStatus() const {
     }
 }
 
-uint32_t NetworkManager::getSelfIP() const { return m_ipAddress.u_addr.ip4.addr; }
+uint32_t NetworkManager::getSelfIP() const { return m_ipAddress.addr; }
 
 void NetworkManager::execute() {
     switch (m_state) {
@@ -98,7 +114,6 @@ void NetworkManager::execute() {
         ESP_ERROR_CHECK(esp_wifi_set_config(NetworkConfig::getInterface(),
                                             NetworkConfig::getDefaultNetworkConfig()));
         ESP_ERROR_CHECK(esp_wifi_start());
-
         m_state = NetworkManagerState::LOOKING_FOR_NETWORK;
         break;
     case NetworkManagerState::LOOKING_FOR_NETWORK:

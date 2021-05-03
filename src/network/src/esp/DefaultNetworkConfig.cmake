@@ -1,5 +1,6 @@
 set_default(SSID "swarmus")
 set_default(PASSWORD "beemovie")
+set_default(IS_ROUTER false)
 set_default(AUTH_MODE "WIFI_AUTH_WPA2_PSK")
 set_default(UNICAST_PORT 6969)
 set_default(BROADCAST_INPUT_PORT 6970)
