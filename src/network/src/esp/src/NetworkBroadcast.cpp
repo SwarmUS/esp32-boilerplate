@@ -97,3 +97,5 @@ void NetworkBroadcast::receiveDatagrams() {
         Task::delay(20);
     }
 }
+
+bool NetworkBroadcast::isStarted() const { return m_started; }

@@ -7,7 +7,9 @@ set(TEST_SOURCES
 set(TEST_HEADERS
     mocks/NetworkManagerMock.h
     mocks/LoggerInterfaceMock.h
-        )
+    mocks/BroadcastMock.h
+    mocks/BSPMock.h
+    )
 
 add_executable(${TEST_NAME} ${TEST_SOURCES} ${TEST_HEADERS})
 
