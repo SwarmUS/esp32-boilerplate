@@ -31,7 +31,8 @@ class NetworkManager : public AbstractNetworkManager {
   private:
     INetworkInputStream& m_server;
     BaseTask<configMINIMAL_STACK_SIZE * 4> m_networkExecuteTask;
-    esp_ip_addr_t m_ipAddress;
+    esp_ip4_addr_t m_ipAddress;
+    esp_netif_obj* m_networkInterfaceHandle;
     enum class NetworkManagerState {
         INIT = 0,
         LOOKING_FOR_NETWORK,
