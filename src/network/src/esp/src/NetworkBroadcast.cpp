@@ -98,4 +98,4 @@ void NetworkBroadcast::receiveDatagrams() {
     }
 }
 
-bool NetworkBroadcast::isStarted() { return m_started; }
+bool NetworkBroadcast::isStarted() const { return m_started; }

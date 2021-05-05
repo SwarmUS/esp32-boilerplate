@@ -23,7 +23,7 @@ class NetworkBroadcast : public INetworkBroadcast {
 
     void receiveDatagrams();
 
-    bool isStarted() override;
+    bool isStarted() const override;
 
   private:
     ILogger& m_logger;
